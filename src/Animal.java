@@ -35,7 +35,7 @@ abstract class Animal extends SimComponent implements Actor, Perishable {
         expirationCheck();
 
         satiation -= STEP_SATIATION_DECRASE;
-        if (satiation <= 0) {w.delete(this);}
+        if (satiation <= 0) {kill();}
     }
 
     public void expirationCheck() {
