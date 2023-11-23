@@ -99,7 +99,8 @@ public class Canvas extends JPanel {
             // 1 overlay rendering thread
             // 1 buffer for safety
             // rest for rendering
-            executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()-5);
+            int availableProcessors = Runtime.getRuntime().availableProcessors();
+            executor = Executors.newFixedThreadPool(availableProcessors > 5 ? availableProcessors - 5 : 3);
             try {
                 List<Future<BufferedImage>> queue = executor.invokeAll(af.getImages(delay == 0 ? 1 : delay/MS_PER_FRAME));
                 

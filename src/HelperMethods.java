@@ -1,5 +1,6 @@
 import itumulator.world.Location;
 import itumulator.world.World;
+import itumulator.executable.Program;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Random;
@@ -25,7 +26,7 @@ public class HelperMethods {
         return worldSize;
     }
 
-    public static void readObjects(String input, World world) {
+    public static void readObjects(String input, World world, Program p) {
         String filePath = input;
         int amount = 0, startRange = 0, endRange = 0;
         String type = null;
@@ -50,12 +51,12 @@ public class HelperMethods {
                 if (tokens.length == 2) {
                     amount = Integer.parseInt(tokens[1]);
                     System.out.println("Amount: " + amount);
-                    HelperMethods.spawnObject(world, type, amount);
+                    HelperMethods.spawnObject(world, p, type, amount);
                 } else if (tokens.length == 3) {
                     startRange = Integer.parseInt(tokens[1]);
                     endRange = Integer.parseInt(tokens[2]);
                     System.out.println("Range: [" + startRange + ", " + endRange + "]");
-                    HelperMethods.spawnObject(world, type, startRange, endRange);
+                    HelperMethods.spawnObject(world, p, type, startRange, endRange);
                 }
 
             }
@@ -64,24 +65,24 @@ public class HelperMethods {
         }
     }
 
-    public static void spawnObject(World world, String type, int amount) {
-        spawnObjects(world, type, amount, amount);
+    public static void spawnObject(World world, Program p, String type, int amount) {
+        spawnObjects(world, p, type, amount, amount);
     }
 
-    public static void spawnObject(World world, String type, int startRange, int endRange) {
-        spawnObjects(world, type, startRange, endRange);
+    public static void spawnObject(World world, Program p, String type, int startRange, int endRange) {
+        spawnObjects(world, p, type, startRange, endRange);
     }
 
-    private static void spawnObjects(World world, String type, int startRange, int endRange) {
+    private static void spawnObjects(World world, Program p, String type, int startRange, int endRange) {
         Random r = new Random();
         int rValue = r.nextInt((endRange + 1) - startRange) + startRange;
 
         for (int i = 0; i < rValue; i++) {
             Location l = getRandomEmptyLocation(world, r);
             if (type.equals("grass")) {
-                world.setTile(l, new Grass());
+                world.setTile(l, new Grass(p));
             } else if (type.equals("rabbit")) {
-                // TODO: Spawn Rabbit
+                world.setTile(l, new Rabbit(p));
             } else if (type.equals("burrow")) {
                 // TODO: Spawn Rabbithole
             }
