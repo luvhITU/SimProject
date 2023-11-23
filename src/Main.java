@@ -13,7 +13,7 @@ public class Main {
         int delay = 1000;
         int display_size = 800;
         Program p = new Program(size, display_size, delay);
-        World world = p.getWorld();
+        World w = p.getWorld();
 
         Random r = new Random();
 
@@ -21,22 +21,22 @@ public class Main {
             int x = r.nextInt(size);
             int y = r.nextInt(size);
             Location l = new Location(x, y);
-            while (!world.isTileEmpty(l)) {
+            while (!w.isTileEmpty(l)) {
                 x = r.nextInt(size);
                 y = r.nextInt(size);
                 l = new Location(x, y);
             }
-            world.setTile(l, new Person());
+            w.setTile(l, new Rabbit(p));
         }
 
-        Grass grass = new Grass();
+        Grass grass = new Grass(p);
         Location gPlace = new Location(1, 2);
-        world.setTile(gPlace, grass);
+        w.setTile(gPlace, grass);
 
         //System.out.println(world.getEmptySurroundingTiles(gPlace));
 
         DisplayInformation di = new DisplayInformation(Color.red);
-        p.setDisplayInformation(Person.class, di);
+        p.setDisplayInformation(Rabbit.class, di);
 
         p.show(); // viser selve simulationen
         for (int i = 0; i < 200; i++) {
