@@ -12,7 +12,6 @@ import java.awt.Color;
 public class Grass extends SimComponent implements Actor, NonBlocking, DynamicDisplayInformationProvider, Perishable, Reproduction, Edible {
     private int stepAge;
     private int nutrition;
-
     public Grass(Program p) {
         super(p);
         stepAge = 0;
@@ -37,7 +36,7 @@ public class Grass extends SimComponent implements Actor, NonBlocking, DynamicDi
         int initialUpperBound = 30;
         double chance = new Random().nextInt(initialUpperBound + 1 + stepAge);
         if (chance > initialUpperBound) {
-            w.delete(this);
+            kill();
         }
     }
 

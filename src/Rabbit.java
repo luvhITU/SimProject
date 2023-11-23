@@ -44,7 +44,7 @@ public class Rabbit extends Animal implements Actor, DynamicDisplayInformationPr
             if (getFoodSources().contains(nonBlocking.getClass().getSimpleName())) {
                 Edible EdibleObject = (Edible) nonBlocking;
                 setSatiation(Math.max(EdibleObject.getNutrition(), getMaxSatiation()));
-                w.delete(nonBlocking);
+                EdibleObject.kill();
             }
         } catch(IllegalArgumentException e) {return;}
     }

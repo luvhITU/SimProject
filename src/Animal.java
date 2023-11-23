@@ -43,7 +43,7 @@ abstract class Animal extends SimComponent implements Actor, Perishable {
         int calculatedUpperBound = (int) (initialUpperBound + age * expirationMultiplier);
         double chance = new Random().nextInt(calculatedUpperBound);
         if (chance > initialUpperBound) {
-            w.delete(this);
+            kill();
         }
     }
 

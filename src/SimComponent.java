@@ -16,7 +16,14 @@ public class SimComponent {
     public Object getCurrentNonBlocking() {
         return w.getNonBlocking(w.getCurrentLocation());
     }
+
+    public void kill() {
+        try {
+            w.delete(this);
+        } catch (IllegalArgumentException ignore) {}
+    }
 }
+
 
 
 
