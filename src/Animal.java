@@ -30,7 +30,7 @@ abstract class Animal extends SimComponent implements Actor, Perishable {
     }
 
     public void act(World w) {
-        System.out.println(satiation);
+        //System.out.println(satiation);
         if (w.getCurrentTime() == 0 && s.getSteps() > stepOfBirth) {age++;}
         expirationCheck();
 

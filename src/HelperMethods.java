@@ -84,7 +84,7 @@ public class HelperMethods {
             } else if (type.equals("rabbit")) {
                 world.setTile(l, new Rabbit(p));
             } else if (type.equals("burrow")) {
-                // TODO: Spawn Rabbithole
+                world.setTile(l, new Burrow(p));
             }
         }
     }

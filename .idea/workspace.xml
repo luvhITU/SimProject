@@ -7,16 +7,69 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dafda8e0-94d7-440d-b2ec-a65c8f2f90b8" name="Changes" comment="" />
+    <list default="true" id="dafda8e0-94d7-440d-b2ec-a65c8f2f90b8" name="Changes" comment="Changes:&#10;- Updated ITUmulator library&#10;- Merged Rabbit &amp; Master branch">
+      <change afterPath="$PROJECT_DIR$/data/rabbits.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/t1-3a.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Animal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Animal.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HelperMethods.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HelperMethods.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Rabbit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Rabbit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/Canvas.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/Canvas.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/ExtractedInfo.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/Frame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/Frame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/animation/AnimationFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/animation/AnimationFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/animation/ObjectInformation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/animation/ObjectInformation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/animation/components/Animation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/animation/components/Animation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/animation/components/AnimationFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/animation/components/AnimationFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/animation/components/AnimationSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/animation/components/AnimationSet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/animation/components/AppearAnimation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/animation/components/AppearAnimation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/animation/components/DayNightAnimation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/animation/components/DayNightAnimation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/animation/components/HideAnimation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/animation/components/HideAnimation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/animation/components/MoveAnimation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/animation/components/MoveAnimation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/animation/components/StillAnimation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/animation/components/StillAnimation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/overlay/Cloud.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/overlay/Cloud.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/overlay/OverlayCanvas.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/overlay/OverlayCanvas.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/utility/DayNightHelper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/utility/DayNightHelper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/utility/ImageResourceCache.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/utility/ImageResourceCache.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/utility/ImageUtility.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/utility/ImageUtility.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/utility/IsomorphicCoordinateFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/utility/IsomorphicCoordinateFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/utility/IsomorphicUtility.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/utility/IsomorphicUtility.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/display/utility/Point2DInt.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/display/utility/Point2DInt.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/executable/DisplayInformation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/executable/DisplayInformation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/executable/DynamicDisplayInformationProvider.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/executable/DynamicDisplayInformationProvider.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/executable/Program.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/executable/Program.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/simulator/Actor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/simulator/Actor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/simulator/Simulator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/simulator/Simulator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/world/Location.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/world/Location.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/world/NonBlocking.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/world/NonBlocking.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/itumulator/world/World.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/itumulator/world/World.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="Bunny" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>
   <component name="ProjectId" id="2YElXtTDENf99ZlqHfsG8z1g2lk" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -26,6 +79,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Mathias/Desktop/HandOuts/InteliJ/src/itumulator/world&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -72,10 +126,37 @@
       <workItem from="1700101298263" duration="489000" />
       <workItem from="1700101829680" duration="1332000" />
       <workItem from="1700104204666" duration="17000" />
+      <workItem from="1700778585280" duration="3993000" />
+      <workItem from="1700827451074" duration="6728000" />
     </task>
+    <task id="LOCAL-00001" summary="Changes:&#10;- Updated ITUmulator library&#10;- Merged Rabbit &amp; Master branch">
+      <option name="closed" value="true" />
+      <created>1700746666179</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1700746666179</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added functionality to parse input files." />
+    <MESSAGE value="Changes:&#10;- Updated ITUmulator library&#10;- Merged Rabbit &amp; Master branch" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changes:&#10;- Updated ITUmulator library&#10;- Merged Rabbit &amp; Master branch" />
   </component>
 </project>
