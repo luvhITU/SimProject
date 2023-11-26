@@ -21,27 +21,31 @@ public class Rabbit extends Animal implements Actor, DynamicDisplayInformationPr
     @Override
     public void act(World w) {
         super.act(w);
-        if (isAwake) {
-            tryToEat();
+        if (getIsAwake()) {
             Set<Location> neighbours = w.getEmptySurroundingTiles();
             if (!neighbours.isEmpty() && w.getCurrentTime() < FIND_HOME_TRESHOLD) {
-                randomMove();
+                randomMove(neighbours);
+            } else if (w.getCurrentTime() == FIND_HOME_TRESHOLD) {
+                if (home == null) {
+                    digHole();
+                } else if (w.getCurrentLocation() == w.getLocation(home)) {
+                    hide();
+                } else if (!neighbours.isEmpty()){
+                    moveToHome(neighbours);
+                }
+                tryToEat();
+
+            } else {
+                if (w.getCurrentTime() == 0) {
+                    emerge();
+                }
             }
-            else if (home == null && w.getCurrentTime() == FIND_HOME_TRESHOLD) {
-                digHole();
-            }
-            else if (w.getCurrentLocation() == w.getLocation(home)) {
-                hide();
-            }
+        }
     }
 
     @Override
     public DisplayInformation getInformation() {
-        if (!getIsAwake()) {
-            return new DisplayInformation(Color.blue, "rabbit-sleeping");
-        } else {
-            return new DisplayInformation(Color.gray, "rabbit-large");
-        }
+        return new DisplayInformation(Color.blue, "rabbit-large");
     }
 
     public void randomMove(Set<Location> neighbours){
@@ -65,35 +69,60 @@ public class Rabbit extends Animal implements Actor, DynamicDisplayInformationPr
         }
     }
 
-        public void digHole() {
-            Location curr = w.getCurrentLocation();
-            if (!hasHome) {
-                if (w.containsNonBlocking(curr) && !(w.getNonBlocking(curr) instanceof Burrow)) {
-                    //System.out.println("Standing on Non-blocking Object - deleting & digging my home!");
-                    w.delete(w.getNonBlocking(curr));
-                }
-                //System.out.println("It's empty here - digging my home!");
-                setHome(curr);
-            } else if (w.getLocation(this) != w.getLocation(home)) {
-                //System.out.println("I have a home - moving to home: " + w.getLocation(home));
-                w.move(this, w.getLocation(home));
-            }
+    public void digHole() {
+        Location curr = w.getCurrentLocation();
+        if (w.containsNonBlocking(curr) && !(w.getNonBlocking(curr) instanceof Burrow)) {
+            //System.out.println("Standing on Non-blocking Object - deleting & digging my home!");
+            w.delete(w.getNonBlocking(curr));
+            //System.out.println("It's empty here - digging my home!");
+            setHome(curr);
+        } else if (!w.containsNonBlocking(curr)) {
+            //System.out.println("It's empty here - digging my home!");
+            setHome(curr);
+        } else if (w.getCurrentLocation() != w.getLocation(home)) {
+            //System.out.println("I have a home - moving to home: " + w.getLocation(home));
+            w.move(this, w.getLocation(home));
+        }
+    }
+
+    public void setHome(Location l) {
+        home = new Burrow(p);
+        //System.out.println("Digging hole!");
+        w.setTile(l, home);
+    }
+
+
+    public void hide() {
+            w.remove(this);
+            sleep();
+    }
+
+    public void emerge() {
+        awaken();
+        w.setTile(w.getLocation(home), this);
+    }
+
+    public void moveToHome(Set<Location> neighbours) {
+        Location currL = w.getCurrentLocation();
+        Location homeL = w.getLocation(home);
+        if (currL.equals(homeL)) {
+            return;
         }
 
-        public void setHome(Location l) {
-            home = new Burrow(p);
-            //System.out.println("Digging hole!");
-            w.setTile(l, home);
-            hasHome = true;
+        int xDifference = currL.getX() - homeL.getX();
+        int yDifference = currL.getY() - homeL.getY();
+        int xDirection = 0;
+        int yDirection = 0;
+
+        if (xDifference > 0) {
+            xDirection = -1;
+        } else if(xDifference < 0) {
+            xDirection = 1
         }
-
-
-        public void hide() {
-            Location curr = w.getCurrentLocation();
-            if (curr == w.getLocation(home)) {
-                w.remove(this);
-                isHiding = true;
-            }
+        if (yDifference > 0) {
+            yDirection = -1;
+        } else if(yDifference < 0) {
+            yDirection = 1
         }
     }
 }

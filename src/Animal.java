@@ -75,11 +75,15 @@ abstract class Animal extends SimComponent implements Actor, Perishable {
         }
     }
 
+    public boolean getIsAwake() {
+        return isAwake;
+    }
+
     public void sleep() {
         isAwake = false;
     }
 
-    public void awake() {
+    public void awaken() {
         isAwake = true;
     }
 }
