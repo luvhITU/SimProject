@@ -1,0 +1,6 @@
+15
+rabbit 5
+grass 0
+grass 0-1
+grass 5-5
+grass 9-9
