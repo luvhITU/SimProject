@@ -6,10 +6,10 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Burrow extends SimComponent implements NonBlocking, DynamicDisplayInformationProvider {
-    List<Burrow> exits;
+public class Hole extends SimComponent implements NonBlocking, DynamicDisplayInformationProvider {
+    List<Hole> exits;
 
-    public Burrow(Program p) {
+    public Hole(Program p) {
         super(p);
         this.exits = new ArrayList<>();
     }

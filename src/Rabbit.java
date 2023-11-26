@@ -11,7 +11,7 @@ import itumulator.world.Location;
 public class Rabbit extends Animal implements Actor, DynamicDisplayInformationProvider {
 
     int FIND_HOME_TRESHOLD = 8;
-    Burrow home;
+    Hole home;
 
     public Rabbit(Program p) {
         super(p, new HashSet<String>(Set.of("Grass")), 1.1);
@@ -22,25 +22,20 @@ public class Rabbit extends Animal implements Actor, DynamicDisplayInformationPr
     public void act(World w) {
         super.act(w);
         if (getIsAwake()) {
+            tryToEat();
             Set<Location> neighbours = w.getEmptySurroundingTiles();
             if (!neighbours.isEmpty() && w.getCurrentTime() < FIND_HOME_TRESHOLD) {
                 randomMove(neighbours);
-            } else if (w.getCurrentTime() == FIND_HOME_TRESHOLD) {
+            } else if (w.getCurrentTime() >= FIND_HOME_TRESHOLD) {
                 if (home == null) {
                     digHole();
-                } else if (w.getCurrentLocation() == w.getLocation(home)) {
+                } else if (w.getCurrentLocation().equals(w.getLocation(home))) {
                     hide();
                 } else if (!neighbours.isEmpty()){
                     moveToHome(neighbours);
                 }
-                tryToEat();
-
-            } else {
-                if (w.getCurrentTime() == 0) {
-                    emerge();
-                }
             }
-        }
+        } else if (w.getCurrentTime() == 0) {emerge();}
     }
 
     @Override
@@ -71,22 +66,16 @@ public class Rabbit extends Animal implements Actor, DynamicDisplayInformationPr
 
     public void digHole() {
         Location curr = w.getCurrentLocation();
-        if (w.containsNonBlocking(curr) && !(w.getNonBlocking(curr) instanceof Burrow)) {
+        if (w.containsNonBlocking(curr) && !(w.getNonBlocking(curr) instanceof Hole)) {
             //System.out.println("Standing on Non-blocking Object - deleting & digging my home!");
             w.delete(w.getNonBlocking(curr));
-            //System.out.println("It's empty here - digging my home!");
-            setHome(curr);
-        } else if (!w.containsNonBlocking(curr)) {
-            //System.out.println("It's empty here - digging my home!");
-            setHome(curr);
-        } else if (w.getCurrentLocation() != w.getLocation(home)) {
-            //System.out.println("I have a home - moving to home: " + w.getLocation(home));
-            w.move(this, w.getLocation(home));
         }
+        //System.out.println("It's empty here - digging my home!");
+        setHome(curr);
     }
 
     public void setHome(Location l) {
-        home = new Burrow(p);
+        home = new Hole(p);
         //System.out.println("Digging hole!");
         w.setTile(l, home);
     }
@@ -103,27 +92,29 @@ public class Rabbit extends Animal implements Actor, DynamicDisplayInformationPr
     }
 
     public void moveToHome(Set<Location> neighbours) {
-        Location currL = w.getCurrentLocation();
-        Location homeL = w.getLocation(home);
-        if (currL.equals(homeL)) {
-            return;
-        }
+        try {
+            Location currL = w.getCurrentLocation();
+            Location homeL = w.getLocation(home);
+            if (currL.equals(homeL)) {
+                return;
+            }
+            int minDistance = Integer.MAX_VALUE;
+            Location bestMove = null;
+            for (Location n : neighbours) {
+                int nDistance = Math.abs(n.getX() - homeL.getX()) + Math.abs((n.getY() - homeL.getY()));
+                if (nDistance < minDistance) {
+                    minDistance = nDistance;
+                    bestMove = n;
 
-        int xDifference = currL.getX() - homeL.getX();
-        int yDifference = currL.getY() - homeL.getY();
-        int xDirection = 0;
-        int yDirection = 0;
+                }
+            }
+            if (bestMove != null) {
+                w.move(this, bestMove);
+            }
+        } catch(IllegalArgumentException ignore) {return;}
 
-        if (xDifference > 0) {
-            xDirection = -1;
-        } else if(xDifference < 0) {
-            xDirection = 1
-        }
-        if (yDifference > 0) {
-            yDirection = -1;
-        } else if(yDifference < 0) {
-            yDirection = 1
-        }
+
+
+
     }
 }
-
