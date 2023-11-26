@@ -1,8 +1,9 @@
 import itumulator.executable.Program;
 import itumulator.simulator.Simulator;
+import itumulator.world.Location;
 import itumulator.world.World;
 
-public class SimComponent {
+abstract class SimComponent {
     public Program p;
     public Simulator s;
     public World w;
@@ -13,14 +14,12 @@ public class SimComponent {
         w = p.getWorld();
     }
 
-    public Object getCurrentNonBlocking() {
-        return w.getNonBlocking(w.getCurrentLocation());
-    }
-
-    public void kill() {
+    public void die() {
         try {
             w.delete(this);
-        } catch (IllegalArgumentException ignore) {}
+        } catch (IllegalArgumentException e) {
+            System.out.println(this + " was deleted by another process before it could be deleted by .die() method");
+        }
     }
 }
 

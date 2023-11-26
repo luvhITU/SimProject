@@ -19,9 +19,10 @@ public class Grass extends SimComponent implements Actor, NonBlocking, DynamicDi
     }
 
     public void act(World world) {
+        if (w.isDay()) {
+            reproduce();
+        }
         //Spread grass
-        reproduce();
-
         //Test if needs to die
         expirationCheck();
         stepAge++;
@@ -33,10 +34,10 @@ public class Grass extends SimComponent implements Actor, NonBlocking, DynamicDi
     }
 
     public void expirationCheck() {
-        int initialUpperBound = 30;
+        int initialUpperBound = 100;
         double chance = new Random().nextInt(initialUpperBound + 1 + stepAge);
         if (chance > initialUpperBound) {
-            kill();
+            die();
         }
     }
 
@@ -50,7 +51,5 @@ public class Grass extends SimComponent implements Actor, NonBlocking, DynamicDi
         }
     }
 
-    public int getNutrition() {
-        return nutrition;
-    }
+    public int getNutrition() {return nutrition;}
 }

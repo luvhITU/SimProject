@@ -11,12 +11,14 @@ abstract class Animal extends SimComponent implements Actor, Perishable {
 
     private int MAX_SATIATION = 10;
     private double satiation;
-    private HashSet<String> foodSources;
+    private Set<String> foodSources;
     private int stepOfBirth;
     private double expirationMultiplier;
     private double age;
 
-    public Animal(Program p, HashSet<String> foodSources, double expirationMultiplier) {
+    boolean isAwake;
+
+    public Animal(Program p, Set<String> foodSources, double expirationMultiplier) {
         super(p);
         this.foodSources = foodSources;
         satiation = MAX_SATIATION;
@@ -27,15 +29,15 @@ abstract class Animal extends SimComponent implements Actor, Perishable {
         stepOfBirth = s.getSteps();
         age = 0;
         this.expirationMultiplier = expirationMultiplier;
+        this.isAwake = true;
     }
 
     public void act(World w) {
-        System.out.println(satiation);
+        System.out.println(this + " satiation: " + satiation);
         if (w.getCurrentTime() == 0 && s.getSteps() > stepOfBirth) {age++;}
-        expirationCheck();
-
         satiation -= STEP_SATIATION_DECRASE;
-        if (satiation <= 0) {kill();}
+        if (satiation <= 0) {die();}
+        expirationCheck();
     }
 
     public void expirationCheck() {
@@ -43,11 +45,11 @@ abstract class Animal extends SimComponent implements Actor, Perishable {
         int calculatedUpperBound = (int) (initialUpperBound + age * expirationMultiplier);
         double chance = new Random().nextInt(calculatedUpperBound);
         if (chance > initialUpperBound) {
-            kill();
+            die();
         }
     }
 
-    public HashSet<String> getFoodSources() {
+    public Set<String> getFoodSources() {
         return foodSources;
     }
 
@@ -60,7 +62,26 @@ abstract class Animal extends SimComponent implements Actor, Perishable {
     }
 
     public void setSatiation(double satiation) {
-        this.satiation = satiation;
+        this.satiation = Math.min(satiation, MAX_SATIATION);
+    }
+
+    public void eat(Edible edible) {
+        try {
+            w.delete(edible);
+            setSatiation(getSatiation() + edible.getNutrition());
+        } catch (IllegalArgumentException e) {
+            System.out.println(edible +  " was deleted by another process before it was eaten");
+            return;
+        }
+    }
+
+    public void sleep() {
+        isAwake = false;
+    }
+
+    public void awake() {
+        isAwake = true;
     }
 }
+
 

@@ -16,11 +16,12 @@ public class Rabbit extends Animal implements Actor, DynamicDisplayInformationPr
 
     @Override
     public void act(World w) {
-        try {
-            super.act(w);
-            if (w.isDay()) {move();}
-        } catch(IllegalArgumentException ignored) {}
-        tryToEat();
+        super.act(w);
+        if (isAwake) {
+            Set<Location> neighbours = w.getEmptySurroundingTiles();
+            if (!neighbours.isEmpty()) {randomMove(neighbours);}
+            tryToEat();
+        }
     }
 
     @Override
@@ -32,21 +33,25 @@ public class Rabbit extends Animal implements Actor, DynamicDisplayInformationPr
         }
     }
 
-    public void move(){
-        Set<Location> neighbours = w.getEmptySurroundingTiles();
-        Location l = (Location) neighbours.toArray()[new Random().nextInt(neighbours.size())];
-        w.move(this, l);
+    public void randomMove(Set<Location> neighbours){
+        try {
+            Location l = (Location) neighbours.toArray()[new Random().nextInt(neighbours.size())];
+            w.move(this, l);
+        } catch(IllegalArgumentException e) {
+            System.out.println(this + " was deleted by another process before it be moved");
+        }
     }
 
-    void tryToEat() {
-        try {
-            Object nonBlocking = getCurrentNonBlocking();
-            if (getFoodSources().contains(nonBlocking.getClass().getSimpleName())) {
-                Edible EdibleObject = (Edible) nonBlocking;
-                setSatiation(Math.max(EdibleObject.getNutrition(), getMaxSatiation()));
-                EdibleObject.kill();
-            }
-        } catch(IllegalArgumentException e) {return;}
+    public void tryToEat() {
+        Location l = w.getCurrentLocation();
+        if (!w.containsNonBlocking(l)) {
+            return;
+        }
+        Object nonBlocking = w.getNonBlocking(l);
+        if (getFoodSources().contains(nonBlocking.getClass().getSimpleName())) {
+            Edible edibleObject = (Edible) nonBlocking;
+            eat(edibleObject);
+        }
     }
 }
 

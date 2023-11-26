@@ -7,7 +7,7 @@ public class Main {
         String input = "data/t1-1d.txt";
 
         int size = HelperMethods.readWorldSize(input);
-        int delay = 1000;
+        int delay = 100;
         int display_size = 800;
 
         Program p = new Program(size, display_size, delay);
