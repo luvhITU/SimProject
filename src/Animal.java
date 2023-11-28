@@ -4,16 +4,12 @@ import itumulator.world.World;
 
 import java.util.Set;
 
-abstract class Animal extends Edible implements Actor {
-
-
-    private static final int STEP_SATIATION_DECREASE = 1;
-    private static final int MAX_SATIATION = 100;
+public abstract class Animal extends Edible implements Actor {
 
     private static final int MAX_ENERGY = 100;
     private static final int AGE_ENERGY_DECREASE = 5;
+    private static final int ACTION_COST = 2;
     boolean isAwake;
-    private double satiation;
     private double energy;
     private final Set<String> diet;
     private int stepAge;
@@ -25,7 +21,6 @@ abstract class Animal extends Edible implements Actor {
     public Animal(Set<String> diet, int nutrition, int damage, double absorptionPercentage) {
         super(nutrition);
         this.diet = diet;
-        satiation = MAX_SATIATION;
         energy = MAX_ENERGY;
         stepAge = 0;
         age = 0;
@@ -35,14 +30,18 @@ abstract class Animal extends Edible implements Actor {
     }
 
     public void act(World w) {
+        if (getIsDead(w)) {return;}
         stepAge++;
-        if (World.getTotalDayDuration() % stepAge == 0) {
-            age();
+        if (World.getTotalDayDuration() % stepAge == 0) {age();}
+        actionCost();
+    }
+
+    @Override
+    public boolean getIsDead(World w) {
+        if (!super.getIsDead(w)) {
+            if (energy == 0) {w.delete(this);}
         }
-        satiation -= STEP_SATIATION_DECREASE;
-        if (satiation <= 0) { // Todo - måske de er "cleaner" at sikre os at satiation aldrin er mindre end 0;
-            getWorld().delete(this);
-        }
+        return (super.getIsDead(w));
     }
 
     public double calcNutritionAbsorbed(Edible edible) {
@@ -53,20 +52,16 @@ abstract class Animal extends Edible implements Actor {
         return (int) Math.round(attacker.getDamage() * absorptionPercentage);
     }
 
+    public void loseEnergy() {
+        setEnergy(Math.max(0, energy - 2));
+    }
+
     public int getDamage() {
         return damage;
     }
 
     public Set<String> getDiet() {
         return diet;
-    }
-
-    public double getSatiation() {
-        return satiation;
-    }
-
-    public void setSatiation(double satiation) {
-        this.satiation = Math.min(satiation, MAX_SATIATION);
     }
 
     public boolean getIsAwake() {
@@ -85,26 +80,18 @@ abstract class Animal extends Edible implements Actor {
         return energy;
     }
 
+    public void actionCost() {
+        setEnergy(energy - ACTION_COST);
+    }
+
     public void setEnergy(double energy) {
         this.energy = Math.max(0, Math.min(MAX_ENERGY, energy));
     }
 
-    public void tryToMove(Location l) {
-        double moveProbability = energy / MAX_ENERGY;
-        if (getRandom().nextDouble() < moveProbability) {
-            getWorld().move(this, l);
+    public void eat(World w, Edible edible) {
+        w.delete(edible);
+        setEnergy(energy + calcNutritionAbsorbed(edible));
         }
-    }
-
-    public void eat(Edible edible) {
-        try {
-            getWorld().delete(edible);
-            setSatiation(getSatiation() + edible.getNutrition());
-        } catch (IllegalArgumentException e) {
-            System.out.println(edible + " was deleted by another process before it was eaten");
-            return;
-        }
-    }
 
     private void age() {
         age++;

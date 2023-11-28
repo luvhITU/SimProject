@@ -1,12 +1,15 @@
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.executable.Program;
+import itumulator.simulator.Actor;
 import itumulator.world.NonBlocking;
+import itumulator.world.World;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Hole extends SimComponent implements NonBlocking, DynamicDisplayInformationProvider {
+public class Hole extends Home implements NonBlocking, DynamicDisplayInformationProvider {
     List<Hole> exits;
 
     public Hole() {
