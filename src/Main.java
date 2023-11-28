@@ -10,7 +10,8 @@ public class Main {
         int delay = 100;
         int display_size = 800;
 
-        Program p = new Program(size, display_size, delay);
+        SimManager.INSTANCE.initialize(size, display_size, delay);
+        Program p = SimManager.INSTANCE.getProgram();
         World world = p.getWorld();
         HelperMethods.readObjects(input, world, p);
 

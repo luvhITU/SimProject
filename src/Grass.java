@@ -9,23 +9,23 @@ import java.util.Set;
 import java.util.Random;
 import java.awt.Color;
 
-public class Grass extends SimComponent implements Actor, NonBlocking, DynamicDisplayInformationProvider, Perishable, Reproduction, Edible {
+public class Grass extends Edible implements Actor, NonBlocking, DynamicDisplayInformationProvider {
+
     private int stepAge;
-    private int nutrition;
-    public Grass(Program p) {
-        super(p);
+
+    public Grass() {
+        super(Config.Grass.NUTRITION);
         stepAge = 0;
-        nutrition = 1;
     }
 
     public void act(World world) {
-        if (w.isDay()) {
+        if(getDeleted()) {return;}
+        stepAge++;
+        if (getWorld().isDay()) {
             reproduce();
         }
-        //Spread grass
-        //Test if needs to die
         expirationCheck();
-        stepAge++;
+
     }
 
     @Override
@@ -34,22 +34,20 @@ public class Grass extends SimComponent implements Actor, NonBlocking, DynamicDi
     }
 
     public void expirationCheck() {
-        int initialUpperBound = 100;
-        double chance = new Random().nextInt(initialUpperBound + 1 + stepAge);
-        if (chance > initialUpperBound) {
-            die();
+        int max_step_age = 100;
+        double expirationProbability = 1.0 * stepAge / max_step_age;
+        if (getRandom().nextDouble() < expirationProbability) {
+            getWorld().delete(this);
         }
     }
 
     public void reproduce() {
-        Set<Location> locations = w.getEmptySurroundingTiles();
+        Set<Location> locations = getWorld().getEmptySurroundingTiles();
         Location l = (Location) locations.toArray()[new Random().nextInt(locations.size())];
 
-        if (!w.containsNonBlocking(l)) {
+        if (!getWorld().containsNonBlocking(l)) {
             //System.out.println("Placing grass at: " + l);
-            w.setTile(l, new Grass(p));
+            getWorld().setTile(l, new Grass());
         }
     }
-
-    public int getNutrition() {return nutrition;}
 }

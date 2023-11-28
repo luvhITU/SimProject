@@ -1,25 +1,27 @@
-import java.awt.Color;
-import java.util.*;
-
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
-import itumulator.executable.Program;
 import itumulator.simulator.Actor;
-import itumulator.world.World;
 import itumulator.world.Location;
+import itumulator.world.World;
+
+import java.awt.*;
+import java.util.Random;
+import java.util.Set;
 
 public class Rabbit extends Animal implements Actor, DynamicDisplayInformationProvider {
 
-    int FIND_HOME_TRESHOLD = 8;
+    private static final int FIND_HOME_TRESHOLD = 8;
     Hole home;
 
-    public Rabbit(Program p) {
-        super(p, new HashSet<String>(Set.of("Grass")), 1.1);
+    public Rabbit() {
+        super(Config.Rabbit.DIET, Config.Rabbit.NUTRITION, Config.Rabbit.DAMAGE, Config.Rabbit.ABSORPTION_PERCENTAGE);
         home = null;
     }
 
     @Override
     public void act(World w) {
+        if(getDeleted()) {return;}
+        System.out.println("HEEEEEY");
         super.act(w);
         if (getIsAwake()) {
             tryToEat();
@@ -31,11 +33,13 @@ public class Rabbit extends Animal implements Actor, DynamicDisplayInformationPr
                     digHole();
                 } else if (w.getCurrentLocation().equals(w.getLocation(home))) {
                     hide();
-                } else if (!neighbours.isEmpty()){
+                } else if (!neighbours.isEmpty()) {
                     moveToHome(neighbours);
                 }
             }
-        } else if (w.getCurrentTime() == 0) {emerge();}
+        } else if (w.getCurrentTime() == 0) {
+            emerge();
+        }
     }
 
     @Override
@@ -43,58 +47,58 @@ public class Rabbit extends Animal implements Actor, DynamicDisplayInformationPr
         return new DisplayInformation(Color.blue, "rabbit-large");
     }
 
-    public void randomMove(Set<Location> neighbours){
+    public void randomMove(Set<Location> neighbours) {
         try {
             Location l = (Location) neighbours.toArray()[new Random().nextInt(neighbours.size())];
-            w.move(this, l);
-        } catch(IllegalArgumentException e) {
+            getWorld().move(this, l);
+        } catch (IllegalArgumentException e) {
             System.out.println(this + " was deleted by another process before it be moved");
         }
     }
 
     public void tryToEat() {
-        Location l = w.getCurrentLocation();
-        if (!w.containsNonBlocking(l)) {
+        Location l = getWorld().getCurrentLocation();
+        if (!getWorld().containsNonBlocking(l)) {
             return;
         }
-        Object nonBlocking = w.getNonBlocking(l);
-        if (getFoodSources().contains(nonBlocking.getClass().getSimpleName())) {
+        Object nonBlocking = getWorld().getNonBlocking(l);
+        if (getDiet().contains(nonBlocking.getClass().getSimpleName())) {
             Edible edibleObject = (Edible) nonBlocking;
             eat(edibleObject);
         }
     }
 
     public void digHole() {
-        Location curr = w.getCurrentLocation();
-        if (w.containsNonBlocking(curr) && !(w.getNonBlocking(curr) instanceof Hole)) {
+        Location curr = getWorld().getCurrentLocation();
+        if (getWorld().containsNonBlocking(curr) && !(getWorld().getNonBlocking(curr) instanceof Hole)) {
             //System.out.println("Standing on Non-blocking Object - deleting & digging my home!");
-            w.delete(w.getNonBlocking(curr));
+            getWorld().delete(getWorld().getNonBlocking(curr));
         }
         //System.out.println("It's empty here - digging my home!");
         setHome(curr);
     }
 
     public void setHome(Location l) {
-        home = new Hole(p);
+        home = new Hole();
         //System.out.println("Digging hole!");
-        w.setTile(l, home);
+        getWorld().setTile(l, home);
     }
 
 
     public void hide() {
-            w.remove(this);
-            sleep();
+        getWorld().remove(this);
+        sleep();
     }
 
     public void emerge() {
         awaken();
-        w.setTile(w.getLocation(home), this);
+        getWorld().setTile(getWorld().getLocation(home), this);
     }
 
     public void moveToHome(Set<Location> neighbours) {
         try {
-            Location currL = w.getCurrentLocation();
-            Location homeL = w.getLocation(home);
+            Location currL = getWorld().getCurrentLocation();
+            Location homeL = getWorld().getLocation(home);
             if (currL.equals(homeL)) {
                 return;
             }
@@ -109,11 +113,10 @@ public class Rabbit extends Animal implements Actor, DynamicDisplayInformationPr
                 }
             }
             if (bestMove != null) {
-                w.move(this, bestMove);
+                getWorld().move(this, bestMove);
             }
-        } catch(IllegalArgumentException ignore) {return;}
-
-
+        } catch (IllegalArgumentException ignore) {
+        }
 
 
     }

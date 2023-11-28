@@ -74,17 +74,17 @@ public class HelperMethods {
     }
 
     private static void spawnObjects(World world, Program p, String type, int startRange, int endRange) {
-        Random r = new Random();
+        Random r = SimManager.INSTANCE.getRandom();
         int rValue = r.nextInt((endRange + 1) - startRange) + startRange;
 
         for (int i = 0; i < rValue; i++) {
             Location l = getRandomEmptyLocation(world, r);
             if (type.equals("grass")) {
-                world.setTile(l, new Grass(p));
+                world.setTile(l, new Grass());
             } else if (type.equals("rabbit")) {
-                world.setTile(l, new Rabbit(p));
+                world.setTile(l, new Rabbit());
             } else if (type.equals("burrow")) {
-                world.setTile(l, new Hole(p));
+                world.setTile(l, new Hole());
             }
         }
     }

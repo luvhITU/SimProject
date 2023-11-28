@@ -9,8 +9,7 @@ import java.util.List;
 public class Hole extends SimComponent implements NonBlocking, DynamicDisplayInformationProvider {
     List<Hole> exits;
 
-    public Hole(Program p) {
-        super(p);
+    public Hole() {
         this.exits = new ArrayList<>();
     }
 

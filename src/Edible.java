@@ -1,5 +1,11 @@
-public interface Edible {
-    public int getNutrition();
+public class Edible extends SimComponent {
+    private int nutrition;
 
-    public void die();
+    public Edible(int nutrition) {
+        this.nutrition = nutrition;
+    }
+
+    public int getNutrition() {
+        return nutrition;
+    }
 }

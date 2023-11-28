@@ -1,60 +1,64 @@
-import itumulator.executable.Program;
 import itumulator.simulator.Actor;
+import itumulator.world.Location;
 import itumulator.world.World;
 
-import java.util.*;
+import java.util.Set;
 
-abstract class Animal extends SimComponent implements Actor, Perishable {
+abstract class Animal extends Edible implements Actor {
 
 
-    private double STEP_SATIATION_DECRASE = 0.25;
+    private static final int STEP_SATIATION_DECREASE = 1;
+    private static final int MAX_SATIATION = 100;
 
-    private int MAX_SATIATION = 10;
-    private double satiation;
-    private Set<String> foodSources;
-    private int stepOfBirth;
-    private double expirationMultiplier;
-    private double age;
-
+    private static final int MAX_ENERGY = 100;
+    private static final int AGE_ENERGY_DECREASE = 5;
     boolean isAwake;
+    private double satiation;
+    private double energy;
+    private final Set<String> diet;
+    private int stepAge;
+    private int age;
 
-    public Animal(Program p, Set<String> foodSources, double expirationMultiplier) {
-        super(p);
-        this.foodSources = foodSources;
+    private final int damage;
+    private final double absorptionPercentage; // Dictates percentage of nutrition absorbed and damage taken
+
+    public Animal(Set<String> diet, int nutrition, int damage, double absorptionPercentage) {
+        super(nutrition);
+        this.diet = diet;
         satiation = MAX_SATIATION;
-        /*
-        stepAge is used for dayAge calculation. Since dayAges should be updated at the start of each new day,
-        stepAge starts current time of day.
-         */
-        stepOfBirth = s.getSteps();
+        energy = MAX_ENERGY;
+        stepAge = 0;
         age = 0;
-        this.expirationMultiplier = expirationMultiplier;
+        this.damage = damage;
+        this.absorptionPercentage = absorptionPercentage;
         this.isAwake = true;
     }
 
     public void act(World w) {
-        System.out.println(this + " satiation: " + satiation);
-        if (w.getCurrentTime() == 0 && s.getSteps() > stepOfBirth) {age++;}
-        satiation -= STEP_SATIATION_DECRASE;
-        if (satiation <= 0) {die();}
-        expirationCheck();
-    }
-
-    public void expirationCheck() {
-        int initialUpperBound = 200;
-        int calculatedUpperBound = (int) (initialUpperBound + age * expirationMultiplier);
-        double chance = new Random().nextInt(calculatedUpperBound);
-        if (chance > initialUpperBound) {
-            die();
+        stepAge++;
+        if (World.getTotalDayDuration() % stepAge == 0) {
+            age();
+        }
+        satiation -= STEP_SATIATION_DECREASE;
+        if (satiation <= 0) { // Todo - måske de er "cleaner" at sikre os at satiation aldrin er mindre end 0;
+            getWorld().delete(this);
         }
     }
 
-    public Set<String> getFoodSources() {
-        return foodSources;
+    public double calcNutritionAbsorbed(Edible edible) {
+        return Math.ceil(edible.getNutrition() * absorptionPercentage);
     }
 
-    public int getMaxSatiation() {
-        return MAX_SATIATION;
+    public int calcDamageTaken(Animal attacker) {
+        return (int) Math.round(attacker.getDamage() * absorptionPercentage);
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public Set<String> getDiet() {
+        return diet;
     }
 
     public double getSatiation() {
@@ -63,16 +67,6 @@ abstract class Animal extends SimComponent implements Actor, Perishable {
 
     public void setSatiation(double satiation) {
         this.satiation = Math.min(satiation, MAX_SATIATION);
-    }
-
-    public void eat(Edible edible) {
-        try {
-            w.delete(edible);
-            setSatiation(getSatiation() + edible.getNutrition());
-        } catch (IllegalArgumentException e) {
-            System.out.println(edible +  " was deleted by another process before it was eaten");
-            return;
-        }
     }
 
     public boolean getIsAwake() {
@@ -86,6 +80,38 @@ abstract class Animal extends SimComponent implements Actor, Perishable {
     public void awaken() {
         isAwake = true;
     }
+
+    public double getEnergy() {
+        return energy;
+    }
+
+    public void setEnergy(double energy) {
+        this.energy = Math.max(0, Math.min(MAX_ENERGY, energy));
+    }
+
+    public void tryToMove(Location l) {
+        double moveProbability = energy / MAX_ENERGY;
+        if (getRandom().nextDouble() < moveProbability) {
+            getWorld().move(this, l);
+        }
+    }
+
+    public void eat(Edible edible) {
+        try {
+            getWorld().delete(edible);
+            setSatiation(getSatiation() + edible.getNutrition());
+        } catch (IllegalArgumentException e) {
+            System.out.println(edible + " was deleted by another process before it was eaten");
+            return;
+        }
+    }
+
+    private void age() {
+        age++;
+        setEnergy(energy - age * AGE_ENERGY_DECREASE);
+    }
 }
+
+
 
 
