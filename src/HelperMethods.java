@@ -6,8 +6,10 @@ import java.io.FileNotFoundException;
 import java.util.Random;
 import java.util.Scanner;
 
-public class HelperMethods {
+public abstract class HelperMethods {
+    private static final Random r = new Random();
 
+    public static Random getRandom() {return r;}
     public static int readWorldSize(String input) {
         String filePath = input;
         int worldSize = 0;
@@ -74,7 +76,6 @@ public class HelperMethods {
     }
 
     private static void spawnObjects(World world, Program p, String type, int startRange, int endRange) {
-        Random r = SimManager.INSTANCE.getRandom();
         int rValue = r.nextInt((endRange + 1) - startRange) + startRange;
 
         for (int i = 0; i < rValue; i++) {
@@ -99,5 +100,9 @@ public class HelperMethods {
             l = new Location(x, y);
         } while (world.containsNonBlocking(l));
         return l;
+    }
+
+    public boolean getIsDeleted(World w, Object obj) {
+        return w.getEntities().containsKey(obj);
     }
 }

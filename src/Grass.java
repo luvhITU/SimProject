@@ -18,14 +18,12 @@ public class Grass extends Edible implements Actor, NonBlocking, DynamicDisplayI
         stepAge = 0;
     }
 
-    public void act(World world) {
-        if(getDeleted()) {return;}
+    public void act(World w) {
+        if (getIsDead(w)) {return;}
         stepAge++;
-        if (getWorld().isDay()) {
-            reproduce();
+        if (w.isDay()) {
+            tryReproduce(w);
         }
-        expirationCheck();
-
     }
 
     @Override
@@ -33,21 +31,29 @@ public class Grass extends Edible implements Actor, NonBlocking, DynamicDisplayI
         return new DisplayInformation(Color.magenta, "grass");
     }
 
-    public void expirationCheck() {
+    @Override
+    public boolean getIsDead(World w) {
+        if (!super.getIsDead(w)) {
+            expirationCheck(w);
+        }
+        return super.getIsDead(w);
+    }
+
+    public void expirationCheck(World w) {
         int max_step_age = 100;
         double expirationProbability = 1.0 * stepAge / max_step_age;
-        if (getRandom().nextDouble() < expirationProbability) {
-            getWorld().delete(this);
+        if (HelperMethods.getRandom().nextDouble() < expirationProbability) {
+            w.delete(this);
         }
     }
 
-    public void reproduce() {
-        Set<Location> locations = getWorld().getEmptySurroundingTiles();
-        Location l = (Location) locations.toArray()[new Random().nextInt(locations.size())];
+    public void tryReproduce(World w) {
+        Set<Location> locations = w.getEmptySurroundingTiles();
+        Location l = (Location) locations.toArray()[HelperMethods.getRandom().nextInt(locations.size())];
 
-        if (!getWorld().containsNonBlocking(l)) {
+        if (!w.containsNonBlocking(l)) {
             //System.out.println("Placing grass at: " + l);
-            getWorld().setTile(l, new Grass());
+            w.setTile(l, new Grass());
         }
     }
 }
