@@ -7,7 +7,7 @@ public class Main {
         String input = "data/rabbits.txt";
 
         int size = HelperMethods.readWorldSize(input);
-        int delay = 100;
+        int delay = 200;
         int display_size = 800;
 
         Program p = new Program(size, display_size, delay);

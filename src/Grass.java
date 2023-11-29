@@ -32,8 +32,7 @@ public class Grass extends Edible implements Actor, NonBlocking, DynamicDisplayI
     }
 
     @Override
-    public boolean getIsDead(World w) {
-        if (!super.getIsDead(w)) {
+    public boolean getIsDead(World w) {{
             expirationCheck(w);
         }
         return super.getIsDead(w);
@@ -43,7 +42,7 @@ public class Grass extends Edible implements Actor, NonBlocking, DynamicDisplayI
         int max_step_age = 100;
         double expirationProbability = 1.0 * stepAge / max_step_age;
         if (HelperMethods.getRandom().nextDouble() < expirationProbability) {
-            w.delete(this);
+            delete(w);
         }
     }
 

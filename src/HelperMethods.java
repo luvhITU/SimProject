@@ -3,8 +3,7 @@ import itumulator.world.World;
 import itumulator.executable.Program;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public abstract class HelperMethods {
     private static final Random r = new Random();
@@ -85,7 +84,7 @@ public abstract class HelperMethods {
             } else if (type.equals("rabbit")) {
                 world.setTile(l, new Rabbit());
             } else if (type.equals("burrow")) {
-                world.setTile(l, new Hole());
+                world.setTile(l, new RabbitBurrow());
             }
         }
     }
@@ -102,7 +101,20 @@ public abstract class HelperMethods {
         return l;
     }
 
-    public boolean getIsDeleted(World w, Object obj) {
-        return w.getEntities().containsKey(obj);
+    public static ArrayList<Home> availableHomes(World w, String type) {
+        Map<Object, Location> entities = w.getEntities();
+        ArrayList<Home> availableHomes = new ArrayList<>();
+        for (Object e : entities.keySet()) {
+            if (!(e instanceof Home) ) {
+                continue;
+            }
+            Home home = (Home) e;
+            if (home.isAvailable() && home.getClass().getSimpleName().equals(type)) {
+                availableHomes.add(home);
+            }
+        }
+        return availableHomes.isEmpty() ? null : availableHomes;
     }
 }
+
+
