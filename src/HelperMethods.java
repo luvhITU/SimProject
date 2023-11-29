@@ -88,6 +88,7 @@ public abstract class HelperMethods {
 
         for (int i = 0; i < rValue; i++) {
             Location l = getRandomEmptyLocation(w, r, occupied);
+            occupied.add(l);
             if (type.equals("grass")) {
                 w.setTile(l, new Grass());
             } else if (type.equals("rabbit")) {
