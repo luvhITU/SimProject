@@ -70,7 +70,8 @@ public class AnimationFactory {
             
             // if the object has been deleted, do hide animation
             if (!ePrime.containsKey(k)){
-                animations.add(new HideAnimation(oi, l, length));
+                // and that it hasn't already been hidden:
+                if(e.get(k) != null) animations.add(new HideAnimation(oi, l, length));
                 continue;
             } 
 
@@ -81,7 +82,6 @@ public class AnimationFactory {
                 animations.add(new AppearAnimation(oi, lPrime, length));
                 continue;
             }
-            
             if (lPrime == null){
                 // if it remains hidden, don't do anything
                 if (l == null){

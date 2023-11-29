@@ -169,7 +169,7 @@ public class World {
     /**
      * Get immediate tiles surrounding the current location (as defined by
      * {@link getCurrentLocation() getCurrentLocation} and {@link setCurrentLocation(Location current)
-     * setLocation}).
+     * setLocation}). 
      * 
      * @return set of immediate surrounding locations.
      * @throws IllegalStateException
@@ -216,7 +216,8 @@ public class World {
      * deleting it entirely, allowing for later repositioning or state changes. 
      * The method first locates the object's current position, sets that tile to null, 
      * and then updates the internal mapping of the object to reflect its non-presence on the map.
-     * Note: this does not delete the object from the world's entity list.
+     * Note: this does not delete the object from the world's entity list. Furthermore, remove does not update the current location. Thus, calling overloaded methods
+     * (e.g., {@link #getEmptySurroundingTiles}) will still provide the tiles surrounding the location you removed from.
      * 
      * @param object The object to be removed from the map.
      * @throws IllegalArgumentException if the object does not exist in the world,
@@ -254,6 +255,7 @@ public class World {
      * For non-blocking objects, they are placed in a different layer and can coexist with other non-blocking objects.
      * If the location already contains an object of the same type (blocking/non-blocking), an exception is thrown.
      * Additionally, if the object already exists elsewhere in the world, it cannot be placed again.
+     * Note that setTile does not update the current location. Thus, one cannot after using setTile use the overloaded methods (e.g., {@link #getEmptySurroundingTiles}) as the current location is not set.
      * 
      * @param location The location where the object will be placed.
      * @param object   The object to place at the specified location.
