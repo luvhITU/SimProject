@@ -257,7 +257,7 @@ public class World {
      * 
      * @param location The location where the object will be placed.
      * @param object   The object to place at the specified location.
-     * @throws IllegalArgumentException if the tile is occupied by the same type of object, or if the object already exists in the world, or if the location is out of bounds.
+     * @throws IllegalArgumentException if the tile is occupied by the same type of object, or if the object already exists on the map, or if the location is out of bounds.
      */
     public void setTile(Location location, Object object) {
         if (entities.get(object) != null) {
@@ -474,6 +474,26 @@ public class World {
         return new HashMap<>(entities);
     }
 
+    /**
+     * Determines whether an object exists in world
+     * @param o object to check
+     * @return true if the object exists in the world
+     */
+    public boolean contains(Object o){
+        if(o == null) throw new IllegalArgumentException("Object cannot be null");
+        return entities.containsKey(o);
+    }
+
+    /**
+     * Determines whether an object is placed on a tile
+     * @param o object to check
+     * @return true if the object exists on a tile
+     */
+    public boolean isOnTile(Object o){
+        if(!contains(o)) throw new IllegalArgumentException("Object must exist in world");
+        return entities.get(o) != null;
+    }
+
     // Private methods
 
     private void validateCurrent() {
@@ -484,11 +504,6 @@ public class World {
     private void validateCoordinates(Location l) {
         if (l.getX() < 0 || l.getX() >= size || l.getY() < 0 || l.getY() >= size)
             throw new IllegalArgumentException("Tile out of bounds");
-    }
-
-    private void validateContents(Location l) {
-        if (!isTileEmpty(l))
-            throw new IllegalArgumentException("Tile already set");
     }
 
     private void validateLocation(Object o) {

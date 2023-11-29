@@ -102,13 +102,13 @@ public class AnimationFactory {
             animations.add(new MoveAnimation(oi, l, length, lPrime));
         }
 
-        // if the element is completely new, also do an appear animation
+        // if the element is completely new, also do an appear animation (if it isn't hidden of course)
         for (Entry<Object, Location> kvp : ePrime.entrySet()){
             Object k = kvp.getKey();
             Location l = kvp.getValue();
             ObjectInformation oi = getObjectInformation(k);
             if (!e.containsKey(k)){
-                animations.add(new AppearAnimation(oi, l, length));
+                if(l != null) animations.add(new AppearAnimation(oi, l, length));
             }
         }
 
