@@ -5,8 +5,8 @@ import itumulator.world.Location;
 import itumulator.world.World;
 
 import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
 
 public abstract class Animal extends Edible implements Actor, DynamicDisplayInformationProvider {
@@ -26,6 +26,8 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
     private int stepAge;
     private int age;
 
+    private boolean hasMatedToday;
+
     public Animal(Set<String> diet, int nutrition, int damage, double absorptionPercentage) {
         super(nutrition);
         this.diet = diet;
@@ -37,6 +39,7 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
         this.absorptionPercentage = absorptionPercentage;
         this.isAwake = true;
         home = null;
+        hasMatedToday = false;
     }
 
     public void act(World w) {
@@ -44,12 +47,11 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
             return;
         }
         stepAge++;
-        if (World.getTotalDayDuration() % stepAge == 0) {
+        if (stepAge % World.getTotalDayDuration() == 0) {
             age();
         }
-        actionCost();
+        if (w.getEntities().get(this) != null) { actionCost(); }
     }
-
     @Override
     public DisplayInformation getInformation() {
         return new DisplayInformation(Color.magenta, buildImageString());
@@ -57,7 +59,7 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
 
     private String buildImageString() {
         String imageString = this.getClass().getSimpleName().toLowerCase();
-        if (age < MATURITY_AGE) {
+        if (!getIsMature()) {
             imageString += "-small";
         }
         if (!isAwake) {
@@ -76,7 +78,6 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
 
     public void tryRandomMove(World w) {
         Set<Location> neighbours = w.getEmptySurroundingTiles();
-
         if (neighbours.isEmpty()) {
             return;
         }
@@ -149,7 +150,6 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
     }
 
 
-
     public Home getHome() {
         return home;
     }
@@ -159,23 +159,18 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
         sleep();
     }
 
+    public boolean getIsMature() {
+        return age >= MATURITY_AGE;
+    }
+
+    public boolean getHasMatedToday() { return hasMatedToday; }
+
     public void emerge(World w) {
-        int maxRadius = 3;
+        int radius = 3;
+        Location l = HelperMethods.getClosestEmptyTile(w, w.getLocation(home), radius);
+        wakeUp();
         w.setCurrentLocation(w.getLocation((home)));
-        Set<Location> oldTargetTiles = new HashSet<>();
-        for (int r = 1; r <= maxRadius; r++) {
-            Set<Location> targetTiles = w.getSurroundingTiles(r);
-            targetTiles.remove(oldTargetTiles);
-            for (Location l : targetTiles) {
-                if (w.isTileEmpty(l)) {
-                    wakeUp();
-                    w.setCurrentLocation(w.getLocation((home)));
-                    w.setTile(l, this);
-                    return;
-                }
-                oldTargetTiles = new HashSet<>(targetTiles);
-            }
-        } throw new IllegalStateException("Cannot emerge. No empty tiles within allowed radius of hole.");
+        w.setTile(l, this);
     }
 
     public void moveToHome(World w) {
@@ -187,7 +182,7 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
 
         Set<Location> neighbours = w.getEmptySurroundingTiles();
         if (neighbours.isEmpty()) {
-            throw new IllegalStateException("No neighbouring tiles are empty");
+            return;
         }
 
         int minDistance = Integer.MAX_VALUE;
@@ -206,7 +201,9 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
 
     public void findHome(World w, String type) {
         ArrayList<Home> availableBurrows = HelperMethods.availableHomes(w, type);
-        if (availableBurrows == null) { throw new IllegalStateException("No homes available"); }
+        if (availableBurrows == null) {
+            throw new IllegalStateException("No homes available");
+        }
         Home burrow = availableBurrows.get(0);
         setHome(w, burrow);
     }
@@ -223,6 +220,37 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
             w.delete(nonBlocking);
         }
         setHome(w, l, burrow);
+        actionCost();
+    }
+
+    public void tryToMate(World w) {
+        if (!getIsMature()) { return; }
+        boolean foundPartner = false;
+        Set<Location> neighbours = w.getSurroundingTiles();
+        for (Location n : neighbours) {
+            Object entity = w.getTile(n);
+            if (entity != null && this.getClass() == entity.getClass()) {
+                Animal partner = (Animal) entity;
+                if(partner.getIsMature()) {
+                    foundPartner = true;
+                    hasMatedToday = true;
+                    partner.hasMatedToday = true;
+                    break;
+                }
+            }
+        }
+        if (!foundPartner) { return; }
+
+
+        int radiusToPlaceChild = 3;
+        Location l = HelperMethods.getClosestEmptyTile(w, w.getCurrentLocation(), radiusToPlaceChild);
+        Animal lilBaby = null;
+        try {
+            lilBaby = this.getClass().getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException ignore) {
+        }
+        w.setTile(l, lilBaby);
         actionCost();
     }
 }

@@ -16,8 +16,6 @@ public class Home extends SimComponent implements Actor {
     public void act(World w) {
         if (getIsDead(w)) { return; }
         updateOccupants(w);
-
-
     }
 
     public void add(Animal animal) {
@@ -26,7 +24,7 @@ public class Home extends SimComponent implements Actor {
     }
 
     public boolean isAvailable() {
-        return maxAllowed == occupants.size();
+        return occupants.size() < maxAllowed;
     }
 
     private void updateOccupants(World w) {

@@ -6,7 +6,7 @@ import java.awt.*;
 
 public class RabbitBurrow extends Home implements NonBlocking, DynamicDisplayInformationProvider {
     public RabbitBurrow() {
-        super(3);
+        super(5);
     }
 
     @Override

@@ -16,11 +16,12 @@ public class Rabbit extends Animal implements Actor {
             return;
         }
         super.act(w);
-        if (getHome() != null && w.getCurrentTime() == 0) {
+        if (!getIsAwake() && w.getCurrentTime() == 0) {
             emerge(w);
         }
         if (getIsAwake()) {
             doMovementPackage(w);
+            if (!getHasMatedToday() && w.getCurrentTime() > 0) { tryToMate(w); }
             tryToEat(w);
         }
 
@@ -44,7 +45,7 @@ public class Rabbit extends Animal implements Actor {
         // If rabbit is homeless, try to dig a burrow.
         if (getHome() == null) {
             try {
-                findHome(w, "AnimalBurrow");
+                findHome(w, "RabbitBurrow");
             } catch (IllegalStateException e) {
                 try {
                     digBurrow(w, new RabbitBurrow());

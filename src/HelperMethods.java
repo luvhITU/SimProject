@@ -115,6 +115,20 @@ public abstract class HelperMethods {
         }
         return availableHomes.isEmpty() ? null : availableHomes;
     }
+
+    public static Location getClosestEmptyTile(World w, Location loc, int radius) {
+        Set<Location> oldTargetTiles = new HashSet<>();
+        for (int r = 1; r <= radius; r++) {
+            Set<Location> targetTiles = w.getSurroundingTiles(loc, r);
+            targetTiles.remove(oldTargetTiles);
+            for (Location l : targetTiles) {
+                if (w.isTileEmpty(l)) {
+                    return l;
+                }
+            }
+            oldTargetTiles = new HashSet<>(targetTiles);
+        } throw new IllegalStateException("No empty tiles within set radius");
+    }
 }
 
 

@@ -6,7 +6,7 @@ public class Config {
     }
 
     public static class Grass {
-        public static final int NUTRITION = 50;
+        public static final int NUTRITION = 20;
     }
 
     public static class Rabbit {
