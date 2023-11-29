@@ -27,9 +27,9 @@ public abstract class HelperMethods {
         return worldSize;
     }
 
-    public static void readObjects(String input, World world, Program p) {
+    public static void readObjects(String input, World w, Program p) {
         String filePath = input;
-        int amount = 0, startRange = 0, endRange = 0;
+        int amount = 0, startRange = 0, endRange = 0, x = 0, y = 0;
         String type = null;
 
         try {
@@ -52,12 +52,19 @@ public abstract class HelperMethods {
                 if (tokens.length == 2) {
                     amount = Integer.parseInt(tokens[1]);
                     System.out.println("Amount: " + amount);
-                    HelperMethods.spawnObject(world, p, type, amount);
+                    spawnObject(w, p, type, amount, -1, -1);
                 } else if (tokens.length == 3) {
                     startRange = Integer.parseInt(tokens[1]);
                     endRange = Integer.parseInt(tokens[2]);
                     System.out.println("Range: [" + startRange + ", " + endRange + "]");
-                    HelperMethods.spawnObject(world, p, type, startRange, endRange);
+                    spawnObject(w, p, type, startRange, endRange, -1, -1);
+                } else if (tokens.length == 4) {
+                    amount = Integer.parseInt(tokens[1]);
+                    x = Integer.parseInt(tokens[2]);
+                    y = Integer.parseInt(tokens[3]);
+                    System.out.println("Amount: " + amount);
+                    System.out.println("Territory Center: (" + x + "," + y + ")");
+                    spawnObject(w, p, type, amount, x, y);
                 }
 
             }
@@ -66,50 +73,57 @@ public abstract class HelperMethods {
         }
     }
 
-    public static void spawnObject(World world, Program p, String type, int amount) {
-        spawnObjects(world, p, type, amount, amount);
+    public static void spawnObject(World w, Program p, String type, int amount, int x, int y) {
+        spawnObjects(w, p, type, amount, amount, x, y);
     }
 
-    public static void spawnObject(World world, Program p, String type, int startRange, int endRange) {
-        spawnObjects(world, p, type, startRange, endRange);
+    public static void spawnObject(World w, Program p, String type, int startRange, int endRange, int x, int y) {
+        spawnObjects(w, p, type, startRange, endRange, x, y);
     }
 
-    private static void spawnObjects(World world, Program p, String type, int startRange, int endRange) {
+    private static void spawnObjects(World w, Program p, String type, int startRange, int endRange, int x, int y) {
+        List<Location> occupied = new ArrayList<>();
         int rValue = r.nextInt((endRange + 1) - startRange) + startRange;
+        if (startRange != endRange) { System.out.println("Range Value: " + rValue); }
 
         for (int i = 0; i < rValue; i++) {
-            Location l = getRandomEmptyLocation(world, r);
+            Location l = getRandomEmptyLocation(w, r, occupied);
             if (type.equals("grass")) {
-                world.setTile(l, new Grass());
+                w.setTile(l, new Grass());
             } else if (type.equals("rabbit")) {
-                world.setTile(l, new Rabbit());
+                w.setTile(l, new Rabbit());
             } else if (type.equals("burrow")) {
-                world.setTile(l, new RabbitBurrow());
+                w.setTile(l, new RabbitBurrow());
             }
         }
+        occupied.clear();
 
-        List<Home> rabbitBurrows = HelperMethods.availableHomes(world, "RabbitBurrow");
-        Set<Object> entitiesKeys = world.getEntities().keySet();
+        List<Home> rabbitBurrows = HelperMethods.availableHomes(w, "RabbitBurrow");
+        Set<Object> entitiesKeys = w.getEntities().keySet();
         for (Home h : rabbitBurrows) {
             for (Object e : entitiesKeys) {
                 if (!h.isAvailable()) { break; }
                 if (e instanceof Rabbit) {
-                    ((Rabbit) e).setHome(world, h);
+                    ((Rabbit) e).setHome(w, h);
                 }
                 ;
             }
         }
+
+        if (!(x == -1 && y == -1)) {
+            //TODO: Spawn Bear Territory
+        }
     }
 
-    private static Location getRandomEmptyLocation(World world, Random r) {
+    private static Location getRandomEmptyLocation(World w, Random r, List<Location> occupied) {
         int x, y;
         Location l;
 
         do {
-            x = r.nextInt(world.getSize());
-            y = r.nextInt(world.getSize());
+            x = r.nextInt(w.getSize());
+            y = r.nextInt(w.getSize());
             l = new Location(x, y);
-        } while (world.containsNonBlocking(l));
+        } while (occupied.contains(l));
         return l;
     }
 
