@@ -32,28 +32,34 @@ public class Grass extends Edible implements Actor, NonBlocking, DynamicDisplayI
     }
 
     @Override
-    public boolean getIsDead(World w) {
-        if (!super.getIsDead(w)) {
+    public boolean getIsDead(World w) {{
             expirationCheck(w);
         }
         return super.getIsDead(w);
     }
 
     public void expirationCheck(World w) {
-        int max_step_age = 100;
-        double expirationProbability = 1.0 * stepAge / max_step_age;
+        double divisor = 100.0;
+        double expirationProbability = stepAge / divisor;
         if (HelperMethods.getRandom().nextDouble() < expirationProbability) {
-            w.delete(this);
+            delete(w);
         }
     }
 
     public void tryReproduce(World w) {
-        Set<Location> locations = w.getEmptySurroundingTiles();
-        Location l = (Location) locations.toArray()[HelperMethods.getRandom().nextInt(locations.size())];
+        double divisor = 5.0;
+        double expirationProbability = stepAge / divisor;
+        if (HelperMethods.getRandom().nextDouble() < expirationProbability) {
+            Set<Location> locations = w.getEmptySurroundingTiles();
+            Location l = (Location) locations.toArray()[HelperMethods.getRandom().nextInt(locations.size())];
 
-        if (!w.containsNonBlocking(l)) {
-            //System.out.println("Placing grass at: " + l);
-            w.setTile(l, new Grass());
+            if (!w.containsNonBlocking(l)) {
+                //System.out.println("Placing grass at: " + l);
+                w.setTile(l, new Grass());
+            }
         }
+
+
+
     }
 }

@@ -7,18 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dafda8e0-94d7-440d-b2ec-a65c8f2f90b8" name="Changes" comment="Merged with exceptions-handling branch, and fixed some stuff.&#10;&#10;goToHome() method in rabbit is WIP">
-      <change afterPath="$PROJECT_DIR$/src/Home.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Animal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Animal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Grass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Grass.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HelperMethods.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HelperMethods.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Hole.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Hole.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Rabbit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Rabbit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SimComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SimComponent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SimManager.java" beforeDir="false" />
-    </list>
+    <list default="true" id="dafda8e0-94d7-440d-b2ec-a65c8f2f90b8" name="Changes" comment="Add input file RabbitBurrow spawning" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -27,8 +16,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Enum" />
         <option value="Class" />
+        <option value="Enum" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -48,10 +38,24 @@
     </favorite-branches>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="stuff" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "T0rvadaL"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="23469215-9da3-4284-badc-6da25b406294" />
+        <option name="url" value="https://github.com/luvhITU/SimProject.git" />
+      </UrlAndAccount>
+    </option>
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
@@ -67,17 +71,18 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;stuff&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;C:/Users/Mathias/Desktop/HandOuts/InteliJ/src/itumulator/world&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;project.propCompiler&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Java&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -125,6 +130,9 @@
       <workItem from="1701021662820" duration="598000" />
       <workItem from="1701106601068" duration="278000" />
       <workItem from="1701106893427" duration="26464000" />
+      <workItem from="1701212632489" duration="12642000" />
+      <workItem from="1701225405907" duration="45000" />
+      <workItem from="1701258706571" duration="18368000" />
     </task>
     <task id="LOCAL-00001" summary="Changes:&#10;- Updated ITUmulator library&#10;- Merged Rabbit &amp; Master branch">
       <option name="closed" value="true" />
@@ -142,7 +150,31 @@
       <option name="project" value="LOCAL" />
       <updated>1701018925325</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Rabbit burrow functionality should be finished">
+      <option name="closed" value="true" />
+      <created>1701265231265</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1701265231265</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Rabbit functionality finished. Canvas error workaround implemented by not allowing removed animals to die.">
+      <option name="closed" value="true" />
+      <created>1701275882699</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1701275882699</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Add input file RabbitBurrow spawning">
+      <option name="closed" value="true" />
+      <created>1701277695571</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1701277695571</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -163,7 +195,10 @@
     <MESSAGE value="Added functionality to parse input files." />
     <MESSAGE value="Changes:&#10;- Updated ITUmulator library&#10;- Merged Rabbit &amp; Master branch" />
     <MESSAGE value="Merged with exceptions-handling branch, and fixed some stuff.&#10;&#10;goToHome() method in rabbit is WIP" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merged with exceptions-handling branch, and fixed some stuff.&#10;&#10;goToHome() method in rabbit is WIP" />
+    <MESSAGE value="Rabbit burrow functionality should be finished" />
+    <MESSAGE value="Rabbit functionality finished. Canvas error workaround implemented by not allowing removed animals to die." />
+    <MESSAGE value="Add input file RabbitBurrow spawning" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add input file RabbitBurrow spawning" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -172,6 +207,15 @@
           <properties class="java.lang.IllegalArgumentException" package="java.lang" />
           <option name="timeStamp" value="1" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/Animal.java</url>
+          <line>201</line>
+          <properties class="Animal" method="findHome">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>

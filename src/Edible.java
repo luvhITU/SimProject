@@ -1,4 +1,4 @@
-public class Edible extends SimComponent {
+public abstract class Edible extends SimComponent {
     private int nutrition;
 
     public Edible(int nutrition) {
