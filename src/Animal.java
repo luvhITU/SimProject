@@ -201,7 +201,7 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
 
     public void findHome(World w, String type) {
         ArrayList<Home> availableBurrows = HelperMethods.availableHomes(w, type);
-        if (availableBurrows == null) {
+        if (availableBurrows.isEmpty()) {
             throw new IllegalStateException("No homes available");
         }
         Home burrow = availableBurrows.get(0);
@@ -254,7 +254,3 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
         actionCost();
     }
 }
-
-
-
-

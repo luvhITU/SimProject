@@ -87,6 +87,18 @@ public abstract class HelperMethods {
                 world.setTile(l, new RabbitBurrow());
             }
         }
+
+        List<Home> rabbitBurrows = HelperMethods.availableHomes(world, "RabbitBurrow");
+        Set<Object> entitiesKeys = world.getEntities().keySet();
+        for (Home h : rabbitBurrows) {
+            for (Object e : entitiesKeys) {
+                if (!h.isAvailable()) { break; }
+                if (e instanceof Rabbit) {
+                    ((Rabbit) e).setHome(world, h);
+                }
+                ;
+            }
+        }
     }
 
     private static Location getRandomEmptyLocation(World world, Random r) {
@@ -113,7 +125,7 @@ public abstract class HelperMethods {
                 availableHomes.add(home);
             }
         }
-        return availableHomes.isEmpty() ? null : availableHomes;
+        return availableHomes;
     }
 
     public static Location getClosestEmptyTile(World w, Location loc, int radius) {
