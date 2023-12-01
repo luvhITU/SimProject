@@ -120,6 +120,10 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
         this.energy = Math.max(0, Math.min(BASE_MAX_ENERGY, energy));
     }
 
+    public int getEnergy() {
+        return energy;
+    }
+
     public void actionCost() {
         setEnergy(energy - ACTION_COST);
     }

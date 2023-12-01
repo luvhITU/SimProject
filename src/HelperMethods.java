@@ -7,6 +7,7 @@ import java.util.*;
 
 public abstract class HelperMethods {
     private static final Random r = new Random();
+    private static List<Location> occupied = new ArrayList<>();
 
     public static Random getRandom() {return r;}
     public static int readWorldSize(String input) {
@@ -44,7 +45,7 @@ public abstract class HelperMethods {
                     continue;
                 }
 
-                String[] tokens = str.split("[\\s-]+");
+                String[] tokens = str.split("[\\s-,()]+");
 
                 type = tokens[0];
                 System.out.println("Type: " + type);
@@ -68,6 +69,7 @@ public abstract class HelperMethods {
                 }
 
             }
+            occupied.clear();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -82,22 +84,32 @@ public abstract class HelperMethods {
     }
 
     private static void spawnObjects(World w, Program p, String type, int startRange, int endRange, int x, int y) {
-        List<Location> occupied = new ArrayList<>();
         int rValue = r.nextInt((endRange + 1) - startRange) + startRange;
         if (startRange != endRange) { System.out.println("Range Value: " + rValue); }
 
         for (int i = 0; i < rValue; i++) {
-            Location l = getRandomEmptyLocation(w, r, occupied);
+            Location l = getRandomEmptyLocation(w, r);
             occupied.add(l);
+            /*for (Location ll : occupied) {
+                System.out.println(ll);
+            }*/
             if (type.equals("grass")) {
                 w.setTile(l, new Grass());
             } else if (type.equals("rabbit")) {
                 w.setTile(l, new Rabbit());
             } else if (type.equals("burrow")) {
                 w.setTile(l, new RabbitBurrow());
+            } else if (type.equals("berry")) {
+                w.setTile(l, new Berry());
+                //System.out.println(l);
+            } else if (type.equals("bear")) {
+                if (!(x == -1 && y == -1)) {
+                    w.setTile(l, new Bear(new Location(x, y)));
+                } else {
+                    w.setTile(l, new Bear(l));
+                }
             }
         }
-        occupied.clear();
 
         List<Home> rabbitBurrows = HelperMethods.availableHomes(w, "RabbitBurrow");
         Set<Object> entitiesKeys = w.getEntities().keySet();
@@ -111,12 +123,14 @@ public abstract class HelperMethods {
             }
         }
 
+        // ONLY UESD TO VISUALIZE BEAR TERRITORY
         if (!(x == -1 && y == -1)) {
-            //TODO: Spawn Bear Territory
+            w.setTile(new Location(x, y), new BearTerritory());
         }
+        occupied.clear();
     }
 
-    private static Location getRandomEmptyLocation(World w, Random r, List<Location> occupied) {
+    private static Location getRandomEmptyLocation(World w, Random r) {
         int x, y;
         Location l;
 
