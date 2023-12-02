@@ -90,9 +90,7 @@ public abstract class HelperMethods {
         for (int i = 0; i < rValue; i++) {
             Location l = getRandomEmptyLocation(w, r);
             occupied.add(l);
-            /*for (Location ll : occupied) {
-                System.out.println(ll);
-            }*/
+            
             if (type.equals("grass")) {
                 w.setTile(l, new Grass());
             } else if (type.equals("rabbit")) {
@@ -123,7 +121,7 @@ public abstract class HelperMethods {
             }
         }
 
-        // ONLY UESD TO VISUALIZE BEAR TERRITORY
+        // ONLY USED TO VISUALIZE BEAR TERRITORY
         if (!(x == -1 && y == -1)) {
             w.setTile(new Location(x, y), new BearTerritory());
         }
