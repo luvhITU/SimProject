@@ -58,8 +58,5 @@ public class Grass extends Edible implements Actor, NonBlocking, DynamicDisplayI
                 w.setTile(l, new Grass());
             }
         }
-
-
-
     }
 }

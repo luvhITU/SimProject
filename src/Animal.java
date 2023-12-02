@@ -177,30 +177,35 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
         w.setTile(l, this);
     }
 
-    public void moveToHome(World w) {
-        Location currL = w.getCurrentLocation();
-        Location homeL = w.getLocation(home);
-        if (currL.equals(homeL)) {
-            return;
-        }
+    /***
+     * Moves to a nearby tile in the direction of input Location l
+     * @param World w
+     * @param Location l
+     */
+    public void moveToLocation(World w,Location l) {
+        Set<Location> neighbours = w.getEmptySurroundingTiles(w.getLocation(this));
+        if (neighbours.isEmpty()) {throw new IllegalStateException("No empty tiles to move to");}
 
-        Set<Location> neighbours = w.getEmptySurroundingTiles();
-        if (neighbours.isEmpty()) {
-            return;
-        }
-
-        int minDistance = Integer.MAX_VALUE;
-        Location bestMove = null;
-        for (Location n : neighbours) {
-            int nDistance = Math.abs(n.getX() - homeL.getX()) + Math.abs((n.getY() - homeL.getY()));
-            if (nDistance < minDistance) {
-                minDistance = nDistance;
-                bestMove = n;
+        try {
+            Location currL = w.getLocation(this);
+            if (currL.equals(l)) {
+                return;
             }
+            int minDistance = Integer.MAX_VALUE;
+            Location bestMove = null;
+            for (Location n : neighbours) {
+                int nDistance = Math.abs(n.getX() - l.getX()) + Math.abs((n.getY() - l.getY()));
+                if (nDistance < minDistance) {
+                    minDistance = nDistance;
+                    bestMove = n;
+                }
+            }
+            if (bestMove != null) {
+                w.move(this, bestMove);
+            }
+        } catch (IllegalArgumentException iae) {
+            //System.out.println(iae.getMessage());
         }
-
-        w.move(this, bestMove);
-        actionCost();
     }
 
     public void findHome(World w, String type) {
@@ -227,6 +232,10 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
         actionCost();
     }
 
+    /***
+     * I am a bit tired but there should probably be some text here to explain what it does
+     * @param w
+     */
     public void tryToMate(World w) {
         if (!getIsMature()) { return; }
         boolean foundPartner = false;

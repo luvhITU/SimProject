@@ -45,39 +45,15 @@ public class Wolf extends Animal implements Actor {
             }
         } catch (IllegalArgumentException ignore) {} //Dies sometimes before doing actions
         //TODO: copied from rabbit should maybe be moved to animal
-        if (!getHasMatedToday() && w.getCurrentTime() > 0) { tryToMate(w); }
+        if (!getHasMatedToday() && w.getCurrentTime() > 0 && w.isOnTile(this) && getIsDead(w)) { tryToMate(w); }
     }
-    public void moveToLocation(World w,Location l) {
-        Set<Location> neighbours = w.getEmptySurroundingTiles(w.getLocation(this));
-        if (neighbours.isEmpty()) {throw new IllegalStateException("No empty tiles to move to");}
-
-        try {
-            Location currL = w.getLocation(this);
-            if (currL.equals(l)) {
-                return;
-            }
-            int minDistance = Integer.MAX_VALUE;
-            Location bestMove = null;
-            for (Location n : neighbours) {
-                int nDistance = Math.abs(n.getX() - l.getX()) + Math.abs((n.getY() - l.getY()));
-                if (nDistance < minDistance) {
-                    minDistance = nDistance;
-                    bestMove = n;
-                }
-            }
-            if (bestMove != null) {
-                w.move(this, bestMove);
-            }
-        } catch (IllegalArgumentException iae) {
-            //System.out.println(iae.getMessage());
-        }
-    }
-    public void tryAttack(World w){ //TODO: moved to animal since bears should use the same attack logic
+    public void tryAttack(World w){ //TODO: need to be put in animal and change the "thePack" for it to work with bears
         for(Location l : w.getSurroundingTiles()){
             if(w.getTile(l) != null) {
                 for (Object diet : getDiet().toArray()) {
                     try {
                         if (diet.equals(w.getTile(l).getClass().getSimpleName())) {
+                            //TODO: needs to be changed from rabbit to just animal for it work with bears
                             Rabbit rabbit = (Rabbit) w.getTile(l);
                             if((rabbit.getEnergy() - rabbit.calcDamageTaken(this)) <= 0){
                                 w.delete(rabbit);

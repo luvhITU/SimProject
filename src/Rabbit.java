@@ -55,7 +55,7 @@ public class Rabbit extends Animal implements Actor {
         else if (currL.equals(w.getLocation(home))) {
                     hide(w);
                 } else {
-                    moveToHome(w);
+                    moveToLocation(w,w.getLocation(getHome()));
                 }
 
             }
