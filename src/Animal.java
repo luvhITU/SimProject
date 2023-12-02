@@ -179,8 +179,8 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
 
     /***
      * Moves to a nearby tile in the direction of input Location l
-     * @param World w
-     * @param Location l
+     * @param w
+     * @param l
      */
     public void moveToLocation(World w,Location l) {
         Set<Location> neighbours = w.getEmptySurroundingTiles(w.getLocation(this));
