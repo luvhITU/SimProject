@@ -11,19 +11,29 @@ import java.awt.Color;
 
 public class Grass extends Edible implements Actor, NonBlocking, DynamicDisplayInformationProvider {
 
+
+    private static final int MAX_REPRODUCE_PER_DAY = 3;
     private int stepAge;
+    private int age;
+
+    private int reproductionsInLastDay;
 
     public Grass() {
         super(Config.Grass.NUTRITION);
         stepAge = 0;
+        age = 0;
+        reproductionsInLastDay = 0;
     }
 
     public void act(World w) {
-        if (getIsDead(w)) {return;}
+        if (w.isDay()) { tryReproduce(w); }
         stepAge++;
-        if (w.isDay()) {
-            tryReproduce(w);
+        if (stepAge % World.getDayDuration() == 0) {
+            age++;
+            reproductionsInLastDay = 0;
+            expirationCheck(w);
         }
+
     }
 
     @Override
@@ -31,31 +41,26 @@ public class Grass extends Edible implements Actor, NonBlocking, DynamicDisplayI
         return new DisplayInformation(Color.magenta, "grass");
     }
 
-    @Override
-    public boolean getIsDead(World w) {{
-            expirationCheck(w);
-        }
-        return super.getIsDead(w);
-    }
-
     public void expirationCheck(World w) {
-        double divisor = 100.0;
-        double expirationProbability = stepAge / divisor;
+        double expirationThreshold = 5.0;
+        double expirationProbability = age / expirationThreshold;
         if (HelperMethods.getRandom().nextDouble() < expirationProbability) {
             delete(w);
         }
     }
 
     public void tryReproduce(World w) {
-        double divisor = 5.0;
-        double expirationProbability = stepAge / divisor;
-        if (HelperMethods.getRandom().nextDouble() < expirationProbability) {
+        if (reproductionsInLastDay == MAX_REPRODUCE_PER_DAY) { return; }
+        double stopReproductionThreshold = 5.0;
+        double reproduceProbability = 0.9 - age / stopReproductionThreshold;
+        if (HelperMethods.getRandom().nextDouble() < reproduceProbability) {
             Set<Location> locations = w.getEmptySurroundingTiles();
             Location l = (Location) locations.toArray()[HelperMethods.getRandom().nextInt(locations.size())];
 
             if (!w.containsNonBlocking(l)) {
                 //System.out.println("Placing grass at: " + l);
                 w.setTile(l, new Grass());
+                reproductionsInLastDay++;
             }
         }
 

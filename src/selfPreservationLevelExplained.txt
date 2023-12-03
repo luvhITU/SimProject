@@ -1,0 +1,5 @@
+selfPreservationLevel
+	= 3: Flee if predator is seen. Attack non predators in diet
+	= 2: Flee if larger predator is seen. Attack smaller non predators or predators in diet.
+	= 1: If energy of this animal is less than 50, use level 0. Use level 2 otherwise. If isCannibalistic, attack same species as well.
+	= 0: Attack everything. If isCannibalistic, attack same species as well.
