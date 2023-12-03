@@ -160,7 +160,7 @@ public abstract class HelperMethods {
             Set<Location> targetTiles = w.getSurroundingTiles(l, r);
             targetTiles.remove(oldTargetTiles);
             for (Location t : targetTiles) {
-                if (w.isTileEmpty(l)) {
+                if (w.isTileEmpty(t)) {
                     return t;
                 }
             }
