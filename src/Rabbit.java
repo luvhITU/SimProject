@@ -18,18 +18,22 @@ public class Rabbit extends Animal implements Actor {
             w.setTile(currL, new Meat(getNutrition()));
             return;
         }
-
         reduceReproductionCooldown();
-        setTilesInSight(w.getSurroundingTiles(5));
+
+        if (getHome() == null && (w.getCurrentTime() == 9 || getEnergy() < 20)) {
+            seekHome(w);
+        }
 
         if (!getIsAwake() && w.getCurrentTime() == 0) {
             emerge(w);
         }
+
+        if (getIsAwake()) {
+            setTilesInSight(w.getSurroundingTiles(5));
+        }
+
 
         super.act(w);
-        if (!getIsAwake() && w.getCurrentTime() == 0) {
-            emerge(w);
-        }
 
 //        if (getIsAwake()) {
 //            doMovementPackage(w);
@@ -46,33 +50,20 @@ public class Rabbit extends Animal implements Actor {
 //        return new DisplayInformation(Color.blue, "rabbit-large");
 //    }
 
-//    private void doMovementPackage(World w) {
-//        // If it isn't bedtime, move around.
-//        if (w.getCurrentTime() < FIND_HOME_THRESHOLD) {
-//            tryRandomMove(w);
-//            return;
-//        }
-//
-//        // If it is bedtime, find or dig burrow.
-//        Location currL = w.getCurrentLocation();
-//        Home home = getHome();
-//        // If rabbit is homeless, try to dig a burrow.
-//        if (getHome() == null) {
-//            try {
-//                findHome(w, "RabbitBurrow");
-//            } catch (IllegalStateException e) {
-//                try {
-//                    digBurrow(w, new RabbitBurrow());
-//                } catch (IllegalStateException i) { tryRandomMove(w); }
-//            }
-//                } // go home and hide
-//        else if (currL.equals(w.getLocation(home))) {
-//                    hide(w);
-//                } else {
-//                    moveToHome(w);
-//                }
-//
-//            }
+    private void seekHome(World w) {
+        try {
+            System.out.println("Finding Home");
+            findHome(w, "RabbitBurrow");
+        } catch (IllegalStateException e) {
+            try {
+                System.out.println("Didn't find home, digging home.");
+                digBurrow(w, new RabbitBurrow());
+            } catch (IllegalStateException i) {
+                System.out.println("Nothing worked. random move");
+                tryRandomMove(w);
+            }
+        }
+    }
 
 //            public void tryToEat (World w){
 //                Location l = w.getCurrentLocation();
@@ -90,10 +81,5 @@ public class Rabbit extends Animal implements Actor {
     @Override
     public void sleep(World w) {
         hide(w);
-    }
-
-    @Override
-    public void wakeUp(World w) {
-        emerge(w);
     }
 }
