@@ -99,7 +99,6 @@ public abstract class HelperMethods {
                 w.setTile(l, new RabbitBurrow());
             } else if (type.equals("berry")) {
                 w.setTile(l, new Berry());
-                //System.out.println(l);
             } else if (type.equals("bear")) {
                 if (!(x == -1 && y == -1)) {
                     w.setTile(l, new Bear(new Location(x, y)));
@@ -125,7 +124,6 @@ public abstract class HelperMethods {
         if (!(x == -1 && y == -1)) {
             w.setTile(new Location(x, y), new BearTerritory());
         }
-        occupied.clear();
     }
 
     private static Location getRandomEmptyLocation(World w, Random r) {
