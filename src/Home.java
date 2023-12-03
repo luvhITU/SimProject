@@ -14,7 +14,6 @@ public class Home extends SimComponent implements Actor {
     }
 
     public void act(World w) {
-        if (getIsDead(w)) { return; }
         updateOccupants(w);
     }
 

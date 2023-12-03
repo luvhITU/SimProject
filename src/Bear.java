@@ -1,75 +1,43 @@
 import itumulator.simulator.Actor;
-import itumulator.world.Location;
 import itumulator.world.World;
+import itumulator.world.Location;
+
 import java.util.Set;
 
 public class Bear extends Animal implements Actor {
+    private static final int TERRITORY_RADIUS = 4;
+    private Set<Location> territory;
+    private Location homeLocation;
 
-    private Location territoryCenter;
-    private int territoryRadius = 2;
-
-    public Bear(Location territoryCenter) {
-        super(Config.Bear.DIET, Config.Bear.NUTRITION, Config.Bear.DAMAGE, Config.Bear.ABSORPTION_PERCENTAGE);
-        this.territoryCenter = territoryCenter;
+    public Bear() {
+        super(Config.Bear.DIET, Config.Bear.DAMAGE, Config.Bear.HEALTH, 0);
     }
 
-    @Override
     public void act(World w) {
         if (getIsDead(w)) {
+            delete(w);
             return;
         }
-        if (w.isNight()) {
-            sleep();
-        } else if (w.isDay() && !getIsAwake()) {
-            wakeUp();
+        if (getHome() == null) {
+            homeLocation = w.getCurrentLocation();
+            setHome(w, new BearHome());
+            territory = w.getSurroundingTiles(TERRITORY_RADIUS);
+        } else if (territory.contains(w.getCurrentLocation())) {
+            setTilesInSight(territory);
+        } else {
+            setTilesInSight(w.getSurroundingTiles(5));
+        }
+        if (!getIsAwake() && w.getCurrentTime() == 0) {
+            wakeUp(w);
         }
         super.act(w);
-        if (getIsAwake()) {
-            doMovementPackage(w);
-            if (!getHasMatedToday() && w.getCurrentTime() > 0) {
-                tryToMate(w);
-            }
-            tryToEat(w);
-        }
-
-    }
-
-    private void doMovementPackage(World w) {
-        if (w.isDay()) {
-            moveAroundTerritory(w);
-        }
-    }
-
-    public void moveAroundTerritory(World w) {
-        Set<Location> validLocations = w.getSurroundingTiles(territoryCenter, territoryRadius);
-        validLocations.removeIf(location -> !w.isTileEmpty(location));
-
-        if (validLocations.isEmpty()) {
-            return;
-        }
-
-        Location newLocation = validLocations.toArray(new Location[0])[HelperMethods.getRandom().nextInt(validLocations.size())];
-        w.move(this, newLocation);
-        actionCost();
-    }
-
-    public void tryToEat(World w) {
-        Location l = w.getCurrentLocation();
-        if (!w.containsNonBlocking(l)) {
-            return;
-        }
-        Object nonBlocking = w.getNonBlocking(l);
-        if (getDiet().contains(nonBlocking.getClass().getSimpleName())) {
-            Edible edible = (Edible) nonBlocking;
-            eat(w, edible);
-        }
     }
 
     @Override
-    public void eat(World w, Edible edible) {
-        if (edible instanceof Berry) {
-            ((Berry) edible).eatBerries();
+    public Location getLocation(World w, Object object) {
+        if (object == getHome()) {
+            return homeLocation;
         }
-        setEnergy(getEnergy() + calcNutritionAbsorbed(edible));
+        return super.getLocation(w, object);
     }
 }

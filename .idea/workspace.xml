@@ -7,16 +7,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dafda8e0-94d7-440d-b2ec-a65c8f2f90b8" name="Changes" comment="Changes:&#10;- Added support for Bear Territory in HelperMethods.&#10;- Updated getRandomEmptyLocation() to use a List, preventing objects from spawning on top of each other.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/InteliJ.iml" beforeDir="false" afterPath="$PROJECT_DIR$/InteliJ.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/rabbits.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/test-files/rabbits.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Animal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Animal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Config.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Config.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Grass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Grass.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/HelperMethods.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HelperMethods.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-    </list>
+    <list default="true" id="dafda8e0-94d7-440d-b2ec-a65c8f2f90b8" name="Changes" comment="Add input file RabbitBurrow spawning" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,9 +16,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Class" />
         <option value="Enum" />
         <option value="Interface" />
-        <option value="Class" />
       </list>
     </option>
   </component>
@@ -52,12 +43,12 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;T0rvadaL&quot;
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "T0rvadaL"
   }
-}</component>
+}]]></component>
   <component name="GithubPullRequestsUISettings">
     <option name="selectedUrlAndAccountId">
       <UrlAndAccount>
@@ -75,42 +66,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Downloaded.Files.Path.Enabled": "true",
-    "Repository.Attach.Annotations": "false",
-    "Repository.Attach.JavaDocs": "false",
-    "Repository.Attach.Sources": "false",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/Mathias/Desktop/HandOuts/InteliJ/src/itumulator/world",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.sourceCode.Java",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Mathias/Desktop/HandOuts/InteliJ/src/itumulator/world&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Java&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Mathias\Desktop\HandOuts\InteliJ\src\itumulator\world" />
     </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Lukas\Desktop\Mapper\ITU\1. Semester\GrundlæggendeProgrammering_2023\Eksamensprojekt\SimProject\data\test-files" />
-    </key>
-    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
-      <recent name="" />
-    </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="ALTERNATIVE_JRE_PATH" value="9.0" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
@@ -120,20 +101,10 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="BerryTest.testBerriesEaten" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="InteliJ" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="BerryTest" />
-      <option name="METHOD_NAME" value="testBerriesEaten" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.Main" />
-        <item itemvalue="JUnit.BerryTest.testBerriesEaten" />
+        <item itemvalue="Application.Main" />
         <item itemvalue="Application.Main" />
         <item itemvalue="Application.Main" />
         <item itemvalue="Application.Main" />
@@ -162,9 +133,6 @@
       <workItem from="1701212632489" duration="12642000" />
       <workItem from="1701225405907" duration="45000" />
       <workItem from="1701258706571" duration="18368000" />
-      <workItem from="1701301458455" duration="289000" />
-      <workItem from="1701380382478" duration="3337000" />
-      <workItem from="1701431107379" duration="3934000" />
     </task>
     <task id="LOCAL-00001" summary="Changes:&#10;- Updated ITUmulator library&#10;- Merged Rabbit &amp; Master branch">
       <option name="closed" value="true" />
@@ -206,23 +174,7 @@
       <option name="project" value="LOCAL" />
       <updated>1701277695571</updated>
     </task>
-    <task id="LOCAL-00006" summary="Changes:&#10;- Added support for Bear Territory in HelperMethods.&#10;- Updated getRandomEmptyLocation() to use a List, preventing objects from spawning on top of each other.">
-      <option name="closed" value="true" />
-      <created>1701301363626</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1701301363626</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Changes:&#10;- Added support for Bear Territory in HelperMethods.&#10;- Updated getRandomEmptyLocation() to use a List, preventing objects from spawning on top of each other.">
-      <option name="closed" value="true" />
-      <created>1701301597884</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1701301597884</updated>
-    </task>
-    <option name="localTasksCounter" value="8" />
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -246,8 +198,7 @@
     <MESSAGE value="Rabbit burrow functionality should be finished" />
     <MESSAGE value="Rabbit functionality finished. Canvas error workaround implemented by not allowing removed animals to die." />
     <MESSAGE value="Add input file RabbitBurrow spawning" />
-    <MESSAGE value="Changes:&#10;- Added support for Bear Territory in HelperMethods.&#10;- Updated getRandomEmptyLocation() to use a List, preventing objects from spawning on top of each other." />
-    <option name="LAST_COMMIT_MESSAGE" value="Changes:&#10;- Added support for Bear Territory in HelperMethods.&#10;- Updated getRandomEmptyLocation() to use a List, preventing objects from spawning on top of each other." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add input file RabbitBurrow spawning" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -256,6 +207,15 @@
           <properties class="java.lang.IllegalArgumentException" package="java.lang" />
           <option name="timeStamp" value="1" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/Animal.java</url>
+          <line>201</line>
+          <properties class="Animal" method="findHome">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
