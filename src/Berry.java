@@ -1,4 +1,3 @@
-import com.sun.jdi.event.StepEvent;
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.simulator.Actor;
@@ -15,7 +14,7 @@ public class Berry extends Edible implements Actor, NonBlocking, DynamicDisplayI
     private boolean hasBerries;
 
     public Berry() {
-        super(Config.BerryBush.NUTRITION);
+        super(Config.Berry.NUTRITION);
         stepAge = 0;
         regrowTime = 30;
         hasBerries = true;

@@ -1,6 +1,7 @@
 import itumulator.world.Location;
 import itumulator.world.World;
 import itumulator.executable.Program;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
@@ -9,7 +10,10 @@ public abstract class HelperMethods {
     private static final Random r = new Random();
     private static List<Location> occupied = new ArrayList<>();
 
-    public static Random getRandom() {return r;}
+    public static Random getRandom() {
+        return r;
+    }
+
     public static int readWorldSize(String input) {
         String filePath = input;
         int worldSize = 0;
@@ -32,6 +36,7 @@ public abstract class HelperMethods {
         String filePath = input;
         int amount = 0, startRange = 0, endRange = 0, x = 0, y = 0;
         String type = null;
+        boolean isInfected = false;
 
         try {
             Scanner sc = new Scanner(new File(filePath));
@@ -45,29 +50,38 @@ public abstract class HelperMethods {
                     continue;
                 }
 
-                String[] tokens = str.split("[\\s-,()]+");
+                // if String contains "cordyceps" then the Animal-Object should be infected
+                if (str.contains("cordyceps")) {
+                    isInfected = true;
+                }
+
+                // Checks if input files contains "cordyceps", then splits into tokens-Array
+                String[] tokens = str.replaceFirst("cordyceps ", "").split("[\\s-,()]+");
 
                 type = tokens[0];
                 System.out.println("Type: " + type);
+                System.out.println("Is Infected: " + isInfected);
 
                 if (tokens.length == 2) {
                     amount = Integer.parseInt(tokens[1]);
                     System.out.println("Amount: " + amount);
-                    spawnObject(w, p, type, amount, -1, -1);
+                    spawnObject(w, p, isInfected, type, amount, -1, -1);
                 } else if (tokens.length == 3) {
                     startRange = Integer.parseInt(tokens[1]);
                     endRange = Integer.parseInt(tokens[2]);
                     System.out.println("Range: [" + startRange + ", " + endRange + "]");
-                    spawnObject(w, p, type, startRange, endRange, -1, -1);
+                    spawnObject(w, p, isInfected, type, startRange, endRange, -1, -1);
                 } else if (tokens.length == 4) {
+                    int value = Integer.parseInt(tokens[1]);
                     amount = Integer.parseInt(tokens[1]);
                     x = Integer.parseInt(tokens[2]);
                     y = Integer.parseInt(tokens[3]);
                     System.out.println("Amount: " + amount);
                     System.out.println("Territory Center: (" + x + "," + y + ")");
-                    spawnObject(w, p, type, amount, x, y);
+                    spawnObject(w, p, isInfected, type, amount, x, y);
                 }
-
+                isInfected = false;
+                System.out.println(); // Empty line
             }
             occupied.clear();
         } catch (FileNotFoundException e) {
@@ -75,22 +89,25 @@ public abstract class HelperMethods {
         }
     }
 
-    public static void spawnObject(World w, Program p, String type, int amount, int x, int y) {
-        spawnObjects(w, p, type, amount, amount, x, y);
+    public static void spawnObject(World w, Program p, boolean isInfected, String type, int amount, int x, int y) {
+        spawnObjects(w, p, isInfected, type, amount, amount, x, y);
     }
 
-    public static void spawnObject(World w, Program p, String type, int startRange, int endRange, int x, int y) {
-        spawnObjects(w, p, type, startRange, endRange, x, y);
+    public static void spawnObject(World w, Program p, boolean isInfected, String type, int startRange, int endRange, int x, int y) {
+        spawnObjects(w, p, isInfected, type, startRange, endRange, x, y);
     }
 
-    private static void spawnObjects(World w, Program p, String type, int startRange, int endRange, int x, int y) {
+    private static void spawnObjects(World w, Program p, boolean isInfected, String type, int startRange, int endRange, int x, int y) {
         int rValue = r.nextInt((endRange + 1) - startRange) + startRange;
-        if (startRange != endRange) { System.out.println("Range Value: " + rValue); }
+        if (startRange != endRange) {
+            System.out.println("Range Value: " + rValue);
+        }
 
         for (int i = 0; i < rValue; i++) {
             Location l = getRandomEmptyLocation(w, r);
             occupied.add(l);
-            
+
+            //TODO: Add logic to infect spawned Animal-Objects
             if (type.equals("grass")) {
                 w.setTile(l, new Grass());
             } else if (type.equals("rabbit")) {
@@ -99,12 +116,12 @@ public abstract class HelperMethods {
                 w.setTile(l, new RabbitBurrow());
             } else if (type.equals("berry")) {
                 w.setTile(l, new Berry());
+            } else if (type.equals("wolf")) {
+                //TODO: Spawn Wolf-Object
             } else if (type.equals("bear")) {
-                if (!(x == -1 && y == -1)) {
-                    w.setTile(l, new Bear(new Location(x, y)));
-                } else {
-                    w.setTile(l, new Bear(l));
-                }
+                //TODO: Spawn Bear-Object
+            } else if (type.equals("Carcass")) {
+                //TODO: Spawn Carcass-Object
             }
         }
 
@@ -112,7 +129,9 @@ public abstract class HelperMethods {
         Set<Object> entitiesKeys = w.getEntities().keySet();
         for (Home h : rabbitBurrows) {
             for (Object e : entitiesKeys) {
-                if (!h.isAvailable()) { break; }
+                if (!h.isAvailable()) {
+                    break;
+                }
                 if (e instanceof Rabbit) {
                     ((Rabbit) e).setHome(w, h);
                 }
@@ -142,7 +161,7 @@ public abstract class HelperMethods {
         Map<Object, Location> entities = w.getEntities();
         ArrayList<Home> availableHomes = new ArrayList<>();
         for (Object e : entities.keySet()) {
-            if (!(e instanceof Home) ) {
+            if (!(e instanceof Home)) {
                 continue;
             }
             Home home = (Home) e;
@@ -164,7 +183,8 @@ public abstract class HelperMethods {
                 }
             }
             oldTargetTiles = new HashSet<>(targetTiles);
-        } throw new IllegalStateException("No empty tiles within set radius");
+        }
+        throw new IllegalStateException("No empty tiles within set radius");
     }
 }
 

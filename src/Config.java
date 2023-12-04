@@ -9,7 +9,7 @@ public class Config {
         public static final int NUTRITION = 20;
     }
 
-    public static class BerryBush {
+    public static class Berry {
         public static  final int NUTRITION = 20;
     }
 
