@@ -126,11 +126,6 @@ public abstract class HelperMethods {
                 }
             }
         }
-
-        // ONLY USED TO VISUALIZE BEAR TERRITORY
-        if (!(x == -1 && y == -1)) {
-            w.setTile(new Location(x, y), new BearTerritory());
-        }
     }
 
     private static Location getRandomEmptyLocation(World w, Random r) {
