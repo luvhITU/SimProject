@@ -107,9 +107,9 @@ public abstract class HelperMethods {
                 w.setTile(l, new Berry());
             } else if (type.equals("bear")) {
                 if (!(x == -1 && y == -1)) {
-                    w.setTile(l, new Bear(new Location(x, y)));
+                    w.setTile(l, new Bear());
                 } else {
-                    w.setTile(l, new Bear(l));
+                    w.setTile(l, new Bear());
                 }
             }
         }

@@ -7,17 +7,12 @@ public class Rabbit extends Animal implements Actor {
     private static final int FIND_HOME_THRESHOLD = 8;
 
     public Rabbit() {
-        super(Config.Rabbit.DIET, Config.Rabbit.DAMAGE, Config.Rabbit.HEALTH, 3);
+        super(Config.Rabbit.DIET, Config.Rabbit.DAMAGE, Config.Rabbit.HEALTH, Config.Rabbit.AGGRESSION, Config.Rabbit.SPEED);
     }
 
     @Override
     public void act(World w) {
-        if (getIsDead(w)) {
-            Location currL = w.getCurrentLocation();
-            delete(w);
-            w.setTile(currL, new Meat(getNutrition()));
-            return;
-        }
+        if (getIsDead()) { return; }
         reduceReproductionCooldown();
 
         if (getHome() == null && (w.getCurrentTime() == 9 || getEnergy() < 20)) {
@@ -58,10 +53,7 @@ public class Rabbit extends Animal implements Actor {
             try {
                 System.out.println("Didn't find home, digging home.");
                 digBurrow(w, new RabbitBurrow());
-            } catch (IllegalStateException i) {
-                System.out.println("Nothing worked. random move");
-                tryRandomMove(w);
-            }
+            } catch (IllegalStateException ignore) {}
         }
     }
 

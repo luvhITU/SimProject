@@ -50,12 +50,12 @@ public class Grass extends Edible implements Actor, NonBlocking, DynamicDisplayI
     }
 
     public void tryReproduce(World w) {
-        if (reproductionsInLastDay == MAX_REPRODUCE_PER_DAY) { return; }
-        double stopReproductionThreshold = 5.0;
+        Set<Location> neighbours = w.getEmptySurroundingTiles();
+        if (neighbours.isEmpty() || reproductionsInLastDay == MAX_REPRODUCE_PER_DAY) { return; }
+        double stopReproductionThreshold = 1.3;
         double reproduceProbability = 0.9 - age / stopReproductionThreshold;
         if (HelperMethods.getRandom().nextDouble() < reproduceProbability) {
-            Set<Location> locations = w.getEmptySurroundingTiles();
-            Location l = (Location) locations.toArray()[HelperMethods.getRandom().nextInt(locations.size())];
+            Location l = (Location) neighbours.toArray()[HelperMethods.getRandom().nextInt(neighbours.size())];
 
             if (!w.containsNonBlocking(l)) {
                 //System.out.println("Placing grass at: " + l);

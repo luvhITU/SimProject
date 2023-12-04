@@ -1,5 +1,8 @@
+import static java.lang.Math.max;
+
 public abstract class Edible extends SimComponent {
     private int nutrition;
+
 
     public Edible(int nutrition) {
         this.nutrition = nutrition;
@@ -10,6 +13,6 @@ public abstract class Edible extends SimComponent {
     }
 
     public void setNutrition(int nutrition) {
-        this.nutrition = Math.max(0, Math.min(this.nutrition, nutrition));
+        this.nutrition = max(0, nutrition);
     }
 }

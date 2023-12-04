@@ -4,10 +4,10 @@ import itumulator.world.World;
 public class Main {
 
     public static void main(String[] args) {
-        String input = "data/rabbits.txt";
+        String input = "data/bear-berry-rabbit-test.txt";
 
         int size = HelperMethods.readWorldSize(input);
-        int delay = 200;
+        int delay = 1000;
         int display_size = 800;
 
         Program p = new Program(size, display_size, delay);

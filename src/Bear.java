@@ -2,6 +2,7 @@ import itumulator.simulator.Actor;
 import itumulator.world.World;
 import itumulator.world.Location;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Bear extends Animal implements Actor {
@@ -10,20 +11,19 @@ public class Bear extends Animal implements Actor {
     private Location homeLocation;
 
     public Bear() {
-        super(Config.Bear.DIET, Config.Bear.DAMAGE, Config.Bear.HEALTH, 0);
+        super(Config.Bear.DIET, Config.Bear.DAMAGE, Config.Bear.HEALTH, Config.Bear.AGGRESSION, Config.Bear.SPEED);
     }
 
     public void act(World w) {
-        if (getIsDead(w)) {
-            delete(w);
-            return;
-        }
+        if (getIsDead()) { return; }
         if (getHome() == null) {
             homeLocation = w.getCurrentLocation();
             setHome(w, new BearHome());
             territory = w.getSurroundingTiles(TERRITORY_RADIUS);
         } else if (territory.contains(w.getCurrentLocation())) {
-            setTilesInSight(territory);
+            Set<Location> tilesInSight = new HashSet<>(territory);
+            tilesInSight.remove(w.getCurrentLocation());
+            setTilesInSight(tilesInSight);
         } else {
             setTilesInSight(w.getSurroundingTiles(5));
         }
