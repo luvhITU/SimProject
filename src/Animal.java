@@ -184,6 +184,17 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
 
     }
 
+    public void delete(World w) {
+        if (!isDead) { die(); }
+        else if (w.getEntities().get(this) != null) {
+            Location currL = w.getLocation(this);
+            super.delete(w);
+//            SET TILE CURRL MUSHROOM
+            return;
+        }
+        super.delete(w);
+    }
+
     private void age() {
         age++;
         setMaxEnergy(BASE_MAX_ENERGY - age * AGE_ENERGY_DECREASE);
