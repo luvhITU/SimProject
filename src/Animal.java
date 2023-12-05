@@ -10,94 +10,97 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.*;
 
-public abstract class Animal extends Edible implements Actor, DynamicDisplayInformationProvider {
+public abstract class Animal extends SimComponent implements Actor, DynamicDisplayInformationProvider, Meat {
 
 
     private static final int MATURITY_AGE = 3;
     private static final int BASE_MAX_ENERGY = 100;
     private static final int MAX_SATIATION = 100;
-    private static final int AGE_ENERGY_DECREASE = 5;
-    private static final int ACTION_COST = 2;
-    private static final int VISION_RANGE = 5;
-    private final int damage;
-    private Set<String> diet;
-    private final String mode;
-    private int reproductionCooldown;
-    Set<Location> territory;
-    private boolean isAwake;
-    private Home home;
-    private int energy;
-    private int health;
-    private int maxHealth;
+    private static final int AGE_MAX_ENERGY_DECREASE = 5;
+    private static final int STEP_SLEEP_ENERGY_INCREASE = 5;
+
+    private final int maxHealth;
     private int maxEnergy;
+    private int energy;
+    private int satiation;
+    private int health;
+    private final int damage;
+    private final int maxSpeed;
+    private final int aggression;
+    private final int matingCooldownDays;
+    private int stepAgeWhenMated;
+    private final Set<String> diet;
+    private Home home;
+    private boolean isAwake;
+    private boolean isBreedable;
     private int stepAge;
     private int age;
-    private Set<Location> tilesInSight;
-    private final int aggression;
-    private int satiation;
-    private boolean isDead;
-    private int speed;
 
-    public Animal(Set<String> diet, int damage, int health, int aggression, int speed) {
-        super(health);
+    public Animal(Set<String> diet, int damage, int maxHealth, int aggression, int maxSpeed, int matingCooldownDays) {
         this.diet = diet;
-        energy = BASE_MAX_ENERGY;
-        maxEnergy = BASE_MAX_ENERGY;
-        stepAge = 0;
-        age = 0;
         this.damage = damage;
-        this.isAwake = true;
-        home = null;
-        tilesInSight = new HashSet<>();
-        mode = "";
-        reproductionCooldown = MATURITY_AGE * World.getTotalDayDuration();
+        this.maxHealth = maxHealth;
+        this.health = maxHealth;
         this.aggression = aggression;
-        this.health = health;
-        maxHealth = health;
+        this.maxSpeed = maxSpeed;
+        this.matingCooldownDays = matingCooldownDays;
+
+        maxEnergy = BASE_MAX_ENERGY;
         satiation = MAX_SATIATION;
-        isDead = false;
-        this.speed = speed;
+        energy = BASE_MAX_ENERGY;
+        stepAge = 0;
+        stepAgeWhenMated = 0;
+        age = 0;
+        isAwake = true;
+        isBreedable = matingCooldownDays != 0;
+        home = null;
     }
 
     public void act(World w) {
-        if (satiation == 0) { isDead = true; }
-        if (isDead) { return; }
         stepAge++;
+        // If a day has passed since last age increase, age.
         if (stepAge % World.getTotalDayDuration() == 0) {
             age();
         }
-
-        if (energy < 20) {
-            System.out.println("tired");
-        }
-        if (isAwake) {
-            aiPackage(w);
-        }
+        // While sleeping, increase energy every step.
         if (!isAwake) {
-            actionCost(1, -8);
+            setEnergy(energy + STEP_SLEEP_ENERGY_INCREASE);
+        }
+        else {
+            aiPackage(w);
         }
 
     }
+
+    // Implement canMateFunction
 
     @Override
     public DisplayInformation getInformation() {
-        return new DisplayInformation(Color.magenta, buildImageKey());
-    }
-
-    private String buildImageKey() {
-        String imageKey = null;
-        if (isDead) {
-            imageKey = (getNutrition() > 100) ? "carcass" : "carcass-small";
-        } else {
-            imageKey = getClass().getSimpleName().toLowerCase();
-            imageKey += (!getIsMature()) ? "-small" : "";
-            imageKey += (!isAwake) ? "-sleeping" : "";
+        StringBuilder imageKeyBuilder = new StringBuilder(getType());
+        if (!getIsMature()) {
+            imageKeyBuilder.append("-small");
         }
-        return imageKey;
+        if (!isAwake) {
+            imageKeyBuilder.append("sleeping");
+        }
+        return new DisplayInformation(Color.magenta, imageKeyBuilder.toString());
     }
 
-    public void reduceReproductionCooldown() {
-        reproductionCooldown--;
+    private boolean isDead() {
+        return satiation == 0 || health == 0;
+    }
+
+    private void deleteIfDead(World w) {
+        if (isDead()) { delete(w); }
+    }
+
+    private int getMaxHealth() {
+        return maxHealth;
+    }
+
+    private void actionCost(int reduceBy) {
+        setSatiation(satiation - reduceBy);
+        setEnergy(energy - reduceBy);
     }
 
     public int calcNutritionAbsorbed(int nutrition) {
@@ -108,40 +111,12 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
         animal.wakeUp(w);
         animal.health -= damage;
         if (animal.health <= 0) {
-            animal.die();
+            animal.delete(w);
         }
     }
 
-    public void die() {
-        isDead = true;
-        diet = new HashSet<>();
-    }
-
-    public int getSpeed() {
-        if (mode.equals("flee") || mode.equals("attack")) {
-            return (int) Math.max(1, Math.round(speed * (energy / 100.0)));
-        }
-        return 1;
-    }
-
-    public void setTerritory(Set<Location> territory) {
-        this.territory = territory;
-    }
-
-    public int getDamage() {
-        return damage;
-    }
-
-    public boolean getIsDead() {
-        return isDead;
-    }
-
-    public void setTilesInSight(Set<Location> tilesInSight) {
-        this.tilesInSight = tilesInSight;
-    }
-
-    public Set<String> getDiet() {
-        return diet;
+    public int calcMaxSpeed() {
+        return (int) Math.max(1, Math.round(maxSpeed * (energy / 100.0)));
     }
 
     public boolean getIsAwake() {
@@ -150,34 +125,27 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
 
     public void sleep(World w) {
         isAwake = false;
-        energy = maxEnergy;
     }
 
     public void wakeUp(World w) {
         isAwake = true;
     }
 
-    public void setEnergy(int energy) {
-        this.energy = Math.max(0, Math.min(maxEnergy, energy));
+    private void setSatiation(int satiation) {
+        this.satiation = Math.max(0, Math.min(MAX_SATIATION, satiation));
     }
-
-    public void actionCost(int satiation, int energy) {
-        setSatiation(this.satiation - satiation);
-        setEnergy(this.energy - energy);
-    }
-
-    private void setSatiation(int satiation) { this.satiation = Math.max(0, Math.min(MAX_SATIATION, satiation)); }
 
     private void setMaxEnergy(int maxEnergy) {
-        this.maxEnergy = Math.max(30, maxEnergy);
+        int minMaxEnergy = 30;
+        this.maxEnergy = Math.max(minMaxEnergy, maxEnergy);
     }
 
     public void eat(World w, Edible edible) {
-        int missingEnergy = maxEnergy - energy;
+        int missingSatiation = MAX_SATIATION - satiation;
         int edibleNutrition = edible.getNutrition();
-        setEnergy(energy + calcNutritionAbsorbed(edibleNutrition));
-        edible.setNutrition(edibleNutrition - missingEnergy);
-        if (edible.getNutrition() == 0) {
+        setSatiation(satiation + calcNutritionAbsorbed(edibleNutrition));
+        edible.setNutrition(edibleNutrition - missingSatiation);
+        if (edible.getNutrition() <= 0) {
             edible.delete(w);
         }
 
@@ -185,8 +153,10 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
     }
 
     public void delete(World w) {
-        if (!isDead) { die(); }
-        else if (w.getEntities().get(this) != null) {
+        if (isDead()) {
+
+        }
+        } else if (w.getEntities().get(this) != null) {
             Location currL = w.getLocation(this);
             super.delete(w);
 //            SET TILE CURRL MUSHROOM
@@ -197,7 +167,7 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
 
     private void age() {
         age++;
-        setMaxEnergy(BASE_MAX_ENERGY - age * AGE_ENERGY_DECREASE);
+        setMaxEnergy(BASE_MAX_ENERGY - age * AGE_MAX_ENERGY_DECREASE);
     }
 
     public void setHome(World w, Location l, Home home) {
@@ -210,7 +180,6 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
         this.home = home;
         home.add(this);
     }
-
 
     public Home getHome() {
         return home;
@@ -232,6 +201,10 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
 
     public int getEnergy() {
         return energy;
+    }
+
+    public void setEnergy(int energy) {
+        this.energy = Math.max(0, Math.min(maxEnergy, energy));
     }
 
     public void emerge(World w) {
@@ -289,7 +262,7 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
         }
         System.out.println("WORKED");
         setHome(w, l, burrow);
-        actionCost(2,10);
+        actionCost(2, 10);
     }
 
     public void resetReproductionCooldown() {
@@ -314,8 +287,9 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
         return w.getEntities().get(object);
     }
 
-    private boolean isHorny(World w) {
-        return energy > 70 && reproductionCooldown <= 0;
+    private boolean canMate(World w) {
+        boolean matingCooldownExpired = stepAge - stepAgeWhenMated >= matingCooldownDays * World.getTotalDayDuration();
+        return isBreedable && energy > 70 && matingCooldownExpired;
     }
 
     private void flee(World w, Location predatorLocation) {
@@ -333,34 +307,42 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
             }
         }
         neighbours.sort(Comparator.comparingInt(n -> HelperMethods.getDistance(n, predatorLocation)));
-        w.move(this, neighbours.get(neighbours.size()-1));
-        actionCost(2,4);
+        w.move(this, neighbours.get(neighbours.size() - 1));
+        actionCost(2, 4);
 
     }
 
     private void hunt(World w, Location preyLocation) {
-        int currSpeed = Math.min(getSpeed(), HelperMethods.getDistance(w.getCurrentLocation(), preyLocation));
+        int currSpeed = getSpeed();
         List<Location> neighbours = new ArrayList<>(HelperMethods.getEmptySurroundingTiles(w, currSpeed));
-        if (neighbours.isEmpty()) { throw new IllegalStateException("No empty tiles to flee to"); }
+        if (neighbours.isEmpty()) {
+            throw new IllegalStateException("No empty tiles to move to");
+        }
         neighbours.sort(Comparator.comparingInt(n -> HelperMethods.getDistance(n, preyLocation)));
         w.move(this, neighbours.get(0));
-        actionCost(2,4);
+        actionCost(2, 4);
     }
 
     private Edible findClosestEdible(World w) {
+        Set<Location> edibleLocations = findEdibleLocations(w);
+
+        Location closestEdibleLocation = HelperMethods.findNearestLocationByTypes(w, w.getCurrentLocation(), edibleLocations, diet);
+        return (closestEdibleLocation != null) ? (Edible) w.getTile(closestEdibleLocation) : null;
+    }
+
+    private Set<Location> findEdibleLocations(World w) {
         Set<Location> edibleLocations = new HashSet<>();
 
         for (Location l : tilesInSight) {
             Object o = w.getTile(l);
             if (o instanceof Edible) {
                 Edible edible = (Edible) o;
-                if (edible.getNutrition() > 0) {
+                if (edible.getNutrition() > 0 && diet.contains(edible.getClass().getSimpleName())) {
                     edibleLocations.add(l);
                 }
             }
         }
-        Location closestEdibleLocation = HelperMethods.findNearestLocationByTypes(w, w.getCurrentLocation(), edibleLocations, diet);
-        return (closestEdibleLocation != null) ? (Edible) w.getTile(closestEdibleLocation) : null;
+        return edibleLocations;
     }
 
     // Needs an override in wolf, to not detect animals in pack.
@@ -414,8 +396,11 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
         return w.isNight() || energy < 20;
     }
 
-    private Animal findClosestSameSpecies(World w) {
-        return (Animal) w.getTile(HelperMethods.findNearestLocationByType(w, w.getCurrentLocation(), tilesInSight, getClass().getSimpleName()));
+    public void randomMove(World w) {
+        Set<Location> neighbours = w.getEmptySurroundingTiles();
+        Location l = (Location) neighbours.toArray()[HelperMethods.getRandom().nextInt(neighbours.size())];
+        w.move(this, l);
+        actionCost(2, 2);
     }
 
     private Animal findClosestPartner(World w) {
@@ -426,7 +411,7 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
                 continue;
             }
             Animal potentialPartner = (Animal) entity;
-            if (potentialPartner.isHorny(w)) {
+            if (potentialPartner.canMate(w)) {
                 partnerLocations.add(n);
             }
         }
@@ -444,15 +429,15 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
             return "stay";
         }
         boolean isPredatorInSight = isPredatorInSight(w);
-        if (isPredatorInSight) {System.out.println("Predator " + findClosestPredator(w));}
-        boolean isHungry = energy < 50;
-        if (isHungry) {
-            tilesInSight = w.getSurroundingTiles(20);
+        if (isPredatorInSight) {
+            System.out.println("Predator " + findClosestPredator(w));
         }
+        boolean isHungry = satiation < 50;
         int activeAggression = (isHungry && aggression == 2) ? 3 : aggression;
         boolean isTired = isTired(w);
         Animal closestPartner = null;
-        if (isHorny(w)) {
+        boolean hasLegalMove = !w.getEmptySurroundingTiles().isEmpty();
+        if (canMate(w)) {
             closestPartner = findClosestPartner(w);
         }
 
@@ -462,19 +447,21 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
             if (activeAggression == 3 || activeAggression == 2 && !isLargerPredatorInSight(w)) {
                 mode = "attack";
             }
-        } else if (w.getEmptySurroundingTiles().isEmpty()) {
+        } else if (!hasLegalMove) {
             mode = "stay";
         } else if (home != null && isTired) {
             mode = "sleep";
         } else if (closestPartner != null) {
             mode = "reproduce";
-        } else if (findClosestEdible(w) != null) {
+        } else if (satiation < 80 && findClosestEdible(w) != null) {
             Edible edible = findClosestEdible(w);
             if (edible instanceof Animal && !((Animal) edible).isDead) {
                 mode = "attack";
-            } else { mode = "eat"; }
+            } else {
+                mode = "eat";
+            }
         } else {
-            mode = "stay";
+            mode = "random move";
         }
         return mode;
     }
@@ -493,6 +480,7 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
                 flee(w, predatorL);
                 return;
             }
+            // TODO Man skal kunne flytte sig mod prey og attacke i samme step.
             case "attack": {
                 System.out.println("ATTACK");
                 // find largest predator or non predator
@@ -543,6 +531,11 @@ public abstract class Animal extends Edible implements Actor, DynamicDisplayInfo
                     return;
                 }
                 break;
+            }
+
+            case "random move": {
+                randomMove(w);
+                return;
             }
         }
         moveTo(w, targetLocation);

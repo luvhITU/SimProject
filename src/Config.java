@@ -37,5 +37,6 @@ public class Config {
 
     public static class BerryBush {
         public static final int NUTRITION = 30;
+        public static final int renewTimeDays = 60;
     }
 }

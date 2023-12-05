@@ -20,8 +20,6 @@ public class Grass extends Edible implements Actor, NonBlocking, DynamicDisplayI
 
     public Grass() {
         super(Config.Grass.NUTRITION);
-        stepAge = 0;
-        age = 0;
         reproductionsInLastDay = 0;
     }
 

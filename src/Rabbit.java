@@ -1,5 +1,4 @@
 import itumulator.simulator.Actor;
-import itumulator.world.Location;
 import itumulator.world.World;
 
 public class Rabbit extends Animal implements Actor {
@@ -14,15 +13,12 @@ public class Rabbit extends Animal implements Actor {
     public void act(World w) {
         if (getIsDead()) { return; }
         reduceReproductionCooldown();
-
         if (getHome() == null && (w.getCurrentTime() == 9 || getEnergy() < 20)) {
-            seekHome(w);
+            findOrCreateBurrow(w, "RabbitBurrow");
         }
-
         if (!getIsAwake() && w.getCurrentTime() == 0) {
             emerge(w);
         }
-
         if (getIsAwake()) {
             setTilesInSight(w.getSurroundingTiles(5));
         }
@@ -45,15 +41,15 @@ public class Rabbit extends Animal implements Actor {
 //        return new DisplayInformation(Color.blue, "rabbit-large");
 //    }
 
-    private void seekHome(World w) {
+    private void findOrCreateBurrow(World w, String type) {
         try {
             System.out.println("Finding Home");
-            findHome(w, "RabbitBurrow");
-        } catch (IllegalStateException e) {
+            findHome(w, type);
+        } catch (IllegalStateException e1) {
             try {
                 System.out.println("Didn't find home, digging home.");
                 digBurrow(w, new RabbitBurrow());
-            } catch (IllegalStateException ignore) {}
+            } catch (IllegalStateException e2) {randomMove(w);}
         }
     }
 

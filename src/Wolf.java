@@ -1,44 +1,48 @@
-//import itumulator.executable.DisplayInformation;
-//import itumulator.executable.DynamicDisplayInformationProvider;
-//import itumulator.simulator.Actor;
-//import itumulator.world.Location;
-//import itumulator.world.World;
-//
-//import java.awt.*;
-//import java.util.HashMap;
-//import java.util.Map;
-//import java.util.Set;
-//
-//public class Wolf extends Animal implements Actor {
-//    boolean hasPack;
-//    Pack thePack;
-//    public Wolf(){
-//        super(Config.Wolf.DIET, Config.Wolf.DAMAGE, Config.Wolf.HEALTH, 1);
-//        this.hasPack = false;
-//    }
-//
-//    @Override
-//    public DisplayInformation getInformation() {
-//        return new DisplayInformation(Color.blue, "wolf");
-//    }
-//    @Override
-//    public void act(World w){
-//        super.act(w);
-//        if(!hasPack){
-//            //Checks if there is room in current packs
-//            for(Object o :w.getEntities().keySet()){
-//                if(o instanceof Pack){
-//                    if(((Pack) o).stillHasRoom()){
-//                        ((Pack) o).addToPack(this);
-//                        thePack = (Pack) o;
-//                    }
-//                }
-//            }
-//            //Checks if it hasn't been added to a pack and then creates a new one
-//            if(!hasPack){
-//                thePack = new Pack(w,this);
-//            }
-//        }
+import itumulator.executable.DisplayInformation;
+import itumulator.simulator.Actor;
+import itumulator.world.Location;
+import itumulator.world.World;
+
+import java.awt.*;
+import java.util.Set;
+
+public class Wolf extends PackAnimal implements Actor {
+    boolean hasPack;
+    Pack thePack;
+    public Wolf(){
+        super(Config.Wolf.DIET, Config.Wolf.DAMAGE, Config.Wolf.HEALTH, Config.Wolf.AGGRESSION, Config.Wolf.SPEED);
+        this.hasPack = false;
+    }
+
+    @Override
+    public DisplayInformation getInformation() {
+        return new DisplayInformation(Color.blue, "wolf");
+    }
+    @Override
+    public void act(World w){
+        if (getIsDead()) { return; }
+        if(!hasPack){
+            //Checks if there is room in current packs
+            for(Object o :w.getEntities().keySet()){
+                if(o instanceof Pack){
+                    Pack pack = (Pack) o;
+                    if(pack.stillHasRoom()){
+                        pack.addToPack(this);
+                        thePack = pack;
+                        break;
+                    }
+                }
+            }
+            // Create pack if none is found.
+            thePack = new Pack(w,this);
+        }
+        if (!getIsAwake() && w.getCurrentTime() == 0) {
+            emerge(w);
+        }
+        if (getIsAwake()) {
+            setTilesInSight(w.getSurroundingTiles(5));
+        }
+        super.act(w);
 //        try {
 //            if(w.isDay() && w.isOnTile(this)){
 //                tryAttack(w);
@@ -46,7 +50,7 @@
 //        } catch (IllegalArgumentException ignore) {} //Dies sometimes before doing actions
 //        //TODO: copied from rabbit should maybe be moved to animal
 //        if (!getHasMatedToday() && w.getCurrentTime() > 0) { tryToMate(w); }
-//    }
+    }
 //    public void moveToLocation(World w,Location l) {
 //        Set<Location> neighbours = w.getEmptySurroundingTiles(w.getLocation(this));
 //        if (neighbours.isEmpty()) {throw new IllegalStateException("No empty tiles to move to");}
@@ -100,7 +104,7 @@
 //            }
 //        }
 //    }
-//    public void setPack(boolean Boo){
-//        hasPack = Boo;
-//    }
-//}
+    public void setPack(boolean Boo){
+        hasPack = Boo;
+    }
+}
