@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
+// Don't mind me
 public abstract class HelperMethods {
     private static final Random r = new Random();
     private static List<Location> occupied = new ArrayList<>();
