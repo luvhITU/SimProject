@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-// Don't mind me
 public abstract class HelperMethods {
     private static final Random r = new Random();
     private static List<Location> occupied = new ArrayList<>();
@@ -15,6 +14,11 @@ public abstract class HelperMethods {
         return r;
     }
 
+    /**
+     * Parses .txt-file and returns WorldSize as Integer.
+     * @param input FilePath as String to be parsed.
+     * @return WorldSize from .txt-file.
+     */
     public static int readWorldSize(String input) {
         String filePath = input;
         int worldSize = 0;
@@ -33,6 +37,12 @@ public abstract class HelperMethods {
         return worldSize;
     }
 
+    /**
+     * Parses .txt-file and reads Objects to be spawned.
+     * @param input FilePath as String to be parsed.
+     * @param w World
+     * @param p Program
+     */
     public static void readObjects(String input, World w, Program p) {
         String filePath = input;
         int amount = 0, startRange = 0, endRange = 0, x = 0, y = 0;
@@ -44,7 +54,7 @@ public abstract class HelperMethods {
             sc.nextLine(); // Skip first line
 
             while (sc.hasNextLine()) {
-                String str = sc.nextLine().trim();
+                String str = sc.nextLine().trim().toLowerCase();
 
                 // Skip empty lines
                 if (str.isEmpty()) {
@@ -70,10 +80,9 @@ public abstract class HelperMethods {
                 } else if (tokens.length == 3) {
                     startRange = Integer.parseInt(tokens[1]);
                     endRange = Integer.parseInt(tokens[2]);
-                    System.out.println("Range: [" + startRange + ", " + endRange + "]");
+                    System.out.println("Range: [" + startRange + "-" + endRange + "]");
                     spawnObject(w, p, isInfected, type, startRange, endRange, -1, -1);
                 } else if (tokens.length == 4) {
-                    int value = Integer.parseInt(tokens[1]);
                     amount = Integer.parseInt(tokens[1]);
                     x = Integer.parseInt(tokens[2]);
                     y = Integer.parseInt(tokens[3]);
@@ -90,14 +99,46 @@ public abstract class HelperMethods {
         }
     }
 
+    /**
+     * Spawns a certain amount of Object(s).
+     * @param w World
+     * @param p Program
+     * @param isInfected Boolean. Returns True if Animal is infected, False if not.
+     * @param type Type of Object to be spawned.
+     * @param amount Amount of Object(s) to be spawned.
+     * @param x x-Coordinate of Bear-Territory.
+     * @param y y-Coordinate of Bear-Territory.
+     */
     public static void spawnObject(World w, Program p, boolean isInfected, String type, int amount, int x, int y) {
         spawnObjects(w, p, isInfected, type, amount, amount, x, y);
     }
 
+    /**
+     * Spawns a certain amount of Object(s) between a Range.
+     * @param w World
+     * @param p Program
+     * @param isInfected Boolean. Returns True if Animal is infected, False if not.
+     * @param type Type of Object to be spawned.
+     * @param startRange Minimum amount of Objects to be spawned.
+     * @param endRange  Maximum amount of Objects to be spawned.
+     * @param x x-Coordinate of Bear-Territory.
+     * @param y y-Coordinate of Bear-Territory.
+     */
     public static void spawnObject(World w, Program p, boolean isInfected, String type, int startRange, int endRange, int x, int y) {
         spawnObjects(w, p, isInfected, type, startRange, endRange, x, y);
     }
 
+    /**
+     * Spawns Object(s) in the World.
+     * @param w World
+     * @param p Program
+     * @param isInfected Boolean. Returns True if Animal is infected, False if not.
+     * @param type Type of Object to be spawned.
+     * @param startRange Minimum amount of Objects to be spawned.
+     * @param endRange  Maximum amount of Objects to be spawned.
+     * @param x x-Coordinate of Bear-Territory.
+     * @param y y-Coordinate of Bear-Territory.
+     */
     private static void spawnObjects(World w, Program p, boolean isInfected, String type, int startRange, int endRange, int x, int y) {
         int rValue = r.nextInt((endRange + 1) - startRange) + startRange;
         if (startRange != endRange) {
@@ -108,7 +149,7 @@ public abstract class HelperMethods {
             Location l = getRandomEmptyLocation(w, r);
             occupied.add(l);
 
-            //TODO: Add logic to infect spawned Animal-Objects
+            //TODO: Add logic to infect spawned Animal-Objects. Maybe as parameter in Animal constructor?
             if (type.equals("grass")) {
                 w.setTile(l, new Grass());
             } else if (type.equals("rabbit")) {
@@ -116,13 +157,26 @@ public abstract class HelperMethods {
             } else if (type.equals("burrow")) {
                 w.setTile(l, new RabbitBurrow());
             } else if (type.equals("berry")) {
-                w.setTile(l, new BerryBush());
+                w.setTile(l, new Berry());
             } else if (type.equals("wolf")) {
-                //TODO: Spawn Wolf-Object
+                w.setTile(l, new Wolf());
             } else if (type.equals("bear")) {
                 //TODO: Spawn Bear-Object
-            } else if (type.equals("Carcass")) {
+            } else if (type.equals("carcass")) {
                 //TODO: Spawn Carcass-Object
+            }
+        }
+        if(type.equals("wolf")){
+            Pack thePack = null;
+            for(Object o :w.getEntities().keySet()){
+                if(o instanceof Wolf){
+                    if(thePack != null){
+                        thePack.addToPack((Wolf) o);
+                    }
+                    else{
+                        thePack = new Pack(w,(Wolf) o);
+                    }
+                }
             }
         }
 
@@ -146,6 +200,12 @@ public abstract class HelperMethods {
         }
     }
 
+    /**
+     *
+     * @param w World
+     * @param r Random Value
+     * @return Random Empty Location in the World.
+     */
     private static Location getRandomEmptyLocation(World w, Random r) {
         int x, y;
         Location l;
