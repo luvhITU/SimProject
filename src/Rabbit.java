@@ -13,9 +13,6 @@ public class Rabbit extends Animal implements Actor {
     @Override
     public void act(World w) {
         super.act(w);
-        if (!getIsAwake() && w.getCurrentTime() == 0) {
-            emerge(w);
-        }
         if (getIsAwake()) {
 //            doMovementPackage(w);
 //            tryToEat(w);

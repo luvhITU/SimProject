@@ -18,6 +18,8 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     protected static final int AGE_MAX_ENERGY_DECREASE = 5;
     protected static final int STEP_SLEEP_ENERGY_INCREASE = 5;
 
+    protected static final int VISION_RANGE = 5;
+
     protected final int maxHealth;
     protected int maxEnergy;
     protected int energy;
@@ -55,6 +57,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     }
 
     public void act(World w) {
+        System.out.println("Time of day is: " + w.getCurrentTime());
         stepAge++;
         // If a day has passed since last age increase, age.
         if (stepAge % World.getTotalDayDuration() == 0) {
@@ -63,9 +66,11 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         // While sleeping, increase energy every step.
         if (!isAwake) {
             setEnergy(energy + STEP_SLEEP_ENERGY_INCREASE);
-        }
-        else {
-            Set<Location> tilesInSight = w.getSurroundingTiles(5);
+            if (w.getCurrentTime() == 0) {
+                wakeUp(w);
+            }
+        } else {
+            tilesInSight = calcTilesInSight(w);
         }
 
     }
@@ -89,7 +94,9 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     }
 
     private void deleteIfDead(World w) {
-        if (isDead()) { delete(w); }
+        if (isDead()) {
+            delete(w);
+        }
     }
 
     private int getMaxHealth() {
@@ -117,16 +124,26 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         return (int) Math.max(1, Math.round(maxSpeed * (energy / 100.0)));
     }
 
+    public Set<Location> calcTilesInSight(World w) {
+        return w.getSurroundingTiles(VISION_RANGE);
+    }
+
     public boolean getIsAwake() {
         return isAwake;
     }
 
     public void sleep(World w) {
         isAwake = false;
+        if (home instanceof Hole) {
+            w.remove(this);
+        }
     }
 
     public void wakeUp(World w) {
         isAwake = true;
+        if (home instanceof Hole) {
+            emerge(w);
+        }
     }
 
     protected void setSatiation(int satiation) {
@@ -169,14 +186,20 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         home.add(this);
     }
 
+    public void goHome(World w) {
+        System.out.println(this + " at location: " + w.getLocation(this) + " is going to sleep at: " + home);
+        Location homeLoc = w.getLocation(home);
+        if (w.getLocation(this).equals(homeLoc)) {
+            sleep(w);
+        } else {
+            moveTo(w, homeLoc);
+        }
+    }
+
     public Home getHome() {
         return home;
     }
 
-    public void hide(World w) {
-        w.remove(this);
-        isAwake = false;
-    }
 
     public int getHealth() {
         return health;
@@ -195,9 +218,9 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     }
 
     public void emerge(World w) {
+        System.out.println("Emerging");
         int radius = 3;
         Location l = HelperMethods.getClosestEmptyTile(w, w.getLocation(home), radius);
-        isAwake = true;
         w.setCurrentLocation(l);
         w.setTile(l, this);
     }
@@ -270,20 +293,25 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         return isBreedable && energy > 70 && matingCooldownExpired;
     }
 
-    private void flee(World w, Location predatorLocation) {
+    protected void flee(World w, Location predatorLocation) {
+        if (this instanceof Wolf) {
+            Wolf thisWolf = (Wolf) this;
+            System.out.println(thisWolf + " fleeing from " + w.getTile(predatorLocation) + ". are in same pack: " + thisWolf.thePack.getPackList().contains(w.getTile(predatorLocation)));
+        }
         int currSpeed = calcMaxSpeed();
         Location targetL = null;
         List<Location> neighbours = new ArrayList<>(HelperMethods.getEmptySurroundingTiles(w, currSpeed));
         if (neighbours.isEmpty()) {
-            throw new IllegalStateException("No empty tiles to flee to");
-        } else if (home != null && home instanceof Hole) {
-            Location homeL = w.getLocation(home);
-            if (neighbours.contains(homeL)) {
-                w.move(this, homeL);
-                hide(w);
-                return;
-            }
+            return;
         }
+//        else if (home != null && home instanceof Hole) {
+//            Location homeL = w.getLocation(home);
+//            if (neighbours.contains(homeL)) {
+//                w.move(this, homeL);
+//                sleep(w);
+//                return;
+//            }
+//        }
         neighbours.sort(Comparator.comparingInt(n -> HelperMethods.getDistance(n, predatorLocation)));
         w.move(this, neighbours.get(neighbours.size() - 1));
         actionCost(2);
@@ -292,6 +320,10 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
 
     protected void hunt(World w) {
         Object target = findClosestEdible(w);
+        if (target == null) {
+            return;
+        }
+        System.out.println(this + " hunting " + target);
         Location targetLoc = w.getLocation(target);
         boolean targetInRange = false;
         if (target instanceof NonBlocking && w.getCurrentLocation().equals(targetLoc)) {
@@ -419,122 +451,4 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         System.out.println(this + " | " + w.getTile(partnerLocation));
         return (Animal) w.getTile(partnerLocation);
     }
-
-
-//    private String getMode(World w) {
-//        if (!isAwake) {
-//            return "stay";
-//        }
-//        boolean isPredatorInSight = isPredatorInSight(w);
-//        if (isPredatorInSight) {
-//            System.out.println("Predator " + findClosestPredator(w));
-//        }
-//        boolean isHungry = satiation < 50;
-//        int activeAggression = (isHungry && aggression == 2) ? 3 : aggression;
-//        boolean isTired = isTired(w);
-//        Animal closestPartner = null;
-//        boolean hasLegalMove = !w.getEmptySurroundingTiles().isEmpty();
-//        if (canMate(w)) {
-//            closestPartner = findClosestPartner(w);
-//        }
-//
-//        String mode = "flee";
-//
-//        if (isPredatorInSight) {
-//            if (activeAggression == 3 || activeAggression == 2 && !isLargerPredatorInSight(w)) {
-//                mode = "attack";
-//            }
-//        } else if (!hasLegalMove) {
-//            mode = "stay";
-//        } else if (home != null && isTired) {
-//            mode = "sleep";
-//        } else if (closestPartner != null) {
-//            mode = "reproduce";
-//        } else if (satiation < 80 && findClosestEdible(w) != null) {
-//            Edible edible = findClosestEdible(w);
-//            if (edible instanceof Animal && !((Animal) edible).isDead) {
-//                mode = "attack";
-//            } else {
-//                mode = "eat";
-//            }
-//        } else {
-//            mode = "random move";
-//        }
-//        return mode;
-//    }
-
-//    private void aiPackage(World w) {
-//        String mode = getMode(w);
-//        Location targetLocation = null;
-//        switch (mode) {
-//            case "stay": {
-//                System.out.println("STAY");
-//                return;
-//            }
-//            case "flee": {
-//                System.out.println("FLEE");
-//                Location predatorL = w.getEntities().get(findClosestPredator(w));
-//                flee(w, predatorL);
-//                return;
-//            }
-//            // TODO Man skal kunne flytte sig mod prey og attacke i samme step.
-//            case "attack": {
-//                System.out.println("ATTACK");
-//                // find largest predator or non predator
-//                // if it is within 1 block radius, attack. else move to it
-//                Animal target = findLargestPredator(w);
-//                if (target == null) {
-//                    target = (Animal) findClosestEdible(w);
-//                }
-//                System.out.println(target);
-//                targetLocation = getLocation(w, target);
-//                if (w.getSurroundingTiles().contains(targetLocation)) {
-//                    attack(w, target);
-//                } else {
-//                    hunt(w, targetLocation);
-//                }
-//                return;
-//            }
-//            case "sleep": {
-//                System.out.println("SLEEP");
-//                targetLocation = getLocation(w, home);
-//                if (w.getCurrentLocation().equals(targetLocation)) {
-//                    sleep(w);
-//                    return;
-//                }
-//                break;
-//            }
-//            case "reproduce": {
-//                System.out.println("REPRODUCE");
-//                Animal partner = findClosestPartner(w);
-//                targetLocation = getLocation(w, partner);
-//                if (w.getSurroundingTiles().contains(targetLocation) && !w.getEmptySurroundingTiles().isEmpty()) {
-//                    reproduce(w, partner);
-//                    return;
-//                }
-//                break;
-//            }
-//            case "eat": {
-//                System.out.println("EAT");
-//                Edible edible = findClosestEdible(w);
-//                System.out.println(this + " " + edible);
-//                targetLocation = getLocation(w, edible);
-//                boolean isNonBlocking = edible instanceof NonBlocking;
-//                if (isNonBlocking && w.getCurrentLocation().equals(targetLocation)
-//                        || w.getSurroundingTiles().contains(targetLocation)) {
-//                    System.out.println(satiation);
-//                    eat(w, edible);
-//                    System.out.println(satiation);
-//                    return;
-//                }
-//                break;
-//            }
-//
-//            case "random move": {
-//                randomMove(w);
-//                return;
-//            }
-//        }
-//        moveTo(w, targetLocation);
-//    }
 }

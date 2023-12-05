@@ -13,7 +13,7 @@ public class Config {
         public static final Set<String> DIET = Set.of("Grass");
         public static final int DAMAGE = 1;
         public static final int HEALTH = 30;
-        public static final int SPEED = 2;
+        public static final int SPEED = 1;
         public static final int MATING_COOLDOWN_DAYS = 2;
     }
 
@@ -22,7 +22,7 @@ public class Config {
         public static final int NUTRITION = 150;
         public static final int DAMAGE = 40;
         public static final int HEALTH = 100;
-        public static final int SPEED = 3;
+        public static final int SPEED = 2;
         public static final int MATING_COOLDOWN_DAYS = 0;
     }
 
@@ -31,7 +31,7 @@ public class Config {
         public static final int NUTRITION = 300;
         public static final int DAMAGE = 100;
         public static final int HEALTH = 300;
-        public static final int SPEED = 3;
+        public static final int SPEED = 2;
         public static final int MATING_COOLDOWN_DAYS = 0;
     }
 

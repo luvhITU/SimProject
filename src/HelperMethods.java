@@ -166,19 +166,19 @@ public abstract class HelperMethods {
                 //TODO: Spawn Carcass-Object
             }
         }
-        if(type.equals("wolf")){
-            Pack thePack = null;
-            for(Object o :w.getEntities().keySet()){
-                if(o instanceof Wolf){
-                    if(thePack != null){
-                        thePack.addToPack((Wolf) o);
-                    }
-                    else{
-                        thePack = new Pack(w,(Wolf) o);
-                    }
-                }
-            }
-        }
+//        if(type.equals("wolf")){
+//            Pack thePack = null;
+//            for(Object o :w.getEntities().keySet()){
+//                if(o instanceof Wolf){
+//                    if(thePack != null){
+//                        thePack.addToPack((Wolf) o);
+//                    }
+//                    else{
+//                        thePack = new Pack(w,(Wolf) o);
+//                    }
+//                }
+//            }
+//        }
 
         List<Home> rabbitBurrows = HelperMethods.availableHomes(w, "RabbitBurrow");
         Set<Object> entitiesKeys = w.getEntities().keySet();
@@ -292,11 +292,14 @@ public abstract class HelperMethods {
     }
 
     public static Object findNearestOfObjects(World w, Set<?> objects) {
+        return findNearestOfObjects(w, w.getCurrentLocation(), objects);
+    }
+
+    public static Object findNearestOfObjects(World w, Location l, Set<?> objects) {
         int minDistance = Integer.MAX_VALUE;
         Object minDistanceObject = null;
         for (Object o : objects) {
-            Location currL = w.getCurrentLocation();
-            int distance = getDistance(currL, w.getEntities().get(o));
+            int distance = getDistance(l, w.getEntities().get(o));
             if (distance < minDistance) {
                 minDistance = distance;
                 minDistanceObject = o;
