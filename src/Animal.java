@@ -11,7 +11,7 @@ import java.util.Set;
 
 public abstract class Animal extends Edible implements Actor, DynamicDisplayInformationProvider {
 
-
+    // Don't mind me
     private static final int MATURITY_AGE = 3;
     private static final int BASE_MAX_ENERGY = 100;
     private static final int AGE_ENERGY_DECREASE = 5;
