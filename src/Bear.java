@@ -19,9 +19,9 @@ public class Bear extends Animal implements Actor {
             return;
         }
         if (w.isNight()) {
-            sleep();
+            sleep(w);
         } else if (w.isDay() && !getIsAwake()) {
-            wakeUp();
+            wakeUp(w);
         }
         super.act(w);
         if (getIsAwake()) {
@@ -63,13 +63,5 @@ public class Bear extends Animal implements Actor {
             Edible edible = (Edible) nonBlocking;
             eat(w, edible);
         }
-    }
-
-    @Override
-    public void eat(World w, Edible edible) {
-        if (edible instanceof Berry) {
-            ((Berry) edible).eatBerries();
-        }
-        setEnergy(getEnergy() + calcNutritionAbsorbed(edible));
     }
 }

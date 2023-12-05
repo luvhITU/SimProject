@@ -6,11 +6,11 @@ import java.util.*;
 
 public class Home extends SimComponent implements Actor {
     private int maxAllowed;
-    private Set<Animal> occupants;
+    private Set<AnimalOLD> occupants;
 
     public Home(int maxAllowed) {
         this.maxAllowed = maxAllowed;
-        occupants = new HashSet<Animal>();
+        occupants = new HashSet<AnimalOLD>();
     }
 
     public void act(World w) {
@@ -18,7 +18,7 @@ public class Home extends SimComponent implements Actor {
         updateOccupants(w);
     }
 
-    public void add(Animal animal) {
+    public void add(AnimalOLD animal) {
         if (!isAvailable()) { throw new IllegalStateException("Home is filled to brim already!"); }
         occupants.add(animal);
     }

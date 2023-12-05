@@ -91,14 +91,14 @@ public class Pack implements Actor,DynamicDisplayInformationProvider {
             try {
                 if (wolf.getIsAwake() && w.getLocation(wolf).equals(homeLocation) && w.isNight()) {
                     w.remove(wolf);
-                    wolf.sleep();
+                    wolf.sleep(w);
                 } else if (w.isDay() && !wolf.getIsAwake()) {
                     int radius = 3;
                     Location l = HelperMethods.getClosestEmptyTile(w, w.getLocation(wolfburrow), radius);
-                    wolf.wakeUp();
+                    wolf.wakeUp(w);
                     w.setTile(l, wolf);
                 } else if (wolf.getIsAwake()) {
-                    wolf.moveToLocation(w, attractionPoint);
+                    wolf.moveTo(w, attractionPoint);
                 }
             }
             catch (IllegalArgumentException ignore) {} //If the wolf dies at same point
