@@ -1,15 +1,19 @@
 import itumulator.executable.DisplayInformation;
+import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.simulator.Actor;
 import itumulator.world.Location;
 import itumulator.world.World;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class Wolf extends Animal implements Actor {
     boolean hasPack;
     Pack thePack;
     public Wolf(){
-        super(Config.Wolf.DIET, Config.Wolf.NUTRITION, Config.Wolf.DAMAGE);
+        super(Config.Wolf.DIET, Config.Wolf.NUTRITION, Config.Wolf.DAMAGE, Config.Wolf.ABSORPTION_PERCENTAGE);
         this.hasPack = false;
     }
 
@@ -41,7 +45,7 @@ public class Wolf extends Animal implements Actor {
             }
         } catch (IllegalArgumentException ignore) {} //Dies sometimes before doing actions
         //TODO: copied from rabbit should maybe be moved to animal
-        if (canMate() && w.getCurrentTime() > 0 && w.isOnTile(this) && IsDead(w)) { tryToMate(w); }
+        if (!getHasMatedToday() && w.getCurrentTime() > 0 && w.isOnTile(this) && getIsDead(w)) { tryToMate(w); }
     }
     public void tryAttack(World w){ //TODO: need to be put in animal and change the "thePack" for it to work with bears
         for(Location l : w.getSurroundingTiles()){
@@ -56,14 +60,14 @@ public class Wolf extends Animal implements Actor {
                                 thePack.addFood(rabbit.getNutrition());
                             }
                             else{
-                                attack(w, rabbit);
+                                rabbit.setEnergy(rabbit.getEnergy() - rabbit.calcDamageTaken(this));
                             }
 
                         } else if (w.getTile(l) instanceof Animal) {
                             Animal animal = (Animal) w.getTile(l);
                             //Checks if wolf is a part of the same pack
                             if(!thePack.getPackList().contains(animal)){
-                                attack(w, animal);
+                               animal.setEnergy(animal.getEnergy() - animal.calcDamageTaken(this));
                             }
                         }
                     }

@@ -26,6 +26,7 @@ public class Pack implements Actor,DynamicDisplayInformationProvider {
     }
     @Override
     public void act(World w) {
+        System.out.println(packList.toArray().length);
         if(wolfburrow == null){
             this.wolfburrow = new WolfBurrow(); //TODO: make it so doesn't delete other burrows
             if(w.containsNonBlocking(homeLocation)) {
@@ -110,6 +111,7 @@ public class Pack implements Actor,DynamicDisplayInformationProvider {
     public void addToPack(Wolf wolf){
         packList.add(wolf);
         wolf.setPack(true);
+        wolf.storePack(this);
     }
     @Override
     public DisplayInformation getInformation() {
