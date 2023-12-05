@@ -157,7 +157,7 @@ public abstract class HelperMethods {
             } else if (type.equals("burrow")) {
                 w.setTile(l, new RabbitBurrow());
             } else if (type.equals("berry")) {
-                w.setTile(l, new Berry());
+                w.setTile(l, new BerryBush());
             } else if (type.equals("wolf")) {
                 w.setTile(l, new Wolf());
             } else if (type.equals("bear")) {
