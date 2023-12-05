@@ -117,11 +117,24 @@ public abstract class HelperMethods {
             } else if (type.equals("berry")) {
                 w.setTile(l, new Berry());
             } else if (type.equals("wolf")) {
-                //TODO: Spawn Wolf-Object
+                w.setTile(l, new Wolf());
             } else if (type.equals("bear")) {
                 //TODO: Spawn Bear-Object
             } else if (type.equals("Carcass")) {
                 //TODO: Spawn Carcass-Object
+            }
+        }
+        if(type.equals("wolf")){
+            Pack thePack = null;
+            for(Object o :w.getEntities().keySet()){
+                if(o instanceof Wolf){
+                    if(thePack != null){
+                        thePack.addToPack((Wolf) o);
+                    }
+                    else{
+                        thePack = new Pack(w,(Wolf) o);
+                    }
+                }
             }
         }
 

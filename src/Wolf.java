@@ -45,7 +45,6 @@ public class Wolf extends Animal implements Actor {
             }
         } catch (IllegalArgumentException ignore) {} //Dies sometimes before doing actions
         //TODO: copied from rabbit should maybe be moved to animal
-        if (!getHasMatedToday() && w.getCurrentTime() > 0 && w.isOnTile(this) && getIsDead(w)) { tryToMate(w); }
     }
     public void tryAttack(World w){ //TODO: need to be put in animal and change the "thePack" for it to work with bears
         for(Location l : w.getSurroundingTiles()){
@@ -78,5 +77,8 @@ public class Wolf extends Animal implements Actor {
     }
     public void setPack(boolean Boo){
         hasPack = Boo;
+    }
+    public void storePack(Pack newPack){
+        this.thePack = newPack;
     }
 }
