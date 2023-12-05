@@ -141,4 +141,12 @@ public class Pack implements Actor,DynamicDisplayInformationProvider {
     public void addFood(int newFood){
         foodToDistribute += newFood;
     }
+
+    protected Set<Location> getFriendlyExcludedTiles(World w, Wolf wolf) {
+        Set<Location> friendlyExcludedTiles = new HashSet<>(wolf.tilesInSight);
+        for (Wolf packWolf: packList) {
+            friendlyExcludedTiles.remove(w.getLocation(packWolf));
+        }
+        return friendlyExcludedTiles;
+    }
 }

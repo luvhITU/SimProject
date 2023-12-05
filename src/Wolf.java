@@ -6,6 +6,7 @@ import itumulator.world.World;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,7 +14,7 @@ public class Wolf extends Animal implements Actor {
     boolean hasPack;
     Pack thePack;
     public Wolf(){
-        super(Config.Wolf.DIET, Config.Wolf.NUTRITION, Config.Wolf.DAMAGE, Config.Wolf.ABSORPTION_PERCENTAGE);
+        super(Config.Wolf.DIET, Config.Wolf.NUTRITION, Config.Wolf.DAMAGE, Config.Wolf.HEALTH, Config.Wolf.SPEED);
         this.hasPack = false;
     }
 
@@ -39,44 +40,62 @@ public class Wolf extends Animal implements Actor {
                 thePack = new Pack(w,this);
             }
         }
-        try {
-            if(w.isDay() && w.isOnTile(this)){
-                tryAttack(w);
-            }
-        } catch (IllegalArgumentException ignore) {} //Dies sometimes before doing actions
-        //TODO: copied from rabbit should maybe be moved to animal
-        if (!getHasMatedToday() && w.getCurrentTime() > 0 && w.isOnTile(this) && getIsDead(w)) { tryToMate(w); }
-    }
-    public void tryAttack(World w){ //TODO: need to be put in animal and change the "thePack" for it to work with bears
-        for(Location l : w.getSurroundingTiles()){
-            if(w.getTile(l) != null) {
-                for (Object diet : getDiet().toArray()) {
-                    try {
-                        if (diet.equals(w.getTile(l).getClass().getSimpleName())) {
-                            //TODO: needs to be changed from rabbit to just animal for it work with bears
-                            Rabbit rabbit = (Rabbit) w.getTile(l);
-                            if((rabbit.getEnergy() - rabbit.calcDamageTaken(this)) <= 0){
-                                w.delete(rabbit);
-                                thePack.addFood(rabbit.getNutrition());
-                            }
-                            else{
-                                rabbit.setEnergy(rabbit.getEnergy() - rabbit.calcDamageTaken(this));
-                            }
-
-                        } else if (w.getTile(l) instanceof Animal) {
-                            Animal animal = (Animal) w.getTile(l);
-                            //Checks if wolf is a part of the same pack
-                            if(!thePack.getPackList().contains(animal)){
-                               animal.setEnergy(animal.getEnergy() - animal.calcDamageTaken(this));
-                            }
-                        }
-                    }
-                    catch (IllegalArgumentException ignore){ }
-                }
-            }
+        if (w.isDay() && w.isOnTile(this)) {
+            hunt(w);
         }
     }
+//    public void tryAttack(World w){ //TODO: need to be put in animal and change the "thePack" for it to work with bears
+//        for(Location l : w.getSurroundingTiles()){
+//            if(w.getTile(l) != null) {
+//                for (Object diet : diet.toArray()) {
+//                    try {
+//                        if (diet.equals(w.getTile(l).getClass().getSimpleName())) {
+//                            //TODO: needs to be changed from rabbit to just animal for it work with bears
+//                            Rabbit rabbit = (Rabbit) w.getTile(l);
+//                            attack(w, rabbit);
+//                            if (rabbit.isDead()) {
+//                                // TODO Carcass. Also try to use a variation of eat() method, because that's where nutrition absorbed is calculated
+////                                thePack.addFood(rabbit.getNutrition());
+//                            }
+//                        } else if (w.getTile(l) instanceof Animal) {
+//                            Animal animal = (Animal) w.getTile(l);
+//                            //Checks if wolf is a part of the same pack
+//                            if(!thePack.getPackList().contains(animal)){
+//                               animal.setEnergy(animal.getEnergy() - animal.calcDamageTaken(this));
+//                            }
+//                        }
+//                    }
+//                    catch (IllegalArgumentException ignore){ }
+//                }
+//            }
+//        }
+//    }
     public void setPack(boolean Boo){
         hasPack = Boo;
+    }
+    public void storePack(Pack newPack){ this.thePack = newPack; }
+    @Override
+    protected Set<Object> findEdibles(World w) {
+        Set<Object> edibles = new HashSet<>();
+        Set<Location> friendlyExcludedTiles = thePack.getFriendlyExcludedTiles(w, this);
+
+        for (Location l : friendlyExcludedTiles) {
+            Object o = w.getTile(l);
+            if (o != null && diet.contains(o.getClass().getSimpleName())) {
+                if (o instanceof Edible && ((Edible) o).isEdible() || o instanceof Animal)
+                    edibles.add(o);
+                }
+            }
+        return edibles;
+    }
+
+    public void eat(World w, Edible edible) {
+        int missingSatiation = (MAX_SATIATION - satiation) / thePack.getPackList().size();
+        int edibleNutrition = edible.getNutrition();
+        setSatiation(satiation + calcNutritionAbsorbed(edibleNutrition));
+        edible.setNutrition(edibleNutrition - missingSatiation);
+        if (edible.getNutrition() <= 0) {
+            edible.delete(w);
+        }
     }
 }

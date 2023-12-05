@@ -2,6 +2,7 @@ import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.simulator.Actor;
 import itumulator.world.Location;
+import itumulator.world.NonBlocking;
 import itumulator.world.World;
 
 import java.awt.*;
@@ -11,28 +12,28 @@ import java.util.*;
 public abstract class Animal extends SimComponent implements Actor, DynamicDisplayInformationProvider {
 
 
-    private static final int MATURITY_AGE = 3;
-    private static final int BASE_MAX_ENERGY = 100;
-    private static final int MAX_SATIATION = 100;
-    private static final int AGE_MAX_ENERGY_DECREASE = 5;
-    private static final int STEP_SLEEP_ENERGY_INCREASE = 5;
+    protected static final int MATURITY_AGE = 3;
+    protected static final int BASE_MAX_ENERGY = 100;
+    protected static final int MAX_SATIATION = 100;
+    protected static final int AGE_MAX_ENERGY_DECREASE = 5;
+    protected static final int STEP_SLEEP_ENERGY_INCREASE = 5;
 
-    private final int maxHealth;
-    private int maxEnergy;
-    private int energy;
-    private int satiation;
-    private int health;
-    private final int damage;
-    private final int maxSpeed;
-    private final int matingCooldownDays;
-    private int stepAgeWhenMated;
-    private final Set<String> diet;
-    private Home home;
-    private boolean isAwake;
-    private boolean isBreedable;
-    private int stepAge;
-    private int age;
-    private Set<Location> tilesInSight;
+    protected final int maxHealth;
+    protected int maxEnergy;
+    protected int energy;
+    protected int satiation;
+    protected int health;
+    protected final int damage;
+    protected final int maxSpeed;
+    protected final int matingCooldownDays;
+    protected int stepAgeWhenMated;
+    protected final Set<String> diet;
+    protected Home home;
+    protected boolean isAwake;
+    protected boolean isBreedable;
+    protected int stepAge;
+    protected int age;
+    protected Set<Location> tilesInSight;
 
     public Animal(Set<String> diet, int damage, int maxHealth, int maxSpeed, int matingCooldownDays) {
         this.diet = diet;
@@ -73,7 +74,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
 
     @Override
     public DisplayInformation getInformation() {
-        StringBuilder imageKeyBuilder = new StringBuilder(getType());
+        StringBuilder imageKeyBuilder = new StringBuilder(getType().toLowerCase());
         if (!getIsMature()) {
             imageKeyBuilder.append("-small");
         }
@@ -83,7 +84,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         return new DisplayInformation(Color.magenta, imageKeyBuilder.toString());
     }
 
-    private boolean isDead() {
+    public boolean isDead() {
         return satiation == 0 || health == 0;
     }
 
@@ -95,7 +96,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         return maxHealth;
     }
 
-    private void actionCost(int reduceBy) {
+    protected void actionCost(int reduceBy) {
         setSatiation(satiation - reduceBy);
         setEnergy(energy - reduceBy);
     }
@@ -128,7 +129,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         isAwake = true;
     }
 
-    private void setSatiation(int satiation) {
+    protected void setSatiation(int satiation) {
         this.satiation = Math.max(0, Math.min(MAX_SATIATION, satiation));
     }
 
@@ -145,8 +146,6 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         if (edible.getNutrition() <= 0) {
             edible.delete(w);
         }
-
-
     }
 
     public void delete(World w) {
@@ -291,36 +290,56 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
 
     }
 
-    private void hunt(World w, Location preyLocation) {
-        int currSpeed = calcMaxSpeed();
-        List<Location> neighbours = new ArrayList<>(HelperMethods.getEmptySurroundingTiles(w, currSpeed));
-        if (neighbours.isEmpty()) {
-            throw new IllegalStateException("No empty tiles to move to");
+    protected void hunt(World w) {
+        Object target = findClosestEdible(w);
+        Location targetLoc = w.getLocation(target);
+        boolean targetInRange = false;
+        if (target instanceof NonBlocking && w.getCurrentLocation().equals(targetLoc)) {
+            targetInRange = true;
+        } else if (w.getSurroundingTiles().contains(targetLoc)) {
+            targetInRange = true;
         }
-        neighbours.sort(Comparator.comparingInt(n -> HelperMethods.getDistance(n, preyLocation)));
-        w.move(this, neighbours.get(0));
-        actionCost(2);
+
+        if (target instanceof Edible) {
+            Edible edible = (Edible) target;
+            if (targetInRange) {
+                eat(w, edible);
+            } else {
+                moveTo(w, targetLoc);
+                actionCost(2);
+            }
+            return;
+        }
+        Animal prey = (Animal) target;
+        if (targetInRange) {
+            attack(w, prey);
+        } else {
+            int currSpeed = calcMaxSpeed();
+            List<Location> neighbours = new ArrayList<>(HelperMethods.getEmptySurroundingTiles(w, currSpeed));
+            neighbours.sort(Comparator.comparingInt(n -> HelperMethods.getDistance(n, targetLoc)));
+            w.move(this, neighbours.get(0));
+            actionCost(2);
+        }
+
+
     }
 
-    private Edible findClosestEdible(World w) {
-        Set<Location> edibleLocations = findEdibleLocations(w);
-        Location closestEdibleLocation = HelperMethods.findNearestLocationByTypes(w, w.getCurrentLocation(), edibleLocations, diet);
-        return (closestEdibleLocation != null) ? (Edible) w.getTile(closestEdibleLocation) : null;
-    }
 
-    private Set<Location> findEdibleLocations(World w) {
-        Set<Location> edibleLocations = new HashSet<>();
+    protected Set<Object> findEdibles(World w) {
+        Set<Object> edibles = new HashSet<>();
 
         for (Location l : tilesInSight) {
             Object o = w.getTile(l);
-            if (o instanceof Edible) {
-                Edible edible = (Edible) o;
-                if (edible.getNutrition() > 0 && diet.contains(edible.getClass().getSimpleName())) {
-                    edibleLocations.add(l);
-                }
+            if (o != null && diet.contains(o.getClass().getSimpleName())) {
+                if (o instanceof Edible && ((Edible) o).isEdible() || o instanceof Animal)
+                    edibles.add(o);
             }
         }
-        return edibleLocations;
+        return edibles;
+    }
+
+    protected Object findClosestEdible(World w) {
+        return HelperMethods.findNearestOfObjects(w, findEdibles(w));
     }
 
     // Needs an override in wolf, to not detect animals in pack.
@@ -517,5 +536,5 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
 //            }
 //        }
 //        moveTo(w, targetLocation);
-    }
+//    }
 }

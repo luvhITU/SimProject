@@ -3,11 +3,11 @@ import itumulator.executable.DynamicDisplayInformationProvider;
 
 import java.awt.*;
 
-public class Carcass extends Edible implements DynamicDisplayInformationProvider, Meat {
+public class Carcass extends Edible implements DynamicDisplayInformationProvider {
     private final String carcassType;
 
-    public Carcass(AnimalOLD animal) {
-        super(animal.getMaxHealth());
+    public Carcass(Animal animal) {
+        super(animal.maxHealth);
         this.carcassType = animal.getType();
     }
 

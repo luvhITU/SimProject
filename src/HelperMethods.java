@@ -115,7 +115,7 @@ public abstract class HelperMethods {
             } else if (type.equals("burrow")) {
                 w.setTile(l, new RabbitBurrow());
             } else if (type.equals("berry")) {
-                w.setTile(l, new Berry());
+                w.setTile(l, new BerryBush());
             } else if (type.equals("wolf")) {
                 //TODO: Spawn Wolf-Object
             } else if (type.equals("bear")) {
@@ -172,19 +172,76 @@ public abstract class HelperMethods {
         return availableHomes;
     }
 
-    public static Location getClosestEmptyTile(World w, Location loc, int radius) {
+    public static Location getClosestEmptyTile(World w, int radius) {
+        return getClosestEmptyTile(w, w.getCurrentLocation(), radius);
+    }
+
+    public static Location getClosestEmptyTile(World w, Location l, int radius) {
         Set<Location> oldTargetTiles = new HashSet<>();
         for (int r = 1; r <= radius; r++) {
-            Set<Location> targetTiles = w.getSurroundingTiles(loc, r);
+            Set<Location> targetTiles = w.getSurroundingTiles(l, r);
             targetTiles.remove(oldTargetTiles);
-            for (Location l : targetTiles) {
-                if (w.isTileEmpty(l)) {
-                    return l;
+            for (Location t : targetTiles) {
+                if (w.isTileEmpty(t)) {
+                    return t;
                 }
             }
             oldTargetTiles = new HashSet<>(targetTiles);
         }
         throw new IllegalStateException("No empty tiles within set radius");
+    }
+
+    public static int getDistance(Location l1, Location l2) {
+        return Math.abs(l1.getX() - l2.getX()) + Math.abs((l1.getY() - l2.getY()));
+    }
+
+    public static Set<Location> getEmptySurroundingTiles(World w, int radius) {
+        return getEmptySurroundingTiles(w, w.getCurrentLocation(), radius);
+    }
+
+    public static Set<Location> getEmptySurroundingTiles(World w, Location location, int radius) {
+        Set<Location> surroundingTiles = w.getSurroundingTiles(location, radius);
+        Iterator<Location> it = surroundingTiles.iterator();
+        while (it.hasNext()) {
+            Location tile = it.next();
+            if (!w.isTileEmpty(tile))
+                it.remove();
+        }
+        return surroundingTiles;
+    }
+
+    public static Location findNearestLocationByType(World w, Location l, Set<Location> tilesInSight, String type) {
+        return findNearestLocationByTypes(w, l, tilesInSight, new HashSet<>(Set.of(type)));
+    }
+
+    public static Location findNearestLocationByTypes(World w, Location l, Set<Location> tilesInSight, Set<String> types) {
+        int minDistance = Integer.MAX_VALUE;
+        Location minDistanceLocation = null;
+        for (Location tile : tilesInSight) {
+            Object tileObject = w.getTile(tile);
+            if (tileObject == null) { continue; }
+            boolean isOfType = types.contains(tileObject.getClass().getSimpleName());
+            int distance = getDistance(l, tile);
+            if (isOfType && distance < minDistance) {
+                minDistance = distance;
+                minDistanceLocation = tile;
+            }
+        }
+        return minDistanceLocation;
+    }
+
+    public static Object findNearestOfObjects(World w, Set<?> objects) {
+        int minDistance = Integer.MAX_VALUE;
+        Object minDistanceObject = null;
+        for (Object o : objects) {
+            Location currL = w.getCurrentLocation();
+            int distance = getDistance(currL, w.getEntities().get(o));
+            if (distance < minDistance) {
+                minDistance = distance;
+                minDistanceObject = o;
+            }
+        }
+        return minDistanceObject;
     }
 }
 

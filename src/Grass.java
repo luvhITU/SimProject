@@ -31,11 +31,11 @@ public class Grass extends Edible implements Actor, NonBlocking, DynamicDisplayI
         return new DisplayInformation(Color.magenta, "grass");
     }
 
-    @Override
+
     public boolean getIsDead(World w) {{
             expirationCheck(w);
+            return w.isOnTile(this);
         }
-        return super.getIsDead(w);
     }
 
     public void expirationCheck(World w) {

@@ -9,15 +9,12 @@ public class Bear extends Animal implements Actor {
     private int territoryRadius = 2;
 
     public Bear(Location territoryCenter) {
-        super(Config.Bear.DIET, Config.Bear.NUTRITION, Config.Bear.DAMAGE, Config.Bear.ABSORPTION_PERCENTAGE);
+        super(Config.Bear.DIET, Config.Bear.NUTRITION, Config.Bear.DAMAGE, Config.Bear.HEALTH, Config.Bear.SPEED);
         this.territoryCenter = territoryCenter;
     }
 
     @Override
     public void act(World w) {
-        if (getIsDead(w)) {
-            return;
-        }
         if (w.isNight()) {
             sleep(w);
         } else if (w.isDay() && !getIsAwake()) {
@@ -26,12 +23,8 @@ public class Bear extends Animal implements Actor {
         super.act(w);
         if (getIsAwake()) {
             doMovementPackage(w);
-            if (!getHasMatedToday() && w.getCurrentTime() > 0) {
-                tryToMate(w);
-            }
-            tryToEat(w);
+            hunt(w);
         }
-
     }
 
     private void doMovementPackage(World w) {
@@ -50,18 +43,18 @@ public class Bear extends Animal implements Actor {
 
         Location newLocation = validLocations.toArray(new Location[0])[HelperMethods.getRandom().nextInt(validLocations.size())];
         w.move(this, newLocation);
-        actionCost();
+        actionCost(2);
     }
 
-    public void tryToEat(World w) {
-        Location l = w.getCurrentLocation();
-        if (!w.containsNonBlocking(l)) {
-            return;
-        }
-        Object nonBlocking = w.getNonBlocking(l);
-        if (getDiet().contains(nonBlocking.getClass().getSimpleName())) {
-            Edible edible = (Edible) nonBlocking;
-            eat(w, edible);
-        }
-    }
+//    public void tryToEat(World w) {
+//        Location l = w.getCurrentLocation();
+//        if (!w.containsNonBlocking(l)) {
+//            return;
+//        }
+//        Object nonBlocking = w.getNonBlocking(l);
+//        if (diet.contains(nonBlocking.getClass().getSimpleName())) {
+//            Edible edible = (Edible) nonBlocking;
+//            eat(w, edible);
+//        }
+//    }
 }
