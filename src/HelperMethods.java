@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-// asda
 public abstract class HelperMethods {
     private static final Random r = new Random();
     private static List<Location> occupied = new ArrayList<>();
@@ -17,6 +16,7 @@ public abstract class HelperMethods {
 
     /**
      * Parses .txt-file and returns WorldSize as Integer.
+     *
      * @param input FilePath as String to be parsed.
      * @return WorldSize from .txt-file.
      */
@@ -40,9 +40,10 @@ public abstract class HelperMethods {
 
     /**
      * Parses .txt-file and reads Objects to be spawned.
+     *
      * @param input FilePath as String to be parsed.
-     * @param w World
-     * @param p Program
+     * @param w     World
+     * @param p     Program
      */
     public static void readObjects(String input, World w, Program p) {
         String filePath = input;
@@ -102,13 +103,14 @@ public abstract class HelperMethods {
 
     /**
      * Spawns a certain amount of Object(s).
-     * @param w World
-     * @param p Program
+     *
+     * @param w          World
+     * @param p          Program
      * @param isInfected Boolean. Returns True if Animal is infected, False if not.
-     * @param type Type of Object to be spawned.
-     * @param amount Amount of Object(s) to be spawned.
-     * @param x x-Coordinate of Bear-Territory.
-     * @param y y-Coordinate of Bear-Territory.
+     * @param type       Type of Object to be spawned.
+     * @param amount     Amount of Object(s) to be spawned.
+     * @param x          x-Coordinate of Bear-Territory.
+     * @param y          y-Coordinate of Bear-Territory.
      */
     public static void spawnObject(World w, Program p, boolean isInfected, String type, int amount, int x, int y) {
         spawnObjects(w, p, isInfected, type, amount, amount, x, y);
@@ -116,14 +118,15 @@ public abstract class HelperMethods {
 
     /**
      * Spawns a certain amount of Object(s) between a Range.
-     * @param w World
-     * @param p Program
+     *
+     * @param w          World
+     * @param p          Program
      * @param isInfected Boolean. Returns True if Animal is infected, False if not.
-     * @param type Type of Object to be spawned.
+     * @param type       Type of Object to be spawned.
      * @param startRange Minimum amount of Objects to be spawned.
-     * @param endRange  Maximum amount of Objects to be spawned.
-     * @param x x-Coordinate of Bear-Territory.
-     * @param y y-Coordinate of Bear-Territory.
+     * @param endRange   Maximum amount of Objects to be spawned.
+     * @param x          x-Coordinate of Bear-Territory.
+     * @param y          y-Coordinate of Bear-Territory.
      */
     public static void spawnObject(World w, Program p, boolean isInfected, String type, int startRange, int endRange, int x, int y) {
         spawnObjects(w, p, isInfected, type, startRange, endRange, x, y);
@@ -131,14 +134,15 @@ public abstract class HelperMethods {
 
     /**
      * Spawns Object(s) in the World.
-     * @param w World
-     * @param p Program
+     *
+     * @param w          World
+     * @param p          Program
      * @param isInfected Boolean. Returns True if Animal is infected, False if not.
-     * @param type Type of Object to be spawned.
+     * @param type       Type of Object to be spawned.
      * @param startRange Minimum amount of Objects to be spawned.
-     * @param endRange  Maximum amount of Objects to be spawned.
-     * @param x x-Coordinate of Bear-Territory.
-     * @param y y-Coordinate of Bear-Territory.
+     * @param endRange   Maximum amount of Objects to be spawned.
+     * @param x          x-Coordinate of Bear-Territory.
+     * @param y          y-Coordinate of Bear-Territory.
      */
     private static void spawnObjects(World w, Program p, boolean isInfected, String type, int startRange, int endRange, int x, int y) {
         int rValue = r.nextInt((endRange + 1) - startRange) + startRange;
@@ -153,33 +157,33 @@ public abstract class HelperMethods {
             //TODO: Add logic to infect spawned Animal-Objects. Maybe as parameter in Animal constructor?
             if (type.equals("grass")) {
                 w.setTile(l, new Grass());
+            } else if (type.equals("bear")) {
+                w.setTile(l, new Bear());
             } else if (type.equals("rabbit")) {
                 w.setTile(l, new Rabbit());
             } else if (type.equals("burrow")) {
                 w.setTile(l, new RabbitBurrow());
             } else if (type.equals("berry")) {
-                w.setTile(l, new Berry());
+                w.setTile(l, new BerryBush());
             } else if (type.equals("wolf")) {
                 w.setTile(l, new Wolf());
-            } else if (type.equals("bear")) {
-                //TODO: Spawn Bear-Object
             } else if (type.equals("carcass")) {
                 //TODO: Spawn Carcass-Object
             }
         }
-        if(type.equals("wolf")){
-            Pack thePack = null;
-            for(Object o :w.getEntities().keySet()){
-                if(o instanceof Wolf){
-                    if(thePack != null){
-                        thePack.addToPack((Wolf) o);
-                    }
-                    else{
-                        thePack = new Pack(w,(Wolf) o);
-                    }
-                }
-            }
-        }
+//        if(type.equals("wolf")){
+//            Pack thePack = null;
+//            for(Object o :w.getEntities().keySet()){
+//                if(o instanceof Wolf){
+//                    if(thePack != null){
+//                        thePack.addToPack((Wolf) o);
+//                    }
+//                    else{
+//                        thePack = new Pack(w,(Wolf) o);
+//                    }
+//                }
+//            }
+//        }
 
         List<Home> rabbitBurrows = HelperMethods.availableHomes(w, "RabbitBurrow");
         Set<Object> entitiesKeys = w.getEntities().keySet();
@@ -202,7 +206,6 @@ public abstract class HelperMethods {
     }
 
     /**
-     *
      * @param w World
      * @param r Random Value
      * @return Random Empty Location in the World.
@@ -234,19 +237,65 @@ public abstract class HelperMethods {
         return availableHomes;
     }
 
-    public static Location getClosestEmptyTile(World w, Location loc, int radius) {
+    public static Location getClosestEmptyTile(World w, Location l, int radius) {
         Set<Location> oldTargetTiles = new HashSet<>();
         for (int r = 1; r <= radius; r++) {
-            Set<Location> targetTiles = w.getSurroundingTiles(loc, r);
+            Set<Location> targetTiles = w.getSurroundingTiles(l, r);
             targetTiles.remove(oldTargetTiles);
-            for (Location l : targetTiles) {
-                if (w.isTileEmpty(l)) {
-                    return l;
+            for (Location t : targetTiles) {
+                if (w.isTileEmpty(t)) {
+                    return t;
                 }
             }
             oldTargetTiles = new HashSet<>(targetTiles);
         }
         throw new IllegalStateException("No empty tiles within set radius");
+    }
+
+    public static int getDistance(Location l1, Location l2) {
+        return Math.abs(l1.getX() - l2.getX()) + Math.abs((l1.getY() - l2.getY()));
+    }
+
+    public static Set<Location> getEmptySurroundingTiles(World w, Location location, int radius) {
+        Set<Location> surroundingTiles = w.getSurroundingTiles(location, radius);
+        surroundingTiles.removeIf(tile -> !w.isTileEmpty(tile));
+        return surroundingTiles;
+    }
+
+    public static Location findNearestLocationByType(World w, Location l, Set<Location> tilesInSight, String type) {
+        return findNearestLocationByTypes(w, l, tilesInSight, new HashSet<>(Set.of(type)));
+    }
+
+    public static Location findNearestLocationByTypes(World w, Location l, Set<Location> tilesInSight, Set<String> types) {
+        int minDistance = Integer.MAX_VALUE;
+        Location minDistanceLocation = null;
+        for (Location tile : tilesInSight) {
+            Object tileObject = w.getTile(tile);
+            if (tileObject == null) {
+                continue;
+            }
+            boolean isOfType = types.contains(tileObject.getClass().getSimpleName());
+            int distance = getDistance(l, tile);
+            if (isOfType && distance < minDistance) {
+                minDistance = distance;
+                minDistanceLocation = tile;
+            }
+        }
+        return minDistanceLocation;
+    }
+
+    public static Object findNearestOfObjects(World w, Location l, Set<?> objects) {
+        int minDistance = Integer.MAX_VALUE;
+        Object minDistanceObject = null;
+        for (Object o : objects) {
+            Location oLoc = (o instanceof Location) ? (Location) o : w.getLocation(o);
+            int distance = getDistance(l, oLoc);
+            if (distance < minDistance) {
+                minDistance = distance;
+                minDistanceObject = o;
+            }
+        }
+        return minDistanceObject;
     }
 }
 

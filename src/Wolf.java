@@ -1,84 +1,139 @@
 import itumulator.executable.DisplayInformation;
-import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.simulator.Actor;
 import itumulator.world.Location;
 import itumulator.world.World;
-
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 public class Wolf extends Animal implements Actor {
-    boolean hasPack;
-    Pack thePack;
-    public Wolf(){
-        super(Config.Wolf.DIET, Config.Wolf.NUTRITION, Config.Wolf.DAMAGE, Config.Wolf.ABSORPTION_PERCENTAGE);
-        this.hasPack = false;
+    private Pack pack;
+    int stepAgeWhenPackActed;
+
+    public Wolf() {
+        super(Config.Wolf.DIET, Config.Wolf.DAMAGE, Config.Wolf.HEALTH, Config.Wolf.SPEED, Config.Wolf.MATING_COOLDOWN_DAYS);
+        stepAgeWhenPackActed = 0;
     }
 
     @Override
     public DisplayInformation getInformation() {
         return new DisplayInformation(Color.blue, "wolf");
     }
-    @Override
-    public void act(World w){
-        super.act(w);
-        if(!hasPack){
-            //Checks if there is room in current packs
-            for(Object o :w.getEntities().keySet()){
-                if(o instanceof Pack){
-                    if(((Pack) o).stillHasRoom()){
-                        ((Pack) o).addToPack(this);
-                        thePack = (Pack) o;
-                    }
-                }
-            }
-            //Checks if it hasn't been added to a pack and then creates a new one
-            if(!hasPack){
-                thePack = new Pack(w,this);
-            }
-        }
-        try {
-            if(w.isDay() && w.isOnTile(this)){
-                tryAttack(w);
-            }
-        } catch (IllegalArgumentException ignore) {} //Dies sometimes before doing actions
-        //TODO: copied from rabbit should maybe be moved to animal
-    }
-    public void tryAttack(World w){ //TODO: need to be put in animal and change the "thePack" for it to work with bears
-        for(Location l : w.getSurroundingTiles()){
-            if(w.getTile(l) != null) {
-                for (Object diet : getDiet().toArray()) {
-                    try {
-                        if (diet.equals(w.getTile(l).getClass().getSimpleName())) {
-                            //TODO: needs to be changed from rabbit to just animal for it work with bears
-                            Rabbit rabbit = (Rabbit) w.getTile(l);
-                            if((rabbit.getEnergy() - rabbit.calcDamageTaken(this)) <= 0){
-                                w.delete(rabbit);
-                                thePack.addFood(rabbit.getNutrition());
-                            }
-                            else{
-                                rabbit.setEnergy(rabbit.getEnergy() - rabbit.calcDamageTaken(this));
-                            }
 
-                        } else if (w.getTile(l) instanceof Animal) {
-                            Animal animal = (Animal) w.getTile(l);
-                            //Checks if wolf is a part of the same pack
-                            if(!thePack.getPackList().contains(animal)){
-                               animal.setEnergy(animal.getEnergy() - animal.calcDamageTaken(this));
-                            }
-                        }
-                    }
-                    catch (IllegalArgumentException ignore){ }
+    @Override
+    public void act(World w) {
+        if (pack == null) {
+            findOrStartPack(w);
+        }
+        if (isTargetUnavailable(w)) {
+            pack.setTempAlpha(this);
+        }
+
+        super.act(w);
+        if (hasPackActed()) { return; }
+        if (isAwake) {
+            Location closestHostileWolfLoc = HelperMethods.findNearestLocationByType(w, w.getLocation(this), tilesInSight, "Wolf");
+            if (closestHostileWolfLoc != null) {
+                flee(w, closestHostileWolfLoc);
+            } else if (w.isNight()) {
+                goHome(w);
+            } else {
+                pack.setTarget(findClosestEdible(w));
+                if (pack.getTarget() == null) {
+                    randomMove(w);
+                } else {
+                    hunt(w, pack.getTarget());
                 }
             }
         }
+        if (isDead()) { delete(w); }
     }
-    public void setPack(boolean Boo){
-        hasPack = Boo;
+
+    @Override
+    public void delete(World w) {
+        if (pack != null) {
+            pack.remove(this);
+        }
+        super.delete(w);
     }
-    public void storePack(Pack newPack){
-        this.thePack = newPack;
+
+    @Override
+    public void digBurrow(World w, Home burrow) {
+        super.digBurrow(w, burrow);
+        pack.setHome((WolfBurrow) burrow);
+    }
+
+    @Override
+    public Set<Location> calcTilesInSight(World w) {
+        Set<Location> tilesInSight;
+        Wolf alpha = pack.getTempAlpha();
+        if (!alpha.isDead() && w.isOnTile(alpha)) {
+            tilesInSight = w.getSurroundingTiles(w.getLocation(alpha), VISION_RANGE);
+        } else {
+            tilesInSight = super.calcTilesInSight(w);
+        }
+        for (Wolf wolf : pack.getPackList()) {
+            if (w.isOnTile(wolf)) {
+                tilesInSight.remove(w.getLocation(wolf));
+            }
+        }
+        return tilesInSight;
+    }
+
+    private boolean isTargetUnavailable(World w) {
+        Object target = pack.getTarget();
+        if (target == null) { return true; }
+        if (target instanceof Edible) {
+            return ((Edible) target).isEdible();
+        }
+        return !(w.contains(target) && w.isOnTile(target));
+    }
+
+    public void findOrStartPack(World w) {
+        //Checks if there is room in current packs
+        for (Object o : w.getEntities().keySet()) {
+            if (o instanceof Pack) {
+                if (((Pack) o).stillHasRoom()) {
+                    ((Pack) o).addToPack(this);
+                    pack = (Pack) o;
+                    home = pack.getHome();
+                }
+            }
+        }
+        //Checks if it hasn't been added to a pack and then creates a new one
+        if (pack == null) {
+            pack = new Pack(w, this);
+            digBurrow(w, new WolfBurrow());
+        }
+    }
+
+    public void storePack(Pack newPack) {
+        this.pack = newPack;
+    }
+
+    @Override
+    public int calcMissingSatiation() {
+        return (int) Math.round((MAX_SATIATION - satiation) / (1.0 * pack.getPackList().size()));
+    }
+
+    @Override
+    protected void hunt(World w, Object target) {
+        for (Wolf wolf : pack.getPackList()) {
+            if (isTargetUnavailable(w)) {
+                return;
+            }
+            if (!wolf.isDead() && wolf.isAwake && !wolf.hasPackActed()) {
+                wolf.joinHunt(w, target);
+                wolf.stepAgeWhenPackActed = wolf.stepAge;
+            }
+
+        }
+    }
+
+    private void joinHunt(World w, Object target) {
+        super.hunt(w, target);
+    }
+
+    private boolean hasPackActed() {
+        return stepAgeWhenPackActed == stepAge;
     }
 }

@@ -31,11 +31,11 @@ public class Grass extends Edible implements Actor, NonBlocking, DynamicDisplayI
         return new DisplayInformation(Color.magenta, "grass");
     }
 
-    @Override
+
     public boolean getIsDead(World w) {{
             expirationCheck(w);
+            return w.isOnTile(this);
         }
-        return super.getIsDead(w);
     }
 
     public void expirationCheck(World w) {
@@ -50,7 +50,7 @@ public class Grass extends Edible implements Actor, NonBlocking, DynamicDisplayI
         double divisor = 5.0;
         double expirationProbability = stepAge / divisor;
         if (HelperMethods.getRandom().nextDouble() < expirationProbability) {
-            Set<Location> locations = w.getEmptySurroundingTiles();
+            Set<Location> locations = w.getEmptySurroundingTiles(w.getLocation(this));
             Location l = (Location) locations.toArray()[HelperMethods.getRandom().nextInt(locations.size())];
 
             if (!w.containsNonBlocking(l)) {

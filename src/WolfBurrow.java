@@ -4,7 +4,7 @@ import itumulator.world.NonBlocking;
 
 import java.awt.*;
 
-public class WolfBurrow extends Home implements NonBlocking, DynamicDisplayInformationProvider {
+public class WolfBurrow extends Home implements NonBlocking, DynamicDisplayInformationProvider, Hole {
     public WolfBurrow() {
         super(5);
     }
