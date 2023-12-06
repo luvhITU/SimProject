@@ -64,12 +64,12 @@ public abstract class HelperMethods {
                 }
 
                 // if String contains "cordyceps" then the Animal-Object should be infected
-                if (str.contains("cordyceps")) {
+                if (str.contains("cordyceps") || str.contains("fungi")) {
                     isInfected = true;
                 }
 
-                // Checks if input files contains "cordyceps", then splits into tokens-Array
-                String[] tokens = str.replaceFirst("cordyceps ", "").split("[\\s-,()]+");
+                // Checks if input files contains "cordyceps" or "fungi", then splits into tokens-Array
+                String[] tokens = str.replaceAll("cordyceps\\s*|fungi\\s*", "").split("[\\s-,()]+");
 
                 type = tokens[0];
                 System.out.println("Type: " + type);
@@ -168,7 +168,7 @@ public abstract class HelperMethods {
             } else if (type.equals("bear")) {
                 //TODO: Spawn Bear-Object
             } else if (type.equals("carcass")) {
-                //TODO: Spawn Carcass-Object
+                w.setTile(l, new Carcass(isInfected));
             }
         }
 //        if(type.equals("wolf")){
