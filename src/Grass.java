@@ -50,7 +50,7 @@ public class Grass extends Edible implements Actor, NonBlocking, DynamicDisplayI
         double divisor = 5.0;
         double expirationProbability = stepAge / divisor;
         if (HelperMethods.getRandom().nextDouble() < expirationProbability) {
-            Set<Location> locations = w.getEmptySurroundingTiles();
+            Set<Location> locations = w.getEmptySurroundingTiles(w.getLocation(this));
             Location l = (Location) locations.toArray()[HelperMethods.getRandom().nextInt(locations.size())];
 
             if (!w.containsNonBlocking(l)) {

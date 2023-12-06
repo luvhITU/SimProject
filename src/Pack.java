@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.List;
 
 public class Pack implements DynamicDisplayInformationProvider {
-    private List<Wolf> packList;
+    private Set<Wolf> packList;
     private Wolf tempAlpha;
     private WolfBurrow home;
     private final int maxSize;
@@ -15,7 +15,7 @@ public class Pack implements DynamicDisplayInformationProvider {
     private Object target;
 
     public Pack(World w, Wolf wolf) {
-        this.packList = new ArrayList<>();
+        packList = new HashSet<>();
         tempAlpha = wolf;
         home = null;
         packList.add(wolf);
@@ -51,10 +51,10 @@ public class Pack implements DynamicDisplayInformationProvider {
 
     @Override
     public DisplayInformation getInformation() {
-        return new DisplayInformation(Color.blue, "INVISIBILITY"); //Needs display information even if not on the map
+        return new DisplayInformation(Color.blue, "wolf"); //Needs display information even if not on the map
     }
 
-    public List<Wolf> getPackList() {
+    public Set<Wolf> getPackList() {
         return packList;
     }
 

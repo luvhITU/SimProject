@@ -32,6 +32,7 @@ public class Rabbit extends Animal implements Actor {
 
             }
         }
+        if (isDead()) { delete(w); }
     }
 
     private void findOrDigBurrow(World w) {

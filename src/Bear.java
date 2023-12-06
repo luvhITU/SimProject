@@ -4,18 +4,20 @@ import itumulator.world.World;
 import java.util.Set;
 
 public class Bear extends Animal implements Actor {
+    private static final int TERRITORY_RADIUS = 2;
+    private Location territoryCenter;
 
-    private static final int TERRITORY_RADIUS = 3;
-    private final Location territoryCenter;
 
-
-    public Bear(Location territoryCenter) {
-        super(Config.Bear.DIET, Config.Bear.NUTRITION, Config.Bear.DAMAGE, Config.Bear.HEALTH, Config.Bear.SPEED);
-        this.territoryCenter = territoryCenter;
+    public Bear() {
+        super(Config.Bear.DIET, Config.Bear.DAMAGE, Config.Bear.HEALTH, Config.Bear.SPEED, Config.Bear.MATING_COOLDOWN_DAYS);
+        territoryCenter = null;
     }
 
     @Override
     public void act(World w) {
+        if (territoryCenter == null) {
+            territoryCenter = w.getLocation(this);
+        }
         super.act(w);
         if (w.isNight()) {
             goHome(w);
@@ -29,7 +31,9 @@ public class Bear extends Animal implements Actor {
             } else {
                 hunt(w, closestEdible);
             }
-
+        }
+        if (isDead()) {
+            delete(w);
         }
     }
 
@@ -41,7 +45,9 @@ public class Bear extends Animal implements Actor {
     @Override
     public Set<Location> calcTilesInSight(World w) {
         if (satiation >= 50) {
-            return w.getSurroundingTiles(territoryCenter, TERRITORY_RADIUS);
+            Set<Location> tilesInSight = w.getSurroundingTiles(territoryCenter, TERRITORY_RADIUS);
+            tilesInSight.remove(w.getLocation(this));
+            return tilesInSight;
         }
         return super.calcTilesInSight(w);
     }
@@ -59,8 +65,7 @@ public class Bear extends Animal implements Actor {
         }
 
         Location newLocation = validLocations.toArray(new Location[0])[HelperMethods.getRandom().nextInt(validLocations.size())];
-        w.move(this, newLocation);
-        actionCost(2);
+        moveTo(w, newLocation);
     }
 
     private void wander(World w) {
@@ -70,16 +75,4 @@ public class Bear extends Animal implements Actor {
             randomMove(w);
         }
     }
-
-//    public void tryToEat(World w) {
-//        Location l = w.getCurrentLocation();
-//        if (!w.containsNonBlocking(l)) {
-//            return;
-//        }
-//        Object nonBlocking = w.getNonBlocking(l);
-//        if (diet.contains(nonBlocking.getClass().getSimpleName())) {
-//            Edible edible = (Edible) nonBlocking;
-//            eat(w, edible);
-//        }
-//    }
 }

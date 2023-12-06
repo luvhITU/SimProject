@@ -4,7 +4,7 @@ import itumulator.world.World;
 public class Main {
 
     public static void main(String[] args) {
-        String input = "data/tf3-2a.txt";
+        String input = "data/t3-1b.txt";
 
         int size = HelperMethods.readWorldSize(input);
         int delay = 1000;

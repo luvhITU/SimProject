@@ -3,7 +3,6 @@ import itumulator.simulator.Actor;
 import itumulator.world.Location;
 import itumulator.world.World;
 import java.awt.*;
-import java.util.HashSet;
 import java.util.Set;
 
 public class Wolf extends Animal implements Actor {
@@ -31,7 +30,6 @@ public class Wolf extends Animal implements Actor {
 
         super.act(w);
         if (hasPackActed()) { return; }
-//        System.out.println("Pack alpha is: " + pack.getTempAlpha() + "\n. Alpha is awake: " + pack.getTempAlpha().isAwake);
         if (isAwake) {
             Location closestHostileWolfLoc = HelperMethods.findNearestLocationByType(w, w.getLocation(this), tilesInSight, "Wolf");
             if (closestHostileWolfLoc != null) {
@@ -43,17 +41,18 @@ public class Wolf extends Animal implements Actor {
                 if (pack.getTarget() == null) {
                     randomMove(w);
                 } else {
-                    System.out.println(pack.getTarget());
-                    System.out.println("Hunt triggered");
                     hunt(w, pack.getTarget());
                 }
             }
         }
+        if (isDead()) { delete(w); }
     }
 
     @Override
     public void delete(World w) {
-        pack.remove(this);
+        if (pack != null) {
+            pack.remove(this);
+        }
         super.delete(w);
     }
 
@@ -67,7 +66,7 @@ public class Wolf extends Animal implements Actor {
     public Set<Location> calcTilesInSight(World w) {
         Set<Location> tilesInSight;
         Wolf alpha = pack.getTempAlpha();
-        if (w.isOnTile(alpha)) {
+        if (!alpha.isDead() && w.isOnTile(alpha)) {
             tilesInSight = w.getSurroundingTiles(w.getLocation(alpha), VISION_RANGE);
         } else {
             tilesInSight = super.calcTilesInSight(w);
@@ -82,17 +81,14 @@ public class Wolf extends Animal implements Actor {
 
     private boolean isTargetUnavailable(World w) {
         Object target = pack.getTarget();
-        System.out.println("target is: " + target);
         if (target == null) { return true; }
         if (target instanceof Edible) {
-            System.out.println("Target is edible");
             return ((Edible) target).isEdible();
         }
         return !(w.contains(target) && w.isOnTile(target));
     }
 
     public void findOrStartPack(World w) {
-        System.out.println("Seeking Pack");
         //Checks if there is room in current packs
         for (Object o : w.getEntities().keySet()) {
             if (o instanceof Pack) {
@@ -105,7 +101,6 @@ public class Wolf extends Animal implements Actor {
         }
         //Checks if it hasn't been added to a pack and then creates a new one
         if (pack == null) {
-            System.out.println("Creating Pack");
             pack = new Pack(w, this);
             digBurrow(w, new WolfBurrow());
         }
@@ -124,10 +119,9 @@ public class Wolf extends Animal implements Actor {
     protected void hunt(World w, Object target) {
         for (Wolf wolf : pack.getPackList()) {
             if (isTargetUnavailable(w)) {
-                System.out.println("target unavailable");
                 return;
             }
-            if (wolf.isAwake) {
+            if (!wolf.isDead() && wolf.isAwake && !wolf.hasPackActed()) {
                 wolf.joinHunt(w, target);
                 wolf.stepAgeWhenPackActed = wolf.stepAge;
             }
@@ -136,7 +130,6 @@ public class Wolf extends Animal implements Actor {
     }
 
     private void joinHunt(World w, Object target) {
-        System.out.println("HEEEEEEY JOINHUNT");
         super.hunt(w, target);
     }
 

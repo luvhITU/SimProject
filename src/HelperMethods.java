@@ -157,6 +157,8 @@ public abstract class HelperMethods {
             //TODO: Add logic to infect spawned Animal-Objects. Maybe as parameter in Animal constructor?
             if (type.equals("grass")) {
                 w.setTile(l, new Grass());
+            } else if (type.equals("bear")) {
+                w.setTile(l, new Bear());
             } else if (type.equals("rabbit")) {
                 w.setTile(l, new Rabbit());
             } else if (type.equals("burrow")) {
@@ -165,8 +167,6 @@ public abstract class HelperMethods {
                 w.setTile(l, new BerryBush());
             } else if (type.equals("wolf")) {
                 w.setTile(l, new Wolf());
-            } else if (type.equals("bear")) {
-                //TODO: Spawn Bear-Object
             } else if (type.equals("carcass")) {
                 //TODO: Spawn Carcass-Object
             }
@@ -237,10 +237,6 @@ public abstract class HelperMethods {
         return availableHomes;
     }
 
-    public static Location getClosestEmptyTile(World w, int radius) {
-        return getClosestEmptyTile(w, w.getCurrentLocation(), radius);
-    }
-
     public static Location getClosestEmptyTile(World w, Location l, int radius) {
         Set<Location> oldTargetTiles = new HashSet<>();
         for (int r = 1; r <= radius; r++) {
@@ -258,10 +254,6 @@ public abstract class HelperMethods {
 
     public static int getDistance(Location l1, Location l2) {
         return Math.abs(l1.getX() - l2.getX()) + Math.abs((l1.getY() - l2.getY()));
-    }
-
-    public static Set<Location> getEmptySurroundingTiles(World w, int radius) {
-        return getEmptySurroundingTiles(w, w.getCurrentLocation(), radius);
     }
 
     public static Set<Location> getEmptySurroundingTiles(World w, Location location, int radius) {
@@ -290,10 +282,6 @@ public abstract class HelperMethods {
             }
         }
         return minDistanceLocation;
-    }
-
-    public static Object findNearestOfObjects(World w, Set<?> objects) {
-        return findNearestOfObjects(w, w.getCurrentLocation(), objects);
     }
 
     public static Object findNearestOfObjects(World w, Location l, Set<?> objects) {

@@ -68,7 +68,8 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
             if (w.getCurrentTime() == 0) {
                 wakeUp(w);
             }
-        } else {
+        }
+        if (isAwake) {
             tilesInSight = calcTilesInSight(w);
         }
 
@@ -112,6 +113,8 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     }
 
     public void attack(World w, Animal animal) {
+        if (this == animal) {
+        }
         if (!animal.isAwake) {
             animal.wakeUp(w);
         }
@@ -126,7 +129,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     }
 
     public Set<Location> calcTilesInSight(World w) {
-        return w.getSurroundingTiles(VISION_RANGE);
+        return w.getSurroundingTiles(w.getLocation(this), VISION_RANGE);
     }
 
     public void sleep(World w) {
@@ -186,7 +189,6 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     }
 
     public void goHome(World w) {
-//        System.out.println(this + " at location: " + w.getLocation(this) + " is going to sleep at: " + home);
         if (w.getLocation(this).equals(getHomeLocation(w))) {
             sleep(w);
         } else {
@@ -204,7 +206,6 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     }
 
     public void emerge(World w) {
-//        System.out.println("Emerging");
         int radius = 1;
         Location l = HelperMethods.getClosestEmptyTile(w, w.getLocation(home), radius);
         w.setCurrentLocation(l);
@@ -216,17 +217,15 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     }
 
     public void moveTo(World w, Location targetLoc, int speed) {
-//        System.out.println(this + " Location: " + w.getLocation(this));
         Set<Location> neighbours = HelperMethods.getEmptySurroundingTiles(w, w.getLocation(this), speed);
-//        System.out.println("target: " + targetLoc);
         Location bestMove = (Location) HelperMethods.findNearestOfObjects(w, targetLoc, neighbours);
-        int currDistToTargetLoc = HelperMethods.getDistance(w.getLocation(this), targetLoc);
-        int newDistToTargetLoc = HelperMethods.getDistance(bestMove, targetLoc);
-        if (newDistToTargetLoc <= currDistToTargetLoc) {
-            System.out.println("is closer!");
+//        int currDistToTargetLoc = HelperMethods.getDistance(w.getLocation(this), targetLoc);
+//        int newDistToTargetLoc = HelperMethods.getDistance(bestMove, targetLoc);
+//        if (newDistToTargetLoc < currDistToTargetLoc) {
+
             w.move(this, bestMove);
             actionCost(speed);
-        }
+//        }
     }
 
     public void tryFindHome(World w, String type) {
@@ -238,13 +237,13 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
 
     public void digBurrow(World w, Home burrow) {
         Location target;
-        Location currL = w.getCurrentLocation();
+        Location currL = w.getLocation(this);
         if (!(w.containsNonBlocking(currL) && w.getNonBlocking(currL) instanceof Home)) {
             target = currL;
         } else {
-            Set<Location> neighbours = HelperMethods.getEmptySurroundingTiles(w, 5);
+            Set<Location> neighbours = HelperMethods.getEmptySurroundingTiles(w, currL, 5);
             neighbours.removeIf(n -> w.containsNonBlocking(n) && w.getNonBlocking(n) instanceof Home);
-            target = HelperMethods.findNearestLocationByType(w, w.getCurrentLocation(), neighbours, "Location");
+            target = HelperMethods.findNearestLocationByType(w, w.getLocation(this), neighbours, "Location");
         }
 
         w.setTile(target, burrow);
@@ -273,7 +272,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
 
     protected void flee(World w, Location predatorLocation) {
         int speed = calcMaxSpeed();
-        List<Location> neighbours = new ArrayList<>(HelperMethods.getEmptySurroundingTiles(w, speed));
+        List<Location> neighbours = new ArrayList<>(HelperMethods.getEmptySurroundingTiles(w, w.getLocation(this), speed));
         if (neighbours.isEmpty()) {
             return;
         }
@@ -284,7 +283,6 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     }
 
     protected void hunt(World w, Object target) {
-//        System.out.println(this + " hunting " + target);
         Location targetLoc = w.getLocation(target);
         boolean targetInRange = isTargetInRange(w, target);
         boolean isAnimal = target instanceof Animal;
@@ -307,14 +305,13 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     private boolean isTargetInRange(World w, Object target) {
         Location targetLoc = w.getLocation(target);
         if (target instanceof NonBlocking) {
-            return w.getCurrentLocation().equals(targetLoc);
+            return w.getLocation(this).equals(targetLoc);
         }
-        return w.getSurroundingTiles().contains(targetLoc);
+        return w.getSurroundingTiles(w.getLocation(this)).contains(targetLoc);
     }
 
     protected Set<Object> findEdibles(World w) {
         Set<Object> edibles = new HashSet<>();
-        System.out.println("tile in sight: " + tilesInSight);
         for (Location l : tilesInSight) {
             Object o = w.getTile(l);
             if (o != null && diet.contains(o.getClass().getSimpleName())) {
@@ -326,13 +323,13 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     }
 
     protected Object findClosestEdible(World w) {
-        return HelperMethods.findNearestOfObjects(w, findEdibles(w));
+        return HelperMethods.findNearestOfObjects(w, w.getLocation(this), findEdibles(w));
     }
 
     // Needs an override in wolf, to not detect animals in pack.
     protected Animal findClosestPredator(World w) {
         Set<Animal> predators = findPredators(w);
-        return (Animal) HelperMethods.findNearestOfObjects(w, predators);
+        return (Animal) HelperMethods.findNearestOfObjects(w, w.getLocation(this), predators);
     }
 
     private boolean isPredatorInSight(World w) {
@@ -352,15 +349,14 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
                 predators.add(animal);
             }
         }
-        System.out.println(predators);
         return predators;
     }
 
     public void randomMove(World w) {
-        Set<Location> neighbours = w.getEmptySurroundingTiles();
+        Set<Location> neighbours = w.getEmptySurroundingTiles(w.getLocation(this));
         Location l = (Location) neighbours.toArray()[HelperMethods.getRandom().nextInt(neighbours.size())];
         w.move(this, l);
-        actionCost(2);
+        actionCost(1);
     }
 
     public void moveToMiddle(World w) {
