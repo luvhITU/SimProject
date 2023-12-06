@@ -7,10 +7,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dafda8e0-94d7-440d-b2ec-a65c8f2f90b8" name="Changes" comment="Fix stuff">
+    <list default="true" id="dafda8e0-94d7-440d-b2ec-a65c8f2f90b8" name="Changes" comment="Add rabbit ai">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Animal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Animal.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Bear.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Bear.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/HelperMethods.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/HelperMethods.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Pack.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Pack.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Rabbit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Rabbit.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Wolf.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Wolf.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -163,6 +167,7 @@
       <workItem from="1701550014615" duration="3000" />
       <workItem from="1701550049056" duration="2367000" />
       <workItem from="1701776373831" duration="2107000" />
+      <workItem from="1701865145647" duration="6750000" />
     </task>
     <task id="LOCAL-00001" summary="Changes:&#10;- Updated ITUmulator library&#10;- Merged Rabbit &amp; Master branch">
       <option name="closed" value="true" />
@@ -244,7 +249,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701818869475</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Add rabbit ai">
+      <option name="closed" value="true" />
+      <created>1701824593245</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1701824593245</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -270,7 +283,8 @@
     <MESSAGE value="Changes:&#10;- Added support for Bear Territory in HelperMethods.&#10;- Updated getRandomEmptyLocation() to use a List, preventing objects from spawning on top of each other." />
     <MESSAGE value="Add input file RabbitBurrow spawning" />
     <MESSAGE value="Fix stuff" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix stuff" />
+    <MESSAGE value="Add rabbit ai" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add rabbit ai" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -279,6 +293,15 @@
           <properties class="java.lang.IllegalArgumentException" package="java.lang" />
           <option name="timeStamp" value="1" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/HelperMethods.java</url>
+          <line>298</line>
+          <properties class="HelperMethods" method="findNearestOfObjects">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>

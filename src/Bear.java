@@ -22,13 +22,19 @@ public class Bear extends Animal implements Actor {
         } else if (w.getCurrentTime() == 0 && !isAwake) {
             wakeUp(w);
         }
-        if (getIsAwake()) {
-            hunt(w);
+        if (isAwake) {
+            Object closestEdible = findClosestEdible(w);
+            if (closestEdible == null) {
+                wander(w);
+            } else {
+                hunt(w, closestEdible);
+            }
+
         }
     }
 
     @Override
-    public Location homeLoc(World w) {
+    public Location getHomeLocation(World w) {
         return territoryCenter;
     }
 
@@ -55,6 +61,14 @@ public class Bear extends Animal implements Actor {
         Location newLocation = validLocations.toArray(new Location[0])[HelperMethods.getRandom().nextInt(validLocations.size())];
         w.move(this, newLocation);
         actionCost(2);
+    }
+
+    private void wander(World w) {
+        if (energy < 50) {
+            moveToMiddle(w);
+        } else {
+            randomMove(w);
+        }
     }
 
 //    public void tryToEat(World w) {

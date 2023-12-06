@@ -16,6 +16,7 @@ public abstract class HelperMethods {
 
     /**
      * Parses .txt-file and returns WorldSize as Integer.
+     *
      * @param input FilePath as String to be parsed.
      * @return WorldSize from .txt-file.
      */
@@ -39,9 +40,10 @@ public abstract class HelperMethods {
 
     /**
      * Parses .txt-file and reads Objects to be spawned.
+     *
      * @param input FilePath as String to be parsed.
-     * @param w World
-     * @param p Program
+     * @param w     World
+     * @param p     Program
      */
     public static void readObjects(String input, World w, Program p) {
         String filePath = input;
@@ -101,13 +103,14 @@ public abstract class HelperMethods {
 
     /**
      * Spawns a certain amount of Object(s).
-     * @param w World
-     * @param p Program
+     *
+     * @param w          World
+     * @param p          Program
      * @param isInfected Boolean. Returns True if Animal is infected, False if not.
-     * @param type Type of Object to be spawned.
-     * @param amount Amount of Object(s) to be spawned.
-     * @param x x-Coordinate of Bear-Territory.
-     * @param y y-Coordinate of Bear-Territory.
+     * @param type       Type of Object to be spawned.
+     * @param amount     Amount of Object(s) to be spawned.
+     * @param x          x-Coordinate of Bear-Territory.
+     * @param y          y-Coordinate of Bear-Territory.
      */
     public static void spawnObject(World w, Program p, boolean isInfected, String type, int amount, int x, int y) {
         spawnObjects(w, p, isInfected, type, amount, amount, x, y);
@@ -115,14 +118,15 @@ public abstract class HelperMethods {
 
     /**
      * Spawns a certain amount of Object(s) between a Range.
-     * @param w World
-     * @param p Program
+     *
+     * @param w          World
+     * @param p          Program
      * @param isInfected Boolean. Returns True if Animal is infected, False if not.
-     * @param type Type of Object to be spawned.
+     * @param type       Type of Object to be spawned.
      * @param startRange Minimum amount of Objects to be spawned.
-     * @param endRange  Maximum amount of Objects to be spawned.
-     * @param x x-Coordinate of Bear-Territory.
-     * @param y y-Coordinate of Bear-Territory.
+     * @param endRange   Maximum amount of Objects to be spawned.
+     * @param x          x-Coordinate of Bear-Territory.
+     * @param y          y-Coordinate of Bear-Territory.
      */
     public static void spawnObject(World w, Program p, boolean isInfected, String type, int startRange, int endRange, int x, int y) {
         spawnObjects(w, p, isInfected, type, startRange, endRange, x, y);
@@ -130,14 +134,15 @@ public abstract class HelperMethods {
 
     /**
      * Spawns Object(s) in the World.
-     * @param w World
-     * @param p Program
+     *
+     * @param w          World
+     * @param p          Program
      * @param isInfected Boolean. Returns True if Animal is infected, False if not.
-     * @param type Type of Object to be spawned.
+     * @param type       Type of Object to be spawned.
      * @param startRange Minimum amount of Objects to be spawned.
-     * @param endRange  Maximum amount of Objects to be spawned.
-     * @param x x-Coordinate of Bear-Territory.
-     * @param y y-Coordinate of Bear-Territory.
+     * @param endRange   Maximum amount of Objects to be spawned.
+     * @param x          x-Coordinate of Bear-Territory.
+     * @param y          y-Coordinate of Bear-Territory.
      */
     private static void spawnObjects(World w, Program p, boolean isInfected, String type, int startRange, int endRange, int x, int y) {
         int rValue = r.nextInt((endRange + 1) - startRange) + startRange;
@@ -201,7 +206,6 @@ public abstract class HelperMethods {
     }
 
     /**
-     *
      * @param w World
      * @param r Random Value
      * @return Random Empty Location in the World.
@@ -262,12 +266,7 @@ public abstract class HelperMethods {
 
     public static Set<Location> getEmptySurroundingTiles(World w, Location location, int radius) {
         Set<Location> surroundingTiles = w.getSurroundingTiles(location, radius);
-        Iterator<Location> it = surroundingTiles.iterator();
-        while (it.hasNext()) {
-            Location tile = it.next();
-            if (!w.isTileEmpty(tile))
-                it.remove();
-        }
+        surroundingTiles.removeIf(tile -> !w.isTileEmpty(tile));
         return surroundingTiles;
     }
 
@@ -280,7 +279,9 @@ public abstract class HelperMethods {
         Location minDistanceLocation = null;
         for (Location tile : tilesInSight) {
             Object tileObject = w.getTile(tile);
-            if (tileObject == null) { continue; }
+            if (tileObject == null) {
+                continue;
+            }
             boolean isOfType = types.contains(tileObject.getClass().getSimpleName());
             int distance = getDistance(l, tile);
             if (isOfType && distance < minDistance) {
@@ -299,7 +300,8 @@ public abstract class HelperMethods {
         int minDistance = Integer.MAX_VALUE;
         Object minDistanceObject = null;
         for (Object o : objects) {
-            int distance = getDistance(l, w.getEntities().get(o));
+            Location oLoc = (o instanceof Location) ? (Location) o : w.getLocation(o);
+            int distance = getDistance(l, oLoc);
             if (distance < minDistance) {
                 minDistance = distance;
                 minDistanceObject = o;

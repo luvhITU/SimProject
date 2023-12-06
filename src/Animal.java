@@ -57,7 +57,6 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     }
 
     public void act(World w) {
-        System.out.println("Time of day is: " + w.getCurrentTime());
         stepAge++;
         // If a day has passed since last age increase, age.
         if (stepAge % World.getTotalDayDuration() == 0) {
@@ -130,10 +129,6 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         return w.getSurroundingTiles(VISION_RANGE);
     }
 
-    public boolean getIsAwake() {
-        return isAwake;
-    }
-
     public void sleep(World w) {
         isAwake = false;
         if (home instanceof Hole) {
@@ -158,7 +153,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     }
 
     public void eat(World w, Edible edible) {
-        int missingSatiation = MAX_SATIATION - satiation;
+        int missingSatiation = calcMissingSatiation();
         int edibleNutrition = edible.getNutrition();
         setSatiation(satiation + calcNutritionAbsorbed(edibleNutrition));
         edible.setNutrition(edibleNutrition - missingSatiation);
@@ -167,7 +162,11 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         }
     }
 
-    public Location homeLoc(World w) {
+    public int calcMissingSatiation() {
+        return MAX_SATIATION - satiation;
+    }
+
+    public Location getHomeLocation(World w) {
         return w.getLocation(home);
     }
 
@@ -181,73 +180,53 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         setMaxEnergy(BASE_MAX_ENERGY - age * AGE_MAX_ENERGY_DECREASE);
     }
 
-    public void setHome(World w, Location l, Home home) {
-        w.setTile(l, home);
-        this.home = home;
-        home.add(this);
-    }
-
     public void setHome(World w, Home home) {
         this.home = home;
         home.add(this);
     }
 
     public void goHome(World w) {
-        System.out.println(this + " at location: " + w.getLocation(this) + " is going to sleep at: " + home);
-        if (w.getLocation(this).equals(homeLoc(w))) {
+//        System.out.println(this + " at location: " + w.getLocation(this) + " is going to sleep at: " + home);
+        if (w.getLocation(this).equals(getHomeLocation(w))) {
             sleep(w);
         } else {
-            moveTo(w, homeLoc(w));
+            moveTo(w, getHomeLocation(w));
         }
     }
 
-    public Home getHome() {
-        return home;
-    }
 
-
-    public int getHealth() {
-        return health;
-    }
-
-    public boolean getIsMature() {
+    private boolean getIsMature() {
         return age >= MATURITY_AGE;
     }
 
-    public int getEnergy() {
-        return energy;
-    }
-
-    public void setEnergy(int energy) {
+    protected void setEnergy(int energy) {
         this.energy = Math.max(0, Math.min(maxEnergy, energy));
     }
 
     public void emerge(World w) {
-        System.out.println("Emerging");
+//        System.out.println("Emerging");
         int radius = 1;
         Location l = HelperMethods.getClosestEmptyTile(w, w.getLocation(home), radius);
         w.setCurrentLocation(l);
         w.setTile(l, this);
     }
 
-    public void moveTo(World w, Location l) {
-        Location currL = w.getCurrentLocation();
-        int distanceToL = HelperMethods.getDistance(currL, l);
+    public void moveTo(World w, Location targetLoc) {
+        moveTo(w, targetLoc, 1);
+    }
 
-        Set<Location> neighbours = w.getEmptySurroundingTiles();
-
-        int minDistance = Integer.MAX_VALUE;
-        Location bestMove = null;
-        for (Location n : neighbours) {
-            int nDistance = HelperMethods.getDistance(n, l);
-            if (nDistance < minDistance) {
-                minDistance = nDistance;
-                bestMove = n;
-            }
+    public void moveTo(World w, Location targetLoc, int speed) {
+//        System.out.println(this + " Location: " + w.getLocation(this));
+        Set<Location> neighbours = HelperMethods.getEmptySurroundingTiles(w, w.getLocation(this), speed);
+//        System.out.println("target: " + targetLoc);
+        Location bestMove = (Location) HelperMethods.findNearestOfObjects(w, targetLoc, neighbours);
+        int currDistToTargetLoc = HelperMethods.getDistance(w.getLocation(this), targetLoc);
+        int newDistToTargetLoc = HelperMethods.getDistance(bestMove, targetLoc);
+        if (newDistToTargetLoc <= currDistToTargetLoc) {
+            System.out.println("is closer!");
+            w.move(this, bestMove);
+            actionCost(speed);
         }
-        if (distanceToL == minDistance) { return; }
-        w.move(this, bestMove);
-        actionCost(2);
     }
 
     public void tryFindHome(World w, String type) {
@@ -255,7 +234,6 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         if (availableBurrows.isEmpty()) { return; }
         Home burrow = availableBurrows.get(0);
         setHome(w, burrow);
-        home = burrow;
     }
 
     public void digBurrow(World w, Home burrow) {
@@ -288,79 +266,51 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
 //        actionCost(6, 9);
 //    }
 
-    public Location getLocation(World w, Object object) {
-        return w.getEntities().get(object);
-    }
 
     private boolean canMate(World w) {
-        boolean matingCooldownExpired = stepAge - stepAgeWhenMated >= matingCooldownDays * World.getTotalDayDuration();
-        return isBreedable && energy > 70 && matingCooldownExpired;
+        return getIsMature() && stepAgeWhenMated - stepAge <= matingCooldownDays * World.getTotalDayDuration();
     }
 
     protected void flee(World w, Location predatorLocation) {
-        if (this instanceof Wolf) {
-            Wolf thisWolf = (Wolf) this;
-            System.out.println(thisWolf + " fleeing from " + w.getTile(predatorLocation) + ". are in same pack: " + thisWolf.thePack.getPackList().contains(w.getTile(predatorLocation)));
-        }
-        int currSpeed = calcMaxSpeed();
-        Location targetL = null;
-        List<Location> neighbours = new ArrayList<>(HelperMethods.getEmptySurroundingTiles(w, currSpeed));
+        int speed = calcMaxSpeed();
+        List<Location> neighbours = new ArrayList<>(HelperMethods.getEmptySurroundingTiles(w, speed));
         if (neighbours.isEmpty()) {
             return;
         }
-//        else if (home != null && home instanceof Hole) {
-//            Location homeL = w.getLocation(home);
-//            if (neighbours.contains(homeL)) {
-//                w.move(this, homeL);
-//                sleep(w);
-//                return;
-//            }
-//        }
+
         neighbours.sort(Comparator.comparingInt(n -> HelperMethods.getDistance(n, predatorLocation)));
         w.move(this, neighbours.get(neighbours.size() - 1));
-        actionCost(2);
-
+        actionCost(speed);
     }
 
-    protected void hunt(World w) {
-        Object target = findClosestEdible(w);
-        if (target == null) {
-            randomMove(w);
-            return;
-        }
-        System.out.println(this + " hunting " + target);
+    protected void hunt(World w, Object target) {
+//        System.out.println(this + " hunting " + target);
         Location targetLoc = w.getLocation(target);
-        boolean targetInRange = false;
-        if (target instanceof NonBlocking && w.getCurrentLocation().equals(targetLoc)) {
-            targetInRange = true;
-        } else if (w.getSurroundingTiles().contains(targetLoc)) {
-            targetInRange = true;
+        boolean targetInRange = isTargetInRange(w, target);
+        boolean isAnimal = target instanceof Animal;
+
+        if (!targetInRange) {
+            int speed = (isAnimal) ? calcMaxSpeed() : 1;
+            moveTo(w, targetLoc, speed);
+            targetInRange = isTargetInRange(w, target);
         }
 
-        if (target instanceof Edible) {
-            Edible edible = (Edible) target;
-            if (targetInRange) {
-                eat(w, edible);
-            } else {
-                moveTo(w, targetLoc);
-                actionCost(2);
-            }
-            return;
-        }
-        Animal prey = (Animal) target;
         if (targetInRange) {
-            attack(w, prey);
-        } else {
-            int currSpeed = calcMaxSpeed();
-            List<Location> neighbours = new ArrayList<>(HelperMethods.getEmptySurroundingTiles(w, currSpeed));
-            neighbours.sort(Comparator.comparingInt(n -> HelperMethods.getDistance(n, targetLoc)));
-            w.move(this, neighbours.get(0));
-            actionCost(2);
+            if (isAnimal) {
+                attack(w, (Animal) target);
+            } else {
+                eat(w, (Edible) target);
+            }
         }
-
-
     }
 
+    private boolean isTargetInRange(World w, Object target) {
+        Location targetLoc = w.getLocation(target);
+        if (target instanceof NonBlocking) {
+            return w.getCurrentLocation().equals(targetLoc);
+        }
+        return w.getSurroundingTiles().contains(targetLoc);
+    }
 
     protected Set<Object> findEdibles(World w) {
         Set<Object> edibles = new HashSet<>();
@@ -385,26 +335,6 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         return (Animal) HelperMethods.findNearestOfObjects(w, predators);
     }
 
-    private Animal findLargestPredator(World w) {
-        Set<Animal> predators = findPredators(w);
-        Animal largestPredator = null;
-        int maxMaxHealth = 0;
-
-        for (Animal p : predators) {
-            int pMaxHealth = p.maxHealth;
-            if (pMaxHealth > maxMaxHealth) {
-                maxMaxHealth = pMaxHealth;
-                largestPredator = p;
-            }
-        }
-
-        return largestPredator;
-    }
-
-    private boolean isLargerPredatorInSight(World w) {
-        return health < findLargestPredator(w).health;
-    }
-
     private boolean isPredatorInSight(World w) {
         return !findPredators(w).isEmpty();
     }
@@ -426,10 +356,6 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         return predators;
     }
 
-    private boolean isTired(World w) {
-        return w.isNight() || energy < 20;
-    }
-
     public void randomMove(World w) {
         Set<Location> neighbours = w.getEmptySurroundingTiles();
         Location l = (Location) neighbours.toArray()[HelperMethods.getRandom().nextInt(neighbours.size())];
@@ -437,23 +363,8 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         actionCost(2);
     }
 
-    private Animal findClosestPartner(World w) {
-        Set<Location> partnerLocations = new HashSet<>();
-        for (Location n : tilesInSight) {
-            Object entity = w.getTile(n);
-            if (entity == null || !getClass().equals(entity.getClass())) {
-                continue;
-            }
-            Animal potentialPartner = (Animal) entity;
-            if (potentialPartner.canMate(w)) {
-                partnerLocations.add(n);
-            }
-        }
-        if (partnerLocations.isEmpty()) {
-            return null;
-        }
-        Location partnerLocation = HelperMethods.findNearestLocationByType(w, w.getCurrentLocation(), partnerLocations, getClass().getSimpleName());
-        System.out.println(this + " | " + w.getTile(partnerLocation));
-        return (Animal) w.getTile(partnerLocation);
+    public void moveToMiddle(World w) {
+        int x = w.getSize() / 2 - 1;
+        Location midLocation = new Location(x, x); // don't tell y
     }
 }

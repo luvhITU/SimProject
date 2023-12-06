@@ -1,32 +1,37 @@
 import itumulator.executable.DisplayInformation;
-import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.simulator.Actor;
 import itumulator.world.Location;
 import itumulator.world.World;
-
 import java.awt.*;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class Wolf extends Animal implements Actor {
-    Pack thePack;
-    public Wolf(){
+    private Pack pack;
+    int stepAgeWhenPackActed;
+
+    public Wolf() {
         super(Config.Wolf.DIET, Config.Wolf.DAMAGE, Config.Wolf.HEALTH, Config.Wolf.SPEED, Config.Wolf.MATING_COOLDOWN_DAYS);
+        stepAgeWhenPackActed = 0;
     }
 
     @Override
     public DisplayInformation getInformation() {
         return new DisplayInformation(Color.blue, "wolf");
     }
+
     @Override
-    public void act(World w){
-        if(thePack == null){
-            seekPack(w);
+    public void act(World w) {
+        if (pack == null) {
+            findOrStartPack(w);
         }
+        if (isTargetUnavailable(w)) {
+            pack.setTempAlpha(this);
+        }
+
         super.act(w);
-        System.out.println("Pack alpha is: " + thePack.getAlpha() + "\n. Alpha is awake: " + thePack.getAlpha().isAwake);
+        if (hasPackActed()) { return; }
+//        System.out.println("Pack alpha is: " + pack.getTempAlpha() + "\n. Alpha is awake: " + pack.getTempAlpha().isAwake);
         if (isAwake) {
             Location closestHostileWolfLoc = HelperMethods.findNearestLocationByType(w, w.getLocation(this), tilesInSight, "Wolf");
             if (closestHostileWolfLoc != null) {
@@ -34,122 +39,129 @@ public class Wolf extends Animal implements Actor {
             } else if (w.isNight()) {
                 goHome(w);
             } else {
-//                updateAlphasTilesInSight(w);
-                hunt(w);
+                pack.setTarget(findClosestEdible(w));
+                if (pack.getTarget() == null) {
+                    randomMove(w);
+                } else {
+                    System.out.println(pack.getTarget());
+                    System.out.println("Hunt triggered");
+                    hunt(w, pack.getTarget());
+                }
             }
         }
     }
 
     @Override
     public void delete(World w) {
-        thePack.remove(this);
+        pack.remove(this);
         super.delete(w);
     }
 
-    //    public void tryAttack(World w){ //TODO: need to be put in animal and change the "thePack" for it to work with bears
-//        for(Location l : w.getSurroundingTiles()){
-//            if(w.getTile(l) != null) {
-//                for (Object diet : diet.toArray()) {
-//                    try {
-//                        if (diet.equals(w.getTile(l).getClass().getSimpleName())) {
-//                            //TODO: needs to be changed from rabbit to just animal for it work with bears
-//                            Rabbit rabbit = (Rabbit) w.getTile(l);
-//                            attack(w, rabbit);
-//                            if (rabbit.isDead()) {
-//                                // TODO Carcass. Also try to use a variation of eat() method, because that's where nutrition absorbed is calculated
-////                                thePack.addFood(rabbit.getNutrition());
-//                            }
-//                        } else if (w.getTile(l) instanceof Animal) {
-//                            Animal animal = (Animal) w.getTile(l);
-//                            //Checks if wolf is a part of the same pack
-//                            if(!thePack.getPackList().contains(animal)){
-//                               animal.setEnergy(animal.getEnergy() - animal.calcDamageTaken(this));
-//                            }
-//                        }
-//                    }
-//                    catch (IllegalArgumentException ignore){ }
-//                }
-//            }
-//        }
-//    }
-
+    @Override
+    public void digBurrow(World w, Home burrow) {
+        super.digBurrow(w, burrow);
+        pack.setHome((WolfBurrow) burrow);
+    }
 
     @Override
     public Set<Location> calcTilesInSight(World w) {
-        Set<Location> tiles = new HashSet<>();
-        Wolf alpha = thePack.getAlpha();
+        Set<Location> tilesInSight;
+        Wolf alpha = pack.getTempAlpha();
         if (w.isOnTile(alpha)) {
-            tiles.addAll(w.getSurroundingTiles(w.getLocation(alpha), VISION_RANGE));
+            tilesInSight = w.getSurroundingTiles(w.getLocation(alpha), VISION_RANGE);
         } else {
-            tiles.addAll(super.calcTilesInSight(w));
+            tilesInSight = super.calcTilesInSight(w);
         }
-        for (Wolf wolf : thePack.getPackList()) {
+        for (Wolf wolf : pack.getPackList()) {
             if (w.isOnTile(wolf)) {
-                tiles.remove(w.getLocation(wolf));
+                tilesInSight.remove(w.getLocation(wolf));
             }
         }
-        return tiles;
+        return tilesInSight;
     }
 
-    public void seekPack(World w) {
+    private boolean isTargetUnavailable(World w) {
+        Object target = pack.getTarget();
+        if (target == null) { return true; }
+        if (target instanceof Edible) {
+            return ((Edible) target).isEdible();
+        }
+        return w.contains(target) && w.isOnTile(target);
+    }
+
+    public void findOrStartPack(World w) {
         System.out.println("Seeking Pack");
         //Checks if there is room in current packs
-        for(Object o : w.getEntities().keySet()){
-            if(o instanceof Pack){
-                if(((Pack) o).stillHasRoom()){
+        for (Object o : w.getEntities().keySet()) {
+            if (o instanceof Pack) {
+                if (((Pack) o).stillHasRoom()) {
                     ((Pack) o).addToPack(this);
-                    thePack = (Pack) o;
+                    pack = (Pack) o;
+                    home = pack.getHome();
                 }
             }
         }
         //Checks if it hasn't been added to a pack and then creates a new one
-        if(thePack == null){
+        if (pack == null) {
             System.out.println("Creating Pack");
-            thePack = new Pack(w,this);
+            pack = new Pack(w, this);
+            digBurrow(w, new WolfBurrow());
         }
-        home = thePack.getWolfburrow();
     }
 
-    // Might not be necessary
-    public void updateAlphasTilesInSight(World w) {
-        thePack.getAlpha().tilesInSight = w.getSurroundingTiles(5);
+    public void storePack(Pack newPack) {
+        this.pack = newPack;
     }
-    public void storePack(Pack newPack){ this.thePack = newPack; }
+
 //    @Override
-//    protected Set<Object> findEdibles(World w) {
-//        Set<Object> edibles = new HashSet<>();
-//        Wolf alpha = thePack.getAlpha();
-//        Set<Location> friendlyExcludedTiles = alpha.getFriendlyExcludedTiles(w);
-//
-//        for (Location l : friendlyExcludedTiles) {
-//            Object o = w.getTile(l);
-//            if (o != null && diet.contains(o.getClass().getSimpleName())) {
-//                if (o instanceof Edible && ((Edible) o).isEdible() || o instanceof Animal)
-//                    edibles.add(o);
-//                }
-//            }
-//        return edibles;
+//    protected Object findClosestEdible(World w) {
+//        return HelperMethods.findNearestOfObjects(w, w.getLocation(pack.getTempAlpha()), findEdibles(w));
 //    }
+
     @Override
-    protected Object findClosestEdible(World w) {
-        return HelperMethods.findNearestOfObjects(w, w.getLocation(thePack.getAlpha()), findEdibles(w));
+    public int calcMissingSatiation() {
+        return (int) Math.round((MAX_SATIATION - satiation) / (1.0 * pack.getPackList().size()));
     }
 
-    public void eat(World w, Edible edible) {
-        int missingSatiation = (int) Math.round((MAX_SATIATION - satiation) / (1.0 * thePack.getPackList().size()));
-        int edibleNutrition = edible.getNutrition();
-        setSatiation(satiation + calcNutritionAbsorbed(edibleNutrition));
-        edible.setNutrition(edibleNutrition - missingSatiation);
-        if (edible.getNutrition() <= 0) {
-            edible.delete(w);
+//    @Override
+//    public void moveTo(World w, Location targetLoc) {
+//        for (Wolf wolf : pack.getPackList()) {
+//            if (wolf.isAwake) {
+//                wolf.movePackMember(w, targetLoc);
+//                stepAgeWhenPackActed = stepAge;
+//            }
+//        }
+//
+//    }
+
+    @Override
+    protected void hunt(World w, Object target) {
+        for (Wolf wolf : pack.getPackList()) {
+            if (isTargetUnavailable(w)) {
+                System.out.println("target unavailable");
+                return;
+            }
+            if (wolf.isAwake) {
+                wolf.joinHunt(w, target);
+                wolf.stepAgeWhenPackActed = wolf.stepAge;
+            }
+
         }
     }
 
-//    protected Set<Location> getFriendlyExcludedTiles(World w) {
-//        Set<Location> friendlyExcludedTiles = new HashSet<>(tilesInSight);
-//        for (Wolf packWolf: thePack.getPackList()) {
-//            friendlyExcludedTiles.remove(w.getLocation(packWolf));
-//        }
-//        return friendlyExcludedTiles;
-//    }
+    private void joinHunt(World w, Object target) {
+        System.out.println("HEEEEEEY JOINHUNT");
+        super.hunt(w, target);
+    }
+
+    public void movePackMember(World w, Location targetLoc) {
+        System.out.println("HEy");
+        super.moveTo(w, targetLoc);
+    }
+
+
+
+    private boolean hasPackActed() {
+        return stepAgeWhenPackActed == stepAge;
+    }
 }

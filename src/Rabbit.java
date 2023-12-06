@@ -23,7 +23,13 @@ public class Rabbit extends Animal implements Actor {
             } else if (w.isNight()) {
                 goHome(w);
             } else {
-                hunt(w);
+                Object target = findClosestEdible(w);
+                if (target == null) {
+                    randomMove(w);
+                } else {
+                    hunt(w, target);
+                }
+
             }
         }
     }
