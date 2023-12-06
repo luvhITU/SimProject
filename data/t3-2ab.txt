@@ -3,5 +3,5 @@ rabbit 2-4
 wolf 2
 bear 2
 grass 10
-fungi 5-10
+carcass fungi 5-10
 carcass 4

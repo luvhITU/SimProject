@@ -174,8 +174,9 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     }
 
     public void delete(World w) {
-        //Todo become carcass
+        Location deathL = w.getLocation(this);
         w.delete(this);
+        w.setTile(deathL, new Carcass(this, false));
     }
 
     private void age() {
