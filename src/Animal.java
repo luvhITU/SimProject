@@ -314,7 +314,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
 
     protected Set<Object> findEdibles(World w) {
         Set<Object> edibles = new HashSet<>();
-
+        System.out.println("tile in sight: " + tilesInSight);
         for (Location l : tilesInSight) {
             Object o = w.getTile(l);
             if (o != null && diet.contains(o.getClass().getSimpleName())) {

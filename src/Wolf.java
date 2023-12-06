@@ -82,11 +82,13 @@ public class Wolf extends Animal implements Actor {
 
     private boolean isTargetUnavailable(World w) {
         Object target = pack.getTarget();
+        System.out.println("target is: " + target);
         if (target == null) { return true; }
         if (target instanceof Edible) {
+            System.out.println("Target is edible");
             return ((Edible) target).isEdible();
         }
-        return w.contains(target) && w.isOnTile(target);
+        return !(w.contains(target) && w.isOnTile(target));
     }
 
     public void findOrStartPack(World w) {
@@ -113,26 +115,10 @@ public class Wolf extends Animal implements Actor {
         this.pack = newPack;
     }
 
-//    @Override
-//    protected Object findClosestEdible(World w) {
-//        return HelperMethods.findNearestOfObjects(w, w.getLocation(pack.getTempAlpha()), findEdibles(w));
-//    }
-
     @Override
     public int calcMissingSatiation() {
         return (int) Math.round((MAX_SATIATION - satiation) / (1.0 * pack.getPackList().size()));
     }
-
-//    @Override
-//    public void moveTo(World w, Location targetLoc) {
-//        for (Wolf wolf : pack.getPackList()) {
-//            if (wolf.isAwake) {
-//                wolf.movePackMember(w, targetLoc);
-//                stepAgeWhenPackActed = stepAge;
-//            }
-//        }
-//
-//    }
 
     @Override
     protected void hunt(World w, Object target) {
@@ -153,13 +139,6 @@ public class Wolf extends Animal implements Actor {
         System.out.println("HEEEEEEY JOINHUNT");
         super.hunt(w, target);
     }
-
-    public void movePackMember(World w, Location targetLoc) {
-        System.out.println("HEy");
-        super.moveTo(w, targetLoc);
-    }
-
-
 
     private boolean hasPackActed() {
         return stepAgeWhenPackActed == stepAge;

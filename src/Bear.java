@@ -6,7 +6,7 @@ import java.util.Set;
 public class Bear extends Animal implements Actor {
 
     private static final int TERRITORY_RADIUS = 3;
-    private Location territoryCenter;
+    private final Location territoryCenter;
 
 
     public Bear(Location territoryCenter) {
