@@ -167,6 +167,10 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         }
     }
 
+    public Location homeLoc(World w) {
+        return w.getLocation(home);
+    }
+
     public void delete(World w) {
         //Todo become carcass
         w.delete(this);
@@ -190,11 +194,10 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
 
     public void goHome(World w) {
         System.out.println(this + " at location: " + w.getLocation(this) + " is going to sleep at: " + home);
-        Location homeLoc = w.getLocation(home);
-        if (w.getLocation(this).equals(homeLoc)) {
+        if (w.getLocation(this).equals(homeLoc(w))) {
             sleep(w);
         } else {
-            moveTo(w, homeLoc);
+            moveTo(w, homeLoc(w));
         }
     }
 

@@ -5,8 +5,9 @@ import java.util.Set;
 
 public class Bear extends Animal implements Actor {
 
+    private static final int TERRITORY_RADIUS = 3;
     private Location territoryCenter;
-    private int territoryRadius = 2;
+
 
     public Bear(Location territoryCenter) {
         super(Config.Bear.DIET, Config.Bear.NUTRITION, Config.Bear.DAMAGE, Config.Bear.HEALTH, Config.Bear.SPEED);
@@ -15,28 +16,38 @@ public class Bear extends Animal implements Actor {
 
     @Override
     public void act(World w) {
+        super.act(w);
         if (w.isNight()) {
-            sleep(w);
-        } else if (w.isDay() && !getIsAwake()) {
+            goHome(w);
+        } else if (w.getCurrentTime() == 0 && !isAwake) {
             wakeUp(w);
         }
-        super.act(w);
         if (getIsAwake()) {
-            doMovementPackage(w);
             hunt(w);
         }
     }
 
-    private void doMovementPackage(World w) {
-        if (w.isDay()) {
-            moveAroundTerritory(w);
-        }
+    @Override
+    public Location homeLoc(World w) {
+        return territoryCenter;
     }
 
-    public void moveAroundTerritory(World w) {
-        Set<Location> validLocations = w.getSurroundingTiles(territoryCenter, territoryRadius);
-        validLocations.removeIf(location -> !w.isTileEmpty(location));
+    @Override
+    public Set<Location> calcTilesInSight(World w) {
+        if (satiation >= 50) {
+            return w.getSurroundingTiles(territoryCenter, TERRITORY_RADIUS);
+        }
+        return super.calcTilesInSight(w);
+    }
 
+    @Override
+    public void randomMove(World w) {
+        if (satiation < 50) {
+            super.randomMove(w);
+            return;
+        }
+
+        Set<Location> validLocations = HelperMethods.getEmptySurroundingTiles(w, territoryCenter, TERRITORY_RADIUS);
         if (validLocations.isEmpty()) {
             return;
         }
