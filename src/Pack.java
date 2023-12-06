@@ -8,7 +8,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class Pack implements Actor,DynamicDisplayInformationProvider {
+public class Pack implements DynamicDisplayInformationProvider {
     private List<Wolf> packList;
     private Wolf alpha;
     private WolfBurrow wolfburrow;
@@ -27,9 +27,9 @@ public class Pack implements Actor,DynamicDisplayInformationProvider {
         this.foodToDistribute = 0;
         this.maxSize = 5;
     }
-    @Override
-    public void act(World w) {
-        System.out.println(packList.toArray().length);
+//    @Override
+//    public void act(World w) {
+//        System.out.println(packList.toArray().length);
 //        if(wolfburrow == null){
 //            this.wolfburrow = new WolfBurrow(); //TODO: make it so doesn't delete other burrows
 //            if(w.containsNonBlocking(homeLocation)) {
@@ -107,13 +107,12 @@ public class Pack implements Actor,DynamicDisplayInformationProvider {
 //            }
 //            catch (IllegalArgumentException ignore) {} //If the wolf dies at same point
 //        }
-    }
+//    }
     public boolean stillHasRoom(){
         return packList.size() < maxSize;
     }
     public void addToPack(Wolf wolf){
         packList.add(wolf);
-        wolf.setPack(true);
         wolf.storePack(this);
         wolfburrow.add(wolf);
     }
@@ -145,7 +144,7 @@ public class Pack implements Actor,DynamicDisplayInformationProvider {
     }
     @Override
     public DisplayInformation getInformation() {
-        return new DisplayInformation(Color.blue, "wolf"); //Needs display information even if not on the map
+        return new DisplayInformation(Color.blue, "INVISIBILITY"); //Needs display information even if not on the map
     }
     public List<Wolf> getPackList(){
         return packList;

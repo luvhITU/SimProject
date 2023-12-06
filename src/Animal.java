@@ -18,7 +18,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     protected static final int AGE_MAX_ENERGY_DECREASE = 5;
     protected static final int STEP_SLEEP_ENERGY_INCREASE = 5;
 
-    protected static final int VISION_RANGE = 5;
+    protected static final int VISION_RANGE = 4;
 
     protected final int maxHealth;
     protected int maxEnergy;
@@ -84,7 +84,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
             imageKeyBuilder.append("-small");
         }
         if (!isAwake) {
-            imageKeyBuilder.append("sleeping");
+            imageKeyBuilder.append("-sleeping");
         }
         return new DisplayInformation(Color.magenta, imageKeyBuilder.toString());
     }
@@ -113,7 +113,9 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     }
 
     public void attack(World w, Animal animal) {
-        animal.wakeUp(w);
+        if (!animal.isAwake) {
+            animal.wakeUp(w);
+        }
         animal.health -= damage;
         if (animal.health <= 0) {
             animal.delete(w);
@@ -219,7 +221,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
 
     public void emerge(World w) {
         System.out.println("Emerging");
-        int radius = 3;
+        int radius = 1;
         Location l = HelperMethods.getClosestEmptyTile(w, w.getLocation(home), radius);
         w.setCurrentLocation(l);
         w.setTile(l, this);
@@ -240,34 +242,33 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
                 bestMove = n;
             }
         }
-
+        if (distanceToL == minDistance) { return; }
         w.move(this, bestMove);
         actionCost(2);
     }
 
-    public void findHome(World w, String type) {
+    public void tryFindHome(World w, String type) {
         List<Home> availableBurrows = HelperMethods.availableHomes(w, type);
-        if (availableBurrows.isEmpty()) {
-            throw new IllegalStateException("No homes available");
-        }
+        if (availableBurrows.isEmpty()) { return; }
         Home burrow = availableBurrows.get(0);
         setHome(w, burrow);
+        home = burrow;
     }
 
     public void digBurrow(World w, Home burrow) {
-        Location l = w.getCurrentLocation();
-        Object nonBlocking = null;
-        if (w.containsNonBlocking(l)) {
-            nonBlocking = w.getNonBlocking(l);
-
-            if (nonBlocking instanceof Home) {
-                throw new IllegalStateException("There already exists a home at this location");
-            }
-            w.delete(nonBlocking);
+        Location target;
+        Location currL = w.getCurrentLocation();
+        if (!(w.containsNonBlocking(currL) && w.getNonBlocking(currL) instanceof Home)) {
+            target = currL;
+        } else {
+            Set<Location> neighbours = HelperMethods.getEmptySurroundingTiles(w, 5);
+            neighbours.removeIf(n -> w.containsNonBlocking(n) && w.getNonBlocking(n) instanceof Home);
+            target = HelperMethods.findNearestLocationByType(w, w.getCurrentLocation(), neighbours, "Location");
         }
-        System.out.println("WORKED");
-        setHome(w, l, burrow);
-        actionCost(2);
+
+        w.setTile(target, burrow);
+        burrow.add(this);
+        home = burrow;
     }
 
 //    public void reproduce(World w, Animal partner) {
@@ -321,6 +322,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     protected void hunt(World w) {
         Object target = findClosestEdible(w);
         if (target == null) {
+            randomMove(w);
             return;
         }
         System.out.println(this + " hunting " + target);
@@ -375,7 +377,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     }
 
     // Needs an override in wolf, to not detect animals in pack.
-    private Animal findClosestPredator(World w) {
+    protected Animal findClosestPredator(World w) {
         Set<Animal> predators = findPredators(w);
         return (Animal) HelperMethods.findNearestOfObjects(w, predators);
     }

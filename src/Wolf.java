@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class Wolf extends Animal implements Actor {
-    boolean hasPack;
     Pack thePack;
     public Wolf(){
         super(Config.Wolf.DIET, Config.Wolf.DAMAGE, Config.Wolf.HEALTH, Config.Wolf.SPEED, Config.Wolf.MATING_COOLDOWN_DAYS);
@@ -104,7 +103,7 @@ public class Wolf extends Animal implements Actor {
             }
         }
         //Checks if it hasn't been added to a pack and then creates a new one
-        if(!hasPack){
+        if(thePack == null){
             System.out.println("Creating Pack");
             thePack = new Pack(w,this);
         }
@@ -114,9 +113,6 @@ public class Wolf extends Animal implements Actor {
     // Might not be necessary
     public void updateAlphasTilesInSight(World w) {
         thePack.getAlpha().tilesInSight = w.getSurroundingTiles(5);
-    }
-    public void setPack(boolean Boo){
-        hasPack = Boo;
     }
     public void storePack(Pack newPack){ this.thePack = newPack; }
 //    @Override
