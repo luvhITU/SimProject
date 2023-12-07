@@ -16,6 +16,10 @@ public abstract class HelperMethods {
     private static final Random r = new Random();
     private static List<Location> occupied = new ArrayList<>();
 
+    /***
+     * Gets random
+     * @return  r
+     */
     public static Random getRandom() {
         return r;
     }
@@ -228,6 +232,12 @@ public abstract class HelperMethods {
         return l;
     }
 
+    /***
+     * Searches the World for homes that still has room of a specific type
+     * @param w     World
+     * @param type  Type of Home
+     * @return      Arraylist< Home >
+     */
     public static ArrayList<Home> availableHomes(World w, String type) {
         Map<Object, Location> entities = w.getEntities();
         ArrayList<Home> availableHomes = new ArrayList<>();
@@ -243,10 +253,23 @@ public abstract class HelperMethods {
         return availableHomes;
     }
 
+    /***
+     * Returns the closest empty tile within the given radius
+     * @param w         World
+     * @param radius    Radius in int
+     * @return          Location
+     */
     public static Location getClosestEmptyTile(World w, int radius) {
         return getClosestEmptyTile(w, w.getCurrentLocation(), radius);
     }
 
+    /***
+     * Returns the closest empty tile within the given radius
+     * @param w         World
+     * @param l         Searching Point Location
+     * @param radius    Radius in int
+     * @return          Tile that does not contain a blocking object
+     */
     public static Location getClosestEmptyTile(World w, Location l, int radius) {
         Set<Location> oldTargetTiles = new HashSet<>();
         for (int r = 1; r <= radius; r++) {
@@ -262,24 +285,59 @@ public abstract class HelperMethods {
         throw new IllegalStateException("No empty tiles within set radius");
     }
 
+    /***
+     * Returns int of distance between 2 locations
+     * @param l1    First Location
+     * @param l2    Second Location
+     * @return      Distance in int
+     */
     public static int getDistance(Location l1, Location l2) {
         return Math.abs(l1.getX() - l2.getX()) + Math.abs((l1.getY() - l2.getY()));
     }
 
+    /***
+     * Returns set of empty surrounding locations
+     * @param w         World
+     * @param radius    Radius in int
+     * @return          Set< Location >
+     */
     public static Set<Location> getEmptySurroundingTiles(World w, int radius) {
         return getEmptySurroundingTiles(w, w.getCurrentLocation(), radius);
     }
 
+    /***
+     * Gets tiles within radius that does not contain a blocking object
+     * @param w         World
+     * @param location  Searching Point Location
+     * @param radius    Radius in int
+     * @return          Set< Location >
+     */
     public static Set<Location> getEmptySurroundingTiles(World w, Location location, int radius) {
         Set<Location> surroundingTiles = w.getSurroundingTiles(location, radius);
         surroundingTiles.removeIf(tile -> !w.isTileEmpty(tile));
         return surroundingTiles;
     }
 
+    /***
+     * Returns location of nearest instance of object
+     * @param w             World
+     * @param l             Current Location
+     * @param tilesInSight  Set of location
+     * @param type          Type of object
+     * @return              Location
+     */
     public static Location findNearestLocationByType(World w, Location l, Set<Location> tilesInSight, String type) {
         return findNearestLocationByTypes(w, l, tilesInSight, new HashSet<>(Set.of(type)));
     }
 
+    /***
+     * Returns location of nearest instance of one of the set of object
+     * @param w             World
+     * @param l             Current Location
+     * @param tilesInSight  Set of location
+     * @param types         Type of object
+     * @return              Nearest location that is in the set of types
+     */
     public static Location findNearestLocationByTypes(World w, Location l, Set<Location> tilesInSight, Set<String> types) {
         int minDistance = Integer.MAX_VALUE;
         Location minDistanceLocation = null;
@@ -298,10 +356,23 @@ public abstract class HelperMethods {
         return minDistanceLocation;
     }
 
+    /***
+     * Finds nearest instance of input object using current position of object
+     * @param w         World
+     * @param objects   Object
+     * @return          Nearest instance of input object
+     */
     public static Object findNearestOfObjects(World w, Set<?> objects) {
         return findNearestOfObjects(w, w.getCurrentLocation(), objects);
     }
 
+    /***
+     * Finds nearest object of types
+     * @param w         World
+     * @param l         Location
+     * @param objects   (Set of) object(s)
+     * @return          Nearest instance of one of the objects
+     */
     public static Object findNearestOfObjects(World w, Location l, Set<?> objects) {
         int minDistance = Integer.MAX_VALUE;
         Object minDistanceObject = null;
