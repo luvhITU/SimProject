@@ -1,12 +1,11 @@
+import Helper.Config;
 import itumulator.executable.DynamicDisplayInformationProvider;
-import itumulator.executable.Program;
 import itumulator.simulator.Actor;
 import itumulator.world.Location;
 import itumulator.world.World;
 import itumulator.executable.DisplayInformation;
 import itumulator.world.NonBlocking;
 import java.util.Set;
-import java.util.Random;
 import java.awt.Color;
 
 public class Grass extends Edible implements Actor, NonBlocking, DynamicDisplayInformationProvider {

@@ -1,3 +1,4 @@
+import Helper.Config;
 import itumulator.simulator.Actor;
 import itumulator.world.Location;
 import itumulator.world.World;

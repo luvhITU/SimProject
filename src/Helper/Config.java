@@ -1,7 +1,8 @@
+package Helper;
+
 import java.util.Set;
 
 public class Config {
-
     private Config() {
     }
 

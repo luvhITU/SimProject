@@ -1,8 +1,6 @@
+import Helper.Config;
 import itumulator.simulator.Actor;
-import itumulator.world.Location;
 import itumulator.world.World;
-
-import java.util.Set;
 
 public class Rabbit extends Animal implements Actor {
     public Rabbit() {
