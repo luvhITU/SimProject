@@ -43,6 +43,14 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     protected int age;
     protected Set<Location> tilesInSight;
 
+    /***
+     * Initializes input variables
+     * @param diet                  Set< String >
+     * @param damage                int
+     * @param maxHealth             int
+     * @param maxSpeed              int
+     * @param matingCooldownDays    int
+     */
     public Animal(Set<String> diet, int damage, int maxHealth, int maxSpeed, int matingCooldownDays) {
         this.diet = diet;
         this.damage = damage;
@@ -62,6 +70,10 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         home = null;
     }
 
+    /***
+     * See super
+     * @param w providing details of the position on which the actor is currently located and much more.
+     */
     public void act(World w) {
         stepAge++;
         // If a day has passed since last age increase, age.
@@ -83,6 +95,10 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
 
     // Implement canMateFunction
 
+    /***
+     * See super
+     * @return  DisplayInformation
+     */
     @Override
     public DisplayInformation getInformation() {
         StringBuilder imageKeyBuilder = new StringBuilder(getType().toLowerCase());
@@ -95,6 +111,10 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         return new DisplayInformation(Color.magenta, imageKeyBuilder.toString());
     }
 
+    /***
+     * Checks if object is dead
+     * @return  Boolean
+     */
     public boolean isDead() {
         return satiation == 0 || health == 0;
     }
@@ -104,22 +124,37 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
             delete(w);
         }
     }
-
+    //Should it be Protected?
     private int getMaxHealth() {
         return maxHealth;
     }
 
+    /***
+     * Changes both satiation and energy by input int
+     * @param reduceBy  int
+     */
     protected void actionCost(int reduceBy) {
         setSatiation(satiation - reduceBy);
         setEnergy(energy - reduceBy);
     }
 
+    /***
+     * Returns int for nutrition absorbed based on maxHealth
+     * @param nutrition int
+     * @return          int
+     */
     public int calcNutritionAbsorbed(int nutrition) {
         return (int) Math.round(nutrition / (maxHealth / 100.0));
     }
 
+    /***
+     * Changes health of animal and deletes the animal if health gets below 0
+     * @param w         World
+     * @param animal    Animal
+     */
     public void attack(World w, Animal animal) {
         if (this == animal) {
+            //Does nothing, should everything else be in this?
         }
         if (!animal.isAwake) {
             animal.wakeUp(w);
@@ -130,14 +165,27 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         }
     }
 
+    /***
+     * Returns int speed which is based on maxSpeed and energy
+     * @return  int
+     */
     public int calcMaxSpeed() {
         return (int) Math.max(1, Math.round(maxSpeed * (energy / 100.0)));
     }
 
+    /***
+     * Uses int VISION_RANGE to get tiles that is within that radius
+     * @param w World
+     * @return  Set< Location >
+     */
     public Set<Location> calcTilesInSight(World w) {
         return w.getSurroundingTiles(w.getLocation(this), VISION_RANGE);
     }
 
+    /***
+     * Sets isAwake to false and removes object if it is on top of Hole
+     * @param w World
+     */
     public void sleep(World w) {
         isAwake = false;
         if (home instanceof Hole) {
@@ -145,6 +193,10 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         }
     }
 
+    /***
+     * Sets isAwake to true and uses emerge()
+     * @param w World
+     */
     public void wakeUp(World w) {
         isAwake = true;
         if (home instanceof Hole) {
@@ -161,6 +213,11 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         this.maxEnergy = Math.max(minMaxEnergy, maxEnergy);
     }
 
+    /***
+     * Changes nutrition based on how much missing Satiation and deletes if nutrition gets to or below 0
+     * @param w         World
+     * @param edible    Edible
+     */
     public void eat(World w, Edible edible) {
         int missingSatiation = calcMissingSatiation();
         int edibleNutrition = edible.getNutrition();
@@ -171,14 +228,27 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         }
     }
 
+    /***
+     * Returns the difference of MAX_SATIATION and satiation in int
+     * @return  int
+     */
     public int calcMissingSatiation() {
         return MAX_SATIATION - satiation;
     }
 
+    /***
+     * Getter for location of Home
+     * @param w Wolrd
+     * @return  Location
+     */
     public Location getHomeLocation(World w) {
         return w.getLocation(home);
     }
 
+    /***
+     * Deletes object and places a Carcass on location
+     * @param w
+     */
     public void delete(World w) {
         Location deathL = w.getLocation(this);
         w.delete(this);
@@ -190,11 +260,20 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         setMaxEnergy(BASE_MAX_ENERGY - age * AGE_MAX_ENERGY_DECREASE);
     }
 
+    /***
+     * Initializes Home to input Home
+     * @param w     Wolrd
+     * @param home  Home
+     */
     public void setHome(World w, Home home) {
         this.home = home;
         home.add(this);
     }
 
+    /***
+     * Moves towards location of Home and if it on Home then the object gets removed
+     * @param w World
+     */
     public void goHome(World w) {
         if (w.getLocation(this).equals(getHomeLocation(w))) {
             sleep(w);
@@ -212,6 +291,10 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         this.energy = Math.max(0, Math.min(maxEnergy, energy));
     }
 
+    /***
+     * Sets location of object within a radius of 1 of the Home location
+     * @param w World
+     */
     public void emerge(World w) {
         int radius = 1;
         Location l = HelperMethods.getClosestEmptyTile(w, w.getLocation(home), radius);
@@ -219,10 +302,21 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         w.setTile(l, this);
     }
 
+    /***
+     * Moves object towards input Location
+     * @param w         World
+     * @param targetLoc Location
+     */
     public void moveTo(World w, Location targetLoc) {
         moveTo(w, targetLoc, 1);
     }
 
+    /***
+     * Moves object towards input Location where speed changes how much it moves pr. tick
+     * @param w         World
+     * @param targetLoc Location
+     * @param speed     int
+     */
     public void moveTo(World w, Location targetLoc, int speed) {
         Set<Location> neighbours = HelperMethods.getEmptySurroundingTiles(w, w.getLocation(this), speed);
         Location bestMove = (Location) HelperMethods.findNearestOfObjects(w, targetLoc, neighbours);
@@ -235,6 +329,11 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
 //        }
     }
 
+    /***
+     * Finds a home if one is available
+     * @param w     World
+     * @param type  String
+     */
     public void tryFindHome(World w, String type) {
         List<Home> availableBurrows = HelperMethods.availableHomes(w, type);
         if (availableBurrows.isEmpty()) { return; }
@@ -242,6 +341,11 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         setHome(w, burrow);
     }
 
+    /***
+     * Digs a burrow if it possible and sets Home to the new burrow
+     * @param w         World
+     * @param burrow    Home
+     */
     public void digBurrow(World w, Home burrow) {
         Location target;
         Location currL = w.getLocation(this);
@@ -359,6 +463,10 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         return predators;
     }
 
+    /***
+     * Moves to a random empty surrounding tile
+     * @param w World
+     */
     public void randomMove(World w) {
         Set<Location> neighbours = w.getEmptySurroundingTiles(w.getLocation(this));
         Location l = (Location) neighbours.toArray()[HelperMethods.getRandom().nextInt(neighbours.size())];
@@ -366,6 +474,10 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         actionCost(1);
     }
 
+    /***
+     * Does nothing but calculates center of the map
+     * @param w World
+     */
     public void moveToMiddle(World w) {
         int x = w.getSize() / 2 - 1;
         Location midLocation = new Location(x, x); // don't tell y
