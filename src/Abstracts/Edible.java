@@ -22,21 +22,35 @@ public abstract class Edible extends SimComponent implements Actor {
         if (stepAge % World.getTotalDayDuration() == 0) { age++; }
     }
 
+    /***
+     * Deletes this object
+     * @param w World
+     */
     public void delete(World w) {
         w.delete(this);
     }
 
+    /***
+     * Getter for Nutrition
+     * @return  int
+     */
     public int getNutrition() {
         return nutrition;
     }
 
-
+    /***
+     * Reduces nutrition by input int
+     * @param reduceBy  int
+     */
     public void reduceNutritionBy(int reduceBy) { this.nutrition -= max(0, reduceBy); }
 
+    /***
+     * Sets nutrition by input int
+     * @param nutrition int
+     */
     public void setNutrition(int nutrition) {
         this.nutrition = nutrition;
     }
-
     protected int getStepAge() {
         return stepAge;
     }
@@ -45,6 +59,10 @@ public abstract class Edible extends SimComponent implements Actor {
         return age;
     }
 
+    /***
+     * Returns true if nutrition is not 0 else returns false
+     * @return  Boolean
+     */
     public boolean isEdible() {
         return nutrition != 0;
     }
