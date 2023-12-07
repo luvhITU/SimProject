@@ -1,3 +1,6 @@
+package Abstracts;
+
+import Abstracts.Edible;
 import itumulator.world.World;
 
 public abstract class RenewableEdible extends Edible {

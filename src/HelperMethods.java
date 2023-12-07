@@ -1,3 +1,4 @@
+import Places.BearTerritory;
 import itumulator.world.Location;
 import itumulator.world.World;
 import itumulator.executable.Program;

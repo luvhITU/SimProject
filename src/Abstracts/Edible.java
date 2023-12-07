@@ -1,3 +1,5 @@
+package Abstracts;
+
 import Abstracts.SimComponent;
 import itumulator.simulator.Actor;
 import itumulator.world.World;
@@ -31,7 +33,7 @@ public abstract class Edible extends SimComponent implements Actor {
 
     public void reduceNutritionBy(int reduceBy) { this.nutrition -= max(0, reduceBy); }
 
-    protected void setNutrition(int nutrition) {
+    public void setNutrition(int nutrition) {
         this.nutrition = nutrition;
     }
 

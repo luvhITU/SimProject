@@ -1,3 +1,4 @@
+import Abstracts.Edible;
 import Abstracts.SimComponent;
 import Places.Hole;
 import itumulator.executable.DisplayInformation;

@@ -1,3 +1,4 @@
+import Abstracts.Edible;
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.Location;

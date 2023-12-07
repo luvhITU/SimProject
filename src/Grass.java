@@ -1,3 +1,4 @@
+import Abstracts.Edible;
 import Helper.Config;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.simulator.Actor;
