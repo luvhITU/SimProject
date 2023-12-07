@@ -1,3 +1,4 @@
+import Abstracts.SimComponent;
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.simulator.Actor;

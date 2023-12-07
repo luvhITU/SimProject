@@ -1,3 +1,4 @@
+import Abstracts.SimComponent;
 import itumulator.simulator.Actor;
 import itumulator.world.World;
 

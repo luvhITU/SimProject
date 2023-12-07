@@ -1,3 +1,5 @@
+package Abstracts;
+
 import itumulator.world.World;
 
 import java.awt.*;
