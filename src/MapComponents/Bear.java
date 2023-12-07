@@ -1,4 +1,8 @@
+package MapComponents;
+
+import Abstracts.Animal;
 import Helper.Config;
+import Helper.HelperMethods;
 import itumulator.simulator.Actor;
 import itumulator.world.Location;
 import itumulator.world.World;

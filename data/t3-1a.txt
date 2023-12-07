@@ -1,2 +1,2 @@
 5
-Carcass 2-5 
+MapComponents.Carcass 2-5

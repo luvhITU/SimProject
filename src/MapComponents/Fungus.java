@@ -1,3 +1,5 @@
+package MapComponents;
+
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.simulator.Actor;
@@ -23,7 +25,7 @@ public class Fungus implements Actor, DynamicDisplayInformationProvider {
     @Override
     public void act(World w) {
         stepAge++;
-        //System.out.println("Fungus Health: " + health);
+        //System.out.println("MapComponents.Fungus Health: " + health);
         degrade(w);
         spread(w);
         //System.out.println(spreadRadius);

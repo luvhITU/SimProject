@@ -1,3 +1,5 @@
+package MapComponents;
+
 import Abstracts.RenewableEdible;
 import Helper.Config;
 import itumulator.executable.DisplayInformation;

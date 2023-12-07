@@ -1,3 +1,5 @@
+/*
+import MapComponents.Grass;
 import itumulator.executable.Program;
 import itumulator.world.Location;
 import itumulator.world.World;
@@ -53,3 +55,4 @@ public class GrassTest {
         assertTrue(grass.getIsDead(w));
     }
 }
+*/

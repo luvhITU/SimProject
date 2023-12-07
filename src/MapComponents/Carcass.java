@@ -1,4 +1,8 @@
+package MapComponents;
+
+import Abstracts.Animal;
 import Abstracts.Edible;
+import Helper.HelperMethods;
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.Location;
@@ -36,7 +40,7 @@ public class Carcass extends Edible implements DynamicDisplayInformationProvider
     @Override
     public void act(World w) {
         //System.out.println("Nutrition: " + getNutrition());
-        //System.out.println("Fungus Growth: " + fungusGrowth);
+        //System.out.println("MapComponents.Fungus Growth: " + fungusGrowth);
         super.act(w);
         degrade(w);
         checkForInfection(w);
@@ -71,7 +75,7 @@ public class Carcass extends Edible implements DynamicDisplayInformationProvider
     private void checkForInfection(World w) {
         double infectionProbability = (initialNutrition - getNutrition()) / 100.0;
         if (!isInfected && HelperMethods.getRandom().nextDouble() < infectionProbability) {
-            //System.out.println("Carcass is infected!");
+            //System.out.println("MapComponents.Carcass is infected!");
             isInfected = true;
             fungusGrowth = 0;
             fungusCreated = false;
@@ -92,7 +96,7 @@ public class Carcass extends Edible implements DynamicDisplayInformationProvider
     }
 
     private void createFungus(World w) {
-        //System.out.println("Fungus has grown inside the carcass!");
+        //System.out.println("MapComponents.Fungus has grown inside the carcass!");
         fungus = new Fungus(initialNutrition);
     }
 

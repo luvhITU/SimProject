@@ -1,4 +1,8 @@
+package MapComponents;
+
+import Abstracts.Animal;
 import Helper.Config;
+import Places.RabbitBurrow;
 import itumulator.simulator.Actor;
 import itumulator.world.World;
 
@@ -34,7 +38,7 @@ public class Rabbit extends Animal implements Actor {
     }
 
     private void findOrDigBurrow(World w) {
-        tryFindHome(w, "RabbitBurrow");
+        tryFindHome(w, "Places.RabbitBurrow");
         if (home == null) {
             digBurrow(w, new RabbitBurrow());
         }

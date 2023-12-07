@@ -1,3 +1,6 @@
+package Places;
+
+import Abstracts.Animal;
 import Abstracts.SimComponent;
 import itumulator.simulator.Actor;
 import itumulator.world.Location;
@@ -19,7 +22,7 @@ public class Home extends SimComponent implements Actor {
     }
 
     public void add(Animal animal) {
-        if (!isAvailable()) { throw new IllegalStateException("Home is filled to brim already!"); }
+        if (!isAvailable()) { throw new IllegalStateException("Places.Home is filled to brim already!"); }
         occupants.add(animal);
     }
 

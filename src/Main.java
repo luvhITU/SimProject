@@ -1,3 +1,4 @@
+import Helper.HelperMethods;
 import itumulator.executable.Program;
 import itumulator.world.World;
 

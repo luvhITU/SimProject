@@ -1,4 +1,9 @@
+package Helper;
+
+import MapComponents.*;
 import Places.BearTerritory;
+import Places.Home;
+import Places.RabbitBurrow;
 import itumulator.world.Location;
 import itumulator.world.World;
 import itumulator.executable.Program;
@@ -64,7 +69,7 @@ public abstract class HelperMethods {
                     continue;
                 }
 
-                // if String contains "cordyceps" then the Animal-Object should be infected
+                // if String contains "cordyceps" then the Abstracts.Animal-Object should be infected
                 if (str.contains("cordyceps") || str.contains("fungi")) {
                     isInfected = true;
                 }
@@ -107,11 +112,11 @@ public abstract class HelperMethods {
      *
      * @param w          World
      * @param p          Program
-     * @param isInfected Boolean. Returns True if Animal is infected, False if not.
+     * @param isInfected Boolean. Returns True if Abstracts.Animal is infected, False if not.
      * @param type       Type of Object to be spawned.
      * @param amount     Amount of Object(s) to be spawned.
-     * @param x          x-Coordinate of Bear-Territory.
-     * @param y          y-Coordinate of Bear-Territory.
+     * @param x          x-Coordinate of MapComponents.Bear-Territory.
+     * @param y          y-Coordinate of MapComponents.Bear-Territory.
      */
     public static void spawnObject(World w, Program p, boolean isInfected, String type, int amount, int x, int y) {
         spawnObjects(w, p, isInfected, type, amount, amount, x, y);
@@ -122,12 +127,12 @@ public abstract class HelperMethods {
      *
      * @param w          World
      * @param p          Program
-     * @param isInfected Boolean. Returns True if Animal is infected, False if not.
+     * @param isInfected Boolean. Returns True if Abstracts.Animal is infected, False if not.
      * @param type       Type of Object to be spawned.
      * @param startRange Minimum amount of Objects to be spawned.
      * @param endRange   Maximum amount of Objects to be spawned.
-     * @param x          x-Coordinate of Bear-Territory.
-     * @param y          y-Coordinate of Bear-Territory.
+     * @param x          x-Coordinate of MapComponents.Bear-Territory.
+     * @param y          y-Coordinate of MapComponents.Bear-Territory.
      */
     public static void spawnObject(World w, Program p, boolean isInfected, String type, int startRange, int endRange, int x, int y) {
         spawnObjects(w, p, isInfected, type, startRange, endRange, x, y);
@@ -138,12 +143,12 @@ public abstract class HelperMethods {
      *
      * @param w          World
      * @param p          Program
-     * @param isInfected Boolean. Returns True if Animal is infected, False if not.
+     * @param isInfected Boolean. Returns True if Abstracts.Animal is infected, False if not.
      * @param type       Type of Object to be spawned.
      * @param startRange Minimum amount of Objects to be spawned.
      * @param endRange   Maximum amount of Objects to be spawned.
-     * @param x          x-Coordinate of Bear-Territory.
-     * @param y          y-Coordinate of Bear-Territory.
+     * @param x          x-Coordinate of MapComponents.Bear-Territory.
+     * @param y          y-Coordinate of MapComponents.Bear-Territory.
      */
     private static void spawnObjects(World w, Program p, boolean isInfected, String type, int startRange, int endRange, int x, int y) {
         int rValue = r.nextInt((endRange + 1) - startRange) + startRange;
@@ -155,7 +160,7 @@ public abstract class HelperMethods {
             Location l = getRandomEmptyLocation(w, r);
             occupied.add(l);
 
-            //TODO: Add logic to infect spawned Animal-Objects. Maybe as parameter in Animal constructor?
+            //TODO: Add logic to infect spawned Abstracts.Animal-Objects. Maybe as parameter in Abstracts.Animal constructor?
             if (type.equals("grass")) {
                 w.setTile(l, new Grass());
             } else if (type.equals("rabbit")) {
@@ -167,26 +172,26 @@ public abstract class HelperMethods {
             } else if (type.equals("wolf")) {
                 w.setTile(l, new Wolf());
             } else if (type.equals("bear")) {
-                //TODO: Spawn Bear-Object
+                //TODO: Spawn MapComponents.Bear-Object
             } else if (type.equals("carcass")) {
                 w.setTile(l, new Carcass(isInfected));
             }
         }
 //        if(type.equals("wolf")){
-//            Pack thePack = null;
+//            Places.Pack thePack = null;
 //            for(Object o :w.getEntities().keySet()){
-//                if(o instanceof Wolf){
+//                if(o instanceof MapComponents.Wolf){
 //                    if(thePack != null){
-//                        thePack.addToPack((Wolf) o);
+//                        thePack.addToPack((MapComponents.Wolf) o);
 //                    }
 //                    else{
-//                        thePack = new Pack(w,(Wolf) o);
+//                        thePack = new Places.Pack(w,(MapComponents.Wolf) o);
 //                    }
 //                }
 //            }
 //        }
 
-        List<Home> rabbitBurrows = HelperMethods.availableHomes(w, "RabbitBurrow");
+        List<Home> rabbitBurrows = HelperMethods.availableHomes(w, "Places.RabbitBurrow");
         Set<Object> entitiesKeys = w.getEntities().keySet();
         for (Home h : rabbitBurrows) {
             for (Object e : entitiesKeys) {

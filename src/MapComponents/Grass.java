@@ -1,5 +1,7 @@
+package MapComponents;
+
 import Abstracts.Edible;
-import Helper.Config;
+import Helper.*;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.simulator.Actor;
 import itumulator.world.Location;

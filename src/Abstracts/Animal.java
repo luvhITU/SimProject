@@ -1,6 +1,9 @@
-import Abstracts.Edible;
-import Abstracts.SimComponent;
+package Abstracts;
+
 import Places.Hole;
+import Places.Home;
+import MapComponents.Carcass;
+import Helper.HelperMethods;
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.simulator.Actor;
@@ -23,7 +26,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
 
     protected static final int VISION_RANGE = 4;
 
-    protected final int maxHealth;
+    public final int maxHealth;
     protected int maxEnergy;
     protected int energy;
     protected int satiation;
@@ -223,8 +226,8 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     public void moveTo(World w, Location targetLoc, int speed) {
         Set<Location> neighbours = HelperMethods.getEmptySurroundingTiles(w, w.getLocation(this), speed);
         Location bestMove = (Location) HelperMethods.findNearestOfObjects(w, targetLoc, neighbours);
-//        int currDistToTargetLoc = HelperMethods.getDistance(w.getLocation(this), targetLoc);
-//        int newDistToTargetLoc = HelperMethods.getDistance(bestMove, targetLoc);
+//        int currDistToTargetLoc = Helper.HelperMethods.getDistance(w.getLocation(this), targetLoc);
+//        int newDistToTargetLoc = Helper.HelperMethods.getDistance(bestMove, targetLoc);
 //        if (newDistToTargetLoc < currDistToTargetLoc) {
 
             w.move(this, bestMove);
@@ -255,9 +258,9 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         home = burrow;
     }
 
-//    public void reproduce(World w, Animal partner) {
-//        Location l = HelperMethods.getClosestEmptyTile(w, 1);
-//        Animal lilBaby = null;
+//    public void reproduce(World w, Abstracts.Animal partner) {
+//        Location l = Helper.HelperMethods.getClosestEmptyTile(w, 1);
+//        Abstracts.Animal lilBaby = null;
 //        try {
 //            lilBaby = this.getClass().getDeclaredConstructor().newInstance();
 //        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
