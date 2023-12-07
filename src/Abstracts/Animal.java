@@ -482,4 +482,20 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         int x = w.getSize() / 2 - 1;
         moveTo(w, new Location(x, x)); // don't tell y
     }
+
+    /***
+     * Getter for energy
+     * @return  int
+     */
+    public int getEnergy(){
+        return energy;
+    }
+
+    /***
+     * Getter for satiation
+     * @return  int
+     */
+    public int getSatiation(){
+        return satiation;
+    }
 }

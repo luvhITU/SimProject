@@ -2,6 +2,8 @@ package Testing;
 
 import MapComponents.Grass;
 import MapComponents.Rabbit;
+import Places.Home;
+import Places.RabbitBurrow;
 import itumulator.world.Location;
 import itumulator.world.World;
 import org.junit.Assert;
@@ -27,6 +29,7 @@ public class RabbitTest {
         System.out.println(Arrays.toString(movedXY));
         Assert.assertFalse(Arrays.equals(startXY,movedXY));
     }
+    //There is some bug with it placing a burrow on grass and throws an exception
     public void hasEatenTest(){
         Grass g = new Grass();
         Map<Object, Location> beforeEntities = w.getEntities();
@@ -35,5 +38,33 @@ public class RabbitTest {
         r.act(w);
         Map<Object, Location> afterEntities = w.getEntities();
         Assert.assertNotEquals(beforeEntities,afterEntities);
+    }
+    @Test
+    public void hasDugBurrowTest(){
+        w.setTile(startLocation,r);
+        r.act(w);
+        Home h = null;
+        for(Object o: w.getEntities().keySet()){
+            if(o instanceof RabbitBurrow){
+                h = (Home) o;
+            }
+        }
+        Assert.assertNotNull(h);
+    }
+    @Test
+    public void losesEnergy(){
+        int startEnergy = r.getEnergy();
+        w.setTile(startLocation,r);
+        r.act(w);
+        int afterEnergy = r.getEnergy();
+        Assert.assertNotEquals(startEnergy,afterEnergy);
+    }
+    @Test
+    public void losesSatiation(){
+        int startSatiation = r.getSatiation();
+        w.setTile(startLocation,r);
+        r.act(w);
+        int afterSatiation = r.getSatiation();
+        Assert.assertNotEquals(startSatiation,afterSatiation);
     }
 }
