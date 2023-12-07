@@ -17,7 +17,7 @@ public class Config {
      * Has: Set<String> "DIET", int "DAMAGE", int "HEALTH", int "SPEED" and int "MATING_COOLDOWN_DAYS"
      */
     public static class Rabbit {
-        public static final Set<String> DIET = Set.of("MapComponents.Grass");
+        public static final Set<String> DIET = Set.of("Grass");
         public static final int DAMAGE = 0;
         public static final int HEALTH = 30;
         public static final int SPEED = 1;
@@ -28,7 +28,7 @@ public class Config {
      * Has: Set<String> "DIET", int "DAMAGE", int "HEALTH", int "SPEED" and int "MATING_COOLDOWN_DAYS"
      */
     public static class Wolf {
-        public static final Set<String> DIET = Set.of("MapComponents.Rabbit", "MapComponents.Bear", "MapComponents.Wolf", "Meat");
+        public static final Set<String> DIET = Set.of("Rabbit", "Bear", "Wolf", "Carcass");
         public static final int DAMAGE = 20;
         public static final int HEALTH = 100;
         public static final int SPEED = 2;
@@ -39,7 +39,7 @@ public class Config {
      * Has: Set<String> "DIET", int "DAMAGE", int "HEALTH", int "SPEED" and int "MATING_COOLDOWN_DAYS"
      */
     public static class Bear {
-        public static final Set<String> DIET = Set.of("Berry", "MapComponents.Rabbit", "MapComponents.Wolf", "MapComponents.Bear", "Meat");
+        public static final Set<String> DIET = Set.of("Berry", "Rabbit", "Wolf", "Bear", "Carcass");
         public static final int DAMAGE = 100;
         public static final int HEALTH = 300;
         public static final int SPEED = 2;

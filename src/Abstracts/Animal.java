@@ -12,6 +12,7 @@ import itumulator.world.NonBlocking;
 import itumulator.world.World;
 
 import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.*;
 
@@ -371,7 +372,6 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
 //                 NoSuchMethodException ignore) {
 //        }
 //        w.setTile(l, lilBaby);
-//        resetReproductionCooldown();
 //        partner.resetReproductionCooldown();
 //        actionCost(6, 9);
 //    }
@@ -480,6 +480,6 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
      */
     public void moveToMiddle(World w) {
         int x = w.getSize() / 2 - 1;
-        Location midLocation = new Location(x, x); // don't tell y
+        moveTo(w, new Location(x, x)); // don't tell y
     }
 }

@@ -92,7 +92,7 @@ public class Wolf extends Animal implements Actor {
         Object target = pack.getTarget();
         if (target == null) { return true; }
         if (target instanceof Edible) {
-            return ((Edible) target).isEdible();
+            return !((Edible) target).isEdible();
         }
         return !(w.contains(target) && w.isOnTile(target));
     }
@@ -119,10 +119,10 @@ public class Wolf extends Animal implements Actor {
         this.pack = newPack;
     }
 
-    @Override
-    public int calcMissingSatiation() {
-        return (int) Math.round((MAX_SATIATION - satiation) / (1.0 * pack.getPackList().size()));
-    }
+//    @Override
+//    public int calcMissingSatiation() {
+//        return (int) Math.ceil((MAX_SATIATION - satiation) / (1.0 * pack.getPackList().size()));
+//    }
 
     @Override
     protected void hunt(World w, Object target) {
