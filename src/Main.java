@@ -1,11 +1,11 @@
-import Helper.HelperMethods;
+import utils.HelperMethods;
 import itumulator.executable.Program;
 import itumulator.world.World;
 
 public class Main {
 
     public static void main(String[] args) {
-        String input = "data/t3-1b.txt";
+        String input = "data/t2-8a.txt";
 
         int size = HelperMethods.readWorldSize(input);
         int delay = 1000;

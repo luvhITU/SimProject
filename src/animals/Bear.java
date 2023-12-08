@@ -1,8 +1,8 @@
-package MapComponents;
+package animals;
 
-import Abstracts.Animal;
-import Helper.Config;
-import Helper.HelperMethods;
+import homes.Home;
+import utils.Config;
+import utils.HelperMethods;
 import itumulator.simulator.Actor;
 import itumulator.world.Location;
 import itumulator.world.World;
@@ -10,18 +10,17 @@ import java.util.Set;
 
 public class Bear extends Animal implements Actor {
     private static final int TERRITORY_RADIUS = 2;
-    private Location territoryCenter;
 
 
     public Bear() {
         super(Config.Bear.DIET, Config.Bear.DAMAGE, Config.Bear.HEALTH, Config.Bear.SPEED, Config.Bear.MATING_COOLDOWN_DAYS);
-        territoryCenter = null;
     }
 
     @Override
     public void act(World w) {
-        if (territoryCenter == null) {
-            territoryCenter = w.getLocation(this);
+        System.out.println("I was here");
+        if (home == null) {
+            setHome(w, new Home(w.getLocation(this), 1, "Bear"));
         }
         super.act(w);
         if (w.isNight()) {
@@ -43,14 +42,9 @@ public class Bear extends Animal implements Actor {
     }
 
     @Override
-    public Location getHomeLocation(World w) {
-        return territoryCenter;
-    }
-
-    @Override
     public Set<Location> calcTilesInSight(World w) {
         if (satiation >= 50) {
-            Set<Location> tilesInSight = w.getSurroundingTiles(territoryCenter, TERRITORY_RADIUS);
+            Set<Location> tilesInSight = w.getSurroundingTiles(getHomeLocation(), TERRITORY_RADIUS);
             tilesInSight.remove(w.getLocation(this));
             return tilesInSight;
         }
@@ -64,7 +58,7 @@ public class Bear extends Animal implements Actor {
             return;
         }
 
-        Set<Location> validLocations = HelperMethods.getEmptySurroundingTiles(w, territoryCenter, TERRITORY_RADIUS);
+        Set<Location> validLocations = HelperMethods.getEmptySurroundingTiles(w, home.getLocation(), TERRITORY_RADIUS);
         if (validLocations.isEmpty()) {
             return;
         }

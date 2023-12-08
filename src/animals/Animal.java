@@ -1,9 +1,10 @@
-package Abstracts;
+package animals;
 
-import Places.Hole;
-import Places.Home;
-import MapComponents.Carcass;
-import Helper.HelperMethods;
+import ediblesandflora.edibles.Edible;
+import homes.Burrow;
+import homes.Home;
+import ediblesandflora.edibles.Carcass;
+import utils.HelperMethods;
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.simulator.Actor;
@@ -12,11 +13,11 @@ import itumulator.world.NonBlocking;
 import itumulator.world.World;
 
 import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
-public abstract class Animal extends SimComponent implements Actor, DynamicDisplayInformationProvider {
+public abstract class Animal implements Actor, DynamicDisplayInformationProvider {
 
 
     protected static final int MATURITY_AGE = 3;
@@ -61,7 +62,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         this.matingCooldownDays = matingCooldownDays;
 
         maxEnergy = BASE_MAX_ENERGY;
-        satiation = MAX_SATIATION;
+        satiation = 70;
         energy = BASE_MAX_ENERGY;
         stepAge = 0;
         stepAgeWhenMated = 0;
@@ -77,13 +78,15 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
      */
     public void act(World w) {
         stepAge++;
-        // If a day has passed since last age increase, age.
+        // If a day has passed, age.
         if (stepAge % World.getTotalDayDuration() == 0) {
             age();
         }
-        // While sleeping, increase energy every step.
+
         if (!isAwake) {
+            // Increase energy every stepe while sleeping.
             setEnergy(energy + STEP_SLEEP_ENERGY_INCREASE);
+            // If it's morning, wake up.
             if (w.getCurrentTime() == 0) {
                 wakeUp(w);
             }
@@ -102,7 +105,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
      */
     @Override
     public DisplayInformation getInformation() {
-        StringBuilder imageKeyBuilder = new StringBuilder(getType().toLowerCase());
+        StringBuilder imageKeyBuilder = new StringBuilder(this.getClass().getSimpleName().toLowerCase());
         if (!getIsMature()) {
             imageKeyBuilder.append("-small");
         }
@@ -189,7 +192,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
      */
     public void sleep(World w) {
         isAwake = false;
-        if (home instanceof Hole) {
+        if (home instanceof Burrow) {
             w.remove(this);
         }
     }
@@ -200,13 +203,21 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
      */
     public void wakeUp(World w) {
         isAwake = true;
-        if (home instanceof Hole) {
+        if (home instanceof Burrow) {
             emerge(w);
         }
     }
 
+    public static int getMaxSatiation() {
+        return MAX_SATIATION;
+    }
+
     protected void setSatiation(int satiation) {
         this.satiation = Math.max(0, Math.min(MAX_SATIATION, satiation));
+    }
+
+    public int getSatiation() {
+        return satiation;
     }
 
     private void setMaxEnergy(int maxEnergy) {
@@ -223,7 +234,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         int missingSatiation = calcMissingSatiation();
         int edibleNutrition = edible.getNutrition();
         setSatiation(satiation + calcNutritionAbsorbed(edibleNutrition));
-        edible.setNutrition(edibleNutrition - missingSatiation);
+        edible.reduceNutritionBy(missingSatiation);
         if (edible.getNutrition() <= 0) {
             edible.delete(w);
         }
@@ -233,27 +244,27 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
      * Returns the difference of MAX_SATIATION and satiation in int
      * @return  int
      */
-    public int calcMissingSatiation() {
-        return MAX_SATIATION - satiation;
-    }
+    public int calcMissingSatiation() { return MAX_SATIATION - satiation; }
 
     /***
      * Getter for location of Home
-     * @param w Wolrd
      * @return  Location
      */
-    public Location getHomeLocation(World w) {
-        return w.getLocation(home);
+    public Location getHomeLocation() {
+        return home.getLocation();
     }
 
     /***
      * Deletes object and places a Carcass on location
-     * @param w
+     * @param w World
      */
     public void delete(World w) {
-        Location deathL = w.getLocation(this);
+        if (home != null) {
+            home.remove(this);
+        }
+        Location currL = w.getLocation(this);
         w.delete(this);
-        w.setTile(deathL, new Carcass(this, false));
+        w.setTile(currL, new Carcass(this, false));
     }
 
     private void age() {
@@ -269,6 +280,9 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     public void setHome(World w, Home home) {
         this.home = home;
         home.add(this);
+        if (!w.contains(home)) {
+            w.add(home);
+        }
     }
 
     /***
@@ -276,10 +290,10 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
      * @param w World
      */
     public void goHome(World w) {
-        if (w.getLocation(this).equals(getHomeLocation(w))) {
+        if (w.getLocation(this).equals(getHomeLocation())) {
             sleep(w);
         } else {
-            moveTo(w, getHomeLocation(w));
+            moveTo(w, getHomeLocation());
         }
     }
 
@@ -321,8 +335,8 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     public void moveTo(World w, Location targetLoc, int speed) {
         Set<Location> neighbours = HelperMethods.getEmptySurroundingTiles(w, w.getLocation(this), speed);
         Location bestMove = (Location) HelperMethods.findNearestOfObjects(w, targetLoc, neighbours);
-//        int currDistToTargetLoc = Helper.HelperMethods.getDistance(w.getLocation(this), targetLoc);
-//        int newDistToTargetLoc = Helper.HelperMethods.getDistance(bestMove, targetLoc);
+//        int currDistToTargetLoc = utils.HelperMethods.getDistance(w.getLocation(this), targetLoc);
+//        int newDistToTargetLoc = utils.HelperMethods.getDistance(bestMove, targetLoc);
 //        if (newDistToTargetLoc < currDistToTargetLoc) {
 
             w.move(this, bestMove);
@@ -331,41 +345,52 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     }
 
     /***
+     * Tries to find and a home if one is available. If not, and location is burrow-able, then it burrows a burrow
+     * @param w World
+     * @param maxOccupants String
+     */
+    public void tryFindOrDigBurrow(World w, int maxOccupants) {
+        tryOccupyExistingHomes(w, "Burrow");
+        if (home == null && canBurrowHere(w)) {
+            burrow(w, maxOccupants);
+        }
+    }
+    /***
      * Finds a home if one is available
      * @param w     World
      * @param type  String
      */
-    public void tryFindHome(World w, String type) {
-        List<Home> availableBurrows = HelperMethods.availableHomes(w, type);
-        if (availableBurrows.isEmpty()) { return; }
-        Home burrow = availableBurrows.get(0);
-        setHome(w, burrow);
+    private void tryOccupyExistingHomes(World w, String type) {
+        if (home != null) { throw new IllegalStateException("Animal already has a home"); }
+        List<Home> availableHomes = HelperMethods.availableHomes(w, getClass().getSimpleName());
+        if (availableHomes.isEmpty()) { return; }
+        Home home = availableHomes.get(0);
+        setHome(w, home);
     }
 
     /***
-     * Digs a burrow if it possible and sets Home to the new burrow
+     * Digs a burrow sets home to the new burrow
      * @param w         World
-     * @param burrow    Home
+     * @param maxOccupants int
      */
-    public void digBurrow(World w, Home burrow) {
-        Location target;
-        Location currL = w.getLocation(this);
-        if (!(w.containsNonBlocking(currL) && w.getNonBlocking(currL) instanceof Home)) {
-            target = currL;
-        } else {
-            Set<Location> neighbours = HelperMethods.getEmptySurroundingTiles(w, currL, 5);
-            neighbours.removeIf(n -> w.containsNonBlocking(n) && w.getNonBlocking(n) instanceof Home);
-            target = HelperMethods.findNearestLocationByType(w, w.getLocation(this), neighbours, "Location");
-        }
+    public void burrow(World w, int maxOccupants) {
+        if (!canBurrowHere(w)) { throw new IllegalArgumentException("Cannot burrow at this location"); }
+        if (home != null) { throw new IllegalStateException("Animal already has a home"); }
 
-        w.setTile(target, burrow);
-        burrow.add(this);
-        home = burrow;
+        Burrow burrow = new Burrow(w.getLocation(this), maxOccupants, getClass().getSimpleName());
+        setHome(w, burrow);
+        w.setTile(burrow.getLocation(), burrow);
     }
 
-//    public void reproduce(World w, Abstracts.Animal partner) {
-//        Location l = Helper.HelperMethods.getClosestEmptyTile(w, 1);
-//        Abstracts.Animal lilBaby = null;
+    protected boolean canBurrowHere(World w) {
+        Location currL = w.getLocation(this);
+        // Returns false if animal is standing on an existing home
+        return (!(w.containsNonBlocking(currL) && w.getNonBlocking(currL) instanceof Home));
+    }
+
+//    public void reproduce(World w, animals.Animal partner) {
+//        Location l = utils.HelperMethods.getClosestEmptyTile(w, 1);
+//        animals.Animal lilBaby = null;
 //        try {
 //            lilBaby = this.getClass().getDeclaredConstructor().newInstance();
 //        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
@@ -394,6 +419,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     }
 
     protected void hunt(World w, Object target) {
+//        if (satiation > 85) { return ; }
         Location targetLoc = w.getLocation(target);
         boolean targetInRange = isTargetInRange(w, target);
         boolean isAnimal = target instanceof Animal;
@@ -401,10 +427,7 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
         if (!targetInRange) {
             int speed = (isAnimal) ? calcMaxSpeed() : 1;
             moveTo(w, targetLoc, speed);
-            targetInRange = isTargetInRange(w, target);
-        }
-
-        if (targetInRange) {
+        } else  {
             if (isAnimal) {
                 attack(w, (Animal) target);
             } else {
@@ -481,5 +504,9 @@ public abstract class Animal extends SimComponent implements Actor, DynamicDispl
     public void moveToMiddle(World w) {
         int x = w.getSize() / 2 - 1;
         moveTo(w, new Location(x, x)); // don't tell y
+    }
+
+    public Home getHome() {
+        return home;
     }
 }

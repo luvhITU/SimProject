@@ -1,5 +1,5 @@
 /*
-import MapComponents.Grass;
+import ediblesandflora.edibles.Grass;
 import itumulator.executable.Program;
 import itumulator.world.Location;
 import itumulator.world.World;
