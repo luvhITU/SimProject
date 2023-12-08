@@ -18,9 +18,9 @@ public class CarcassTest extends test{
         int[] startLocation = {w.getLocation(c).getX(),w.getLocation(c).getY()};
         System.out.println(Arrays.toString(startLocation));
         c.act(w);
+        //w.move(c,new Location(1,1)); To see if could fail
         int[] endLocation = {w.getLocation(c).getX(),w.getLocation(c).getY()};
         System.out.println(Arrays.toString(endLocation));
-        //w.setTile(new Location(1,1),c); To see if it could fail
         Assert.assertArrayEquals(startLocation,endLocation);
     }
 }
