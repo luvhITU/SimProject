@@ -24,7 +24,7 @@ public class Bear extends Animal implements Actor {
      */
     @Override
     public void act(World w) {
-        System.out.println("I was here");
+        //System.out.println("I was here");
         if (home == null) {
             setHome(w, new Home(w.getLocation(this), 1, "Bear"));
         }
