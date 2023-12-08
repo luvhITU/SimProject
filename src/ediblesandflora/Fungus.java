@@ -17,12 +17,20 @@ public class Fungus implements Actor, DynamicDisplayInformationProvider {
     private int spreadRadius = 0;
     private int spreadRadiusMax = 5;
 
+    /***
+     * Initializes "deadAnimalNutrition" and initializes health to be 1/4 of "deadAnimalNutrition"
+     * @param deadAnimalNutrition   int
+     */
     public Fungus(int deadAnimalNutrition) {
         this.deadAnimalNutrition = deadAnimalNutrition;
         health = deadAnimalNutrition / 4;
         stepAge = 0;
     }
 
+    /***
+     * See super
+     * @param w providing details of the position on which the actor is currently located and much more.
+     */
     @Override
     public void act(World w) {
         stepAge++;
@@ -32,6 +40,10 @@ public class Fungus implements Actor, DynamicDisplayInformationProvider {
         //System.out.println(spreadRadius);
     }
 
+    /***
+     * See super
+     * @return  DisplayInformation
+     */
     @Override
     public DisplayInformation getInformation() {
         String imageKey = deadAnimalNutrition > 100 ? "fungi" : "fungi-small";
@@ -39,6 +51,11 @@ public class Fungus implements Actor, DynamicDisplayInformationProvider {
     }
 
     // Only runs every 2. step
+
+    /***
+     * Does "health--;" every 2nd world tick
+     * @param w World
+     */
     public void degrade(World w) {
         if (stepAge % 2 == 0) {
             health--;
@@ -48,6 +65,10 @@ public class Fungus implements Actor, DynamicDisplayInformationProvider {
         }
     }
 
+    /***
+     * Sees if there is any uninfected carcass in "spreadRadius" and spreads to the carcass every 2nd world tick
+     * @param w World
+     */
     public void spread(World w) {
         Set<Location> locations = w.getSurroundingTiles(w.getCurrentLocation(), spreadRadius);
         for (Location l : locations) {
@@ -64,6 +85,10 @@ public class Fungus implements Actor, DynamicDisplayInformationProvider {
         }
     }
 
+    /***
+     * Deletes this from the world
+     * @param w World
+     */
     public void delete(World w) {
         w.delete(this);
     }
