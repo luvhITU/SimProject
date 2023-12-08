@@ -34,9 +34,10 @@ public class RabbitTest {
         Home h = new Home(new Location(5,5),5,"Rabbit");
         w.setTile(startLocation,g);
         w.setTile(startLocation,r);
+        r.setHome(w,h); //Sets home before to not get bug
         Object[] beforeEntities = w.getEntities().keySet().toArray();
         System.out.println(Arrays.toString(beforeEntities));
-        r.setHome(w,h); //Sets home before to not get bug
+
         int i = 0;
         while(g.getNutrition() > 0 || i > 20) {
             r.eat(w, g);

@@ -20,13 +20,26 @@ public class Pack implements DynamicDisplayInformationProvider {
         target = null;
     }
 
+    /***
+     * See super
+     * @return  DisplayInformation
+     */
     @Override
     public DisplayInformation getInformation() {
         return new DisplayInformation(Color.cyan);
     }
 
+    /***
+     * Returns true if there is no space left in pack
+     * @return  Boolean
+     */
     public boolean isFull() { return packHome.isFull(); }
 
+    /***
+     * Adds pack animal to pack and throws and exception if the pack animal already is in the pack
+     * @param w         World
+     * @param animal    PackAnimal
+     */
     public void add(World w, PackAnimal animal) {
         if (members.contains(animal)) {
             throw new IllegalArgumentException(animal + " is already a member.");
@@ -37,6 +50,10 @@ public class Pack implements DynamicDisplayInformationProvider {
         }
     }
 
+    /***
+     * Removes the pack animal from the pack
+     * @param animal    PackAnimal
+     */
     public void remove(PackAnimal animal) {
         if (!members.contains(animal)) {
             throw new IllegalArgumentException(animal + " is not a member.");
@@ -44,18 +61,35 @@ public class Pack implements DynamicDisplayInformationProvider {
         members.remove(animal);
     }
 
+    /***
+     * Getter for the target for the pack
+     * @return  Target for the hunt, animal
+     */
     public Object getTarget() {
         return target;
     }
 
+    /***
+     * Getter for members of the pack in a set
+     * @return  Set of pack animals
+     */
     public Set<PackAnimal> getMembers() {
         return members;
     }
 
+    /***
+     * Getter for Home of the pack
+     * @return  Home
+     */
     public Home getPackHome() {
         return packHome;
     }
 
+    /***
+     * Sets packHome for the pack and all members of the pack
+     * @param w     World
+     * @param home  Home
+     */
     public void setPackHome(World w, Home home) {
         packHome = home;
         for (PackAnimal member : members) {
@@ -63,10 +97,19 @@ public class Pack implements DynamicDisplayInformationProvider {
         }
     }
 
+    /***
+     * Sets the target for the pack
+     * @param target    Object, animal
+     */
     public void setTarget(Object target) {
         this.target = target;
     }
 
+    /***
+     * Returns all locations which in sight of members of the pack
+     * @param w World
+     * @return  Set of locations which is in sight of all members
+     */
     public Set<Location> calcPackTilesInSight(World w) {
         Set<Location> packTilesOfSight = new HashSet<>();
         for (PackAnimal member : members) {
@@ -78,6 +121,11 @@ public class Pack implements DynamicDisplayInformationProvider {
         return packTilesOfSight;
     }
 
+    /***
+     * Returns sets of locations of members of the pack
+     * @param w World
+     * @return  Set of Locations
+     */
     public Set<Location> getMemberLocations(World w) {
         Set<Location> memberLocations = new HashSet<>();
         for (PackAnimal member : members) {
