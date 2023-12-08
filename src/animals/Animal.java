@@ -419,7 +419,6 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
     }
 
     protected void hunt(World w, Object target) {
-//        if (satiation > 85) { return ; }
         Location targetLoc = w.getLocation(target);
         boolean targetInRange = isTargetInRange(w, target);
         boolean isAnimal = target instanceof Animal;

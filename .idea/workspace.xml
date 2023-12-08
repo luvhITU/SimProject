@@ -7,32 +7,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dafda8e0-94d7-440d-b2ec-a65c8f2f90b8" name="Changes" comment="Animals eat again">
-      <change afterPath="$PROJECT_DIR$/src/animals/packanimals/PackAnimal.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/homes/Burrow.java" afterDir="false" />
+    <list default="true" id="dafda8e0-94d7-440d-b2ec-a65c8f2f90b8" name="Changes" comment="Restructuring and rebalancing and possibly bug fixing.">
+      <change afterPath="$PROJECT_DIR$/lib/hamcrest-core-1.3.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/junit-4.13.1.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/t3-1a.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/t3-1a.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Abstracts/Animal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/animals/Animal.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Abstracts/Edible.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ediblesandflora/edibles/Edible.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Abstracts/RenewableEdible.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Abstracts/SimComponent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GrassTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tests/GrassTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Helper/Config.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/Config.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Helper/HelperMethods.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/HelperMethods.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MapComponents/Bear.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/animals/Bear.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MapComponents/BerryBush.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ediblesandflora/edibles/BerryBush.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MapComponents/Carcass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ediblesandflora/edibles/Carcass.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MapComponents/Fungus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ediblesandflora/Fungus.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MapComponents/Grass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ediblesandflora/edibles/Grass.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MapComponents/Rabbit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/animals/Rabbit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MapComponents/Wolf.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/animals/packanimals/Wolf.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Places/BearTerritory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Places/Hole.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Places/Home.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/homes/Home.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Places/Pack.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/animals/packanimals/Pack.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Places/RabbitBurrow.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Places/WolfBurrow.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/InteliJ.iml" beforeDir="false" afterPath="$PROJECT_DIR$/InteliJ.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GrassTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GrassTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/animals/Animal.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/animals/Animal.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,6 +49,7 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -92,30 +74,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;true&quot;,
-    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Mathias/Desktop/HandOuts/InteliJ/src/itumulator/world&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Java&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Downloaded.Files.Path.Enabled": "true",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "git-widget-placeholder": "Merging master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/Mathias/Desktop/HandOuts/InteliJ/src/itumulator/world",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.sourceCode.Java",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Mathias\Desktop\HandOuts\InteliJ\src\itumulator\world" />
@@ -190,7 +172,7 @@
       <workItem from="1701944494121" duration="115000" />
       <workItem from="1701945164627" duration="430000" />
       <workItem from="1701955434177" duration="34000" />
-      <workItem from="1701955475765" duration="34095000" />
+      <workItem from="1701955475765" duration="35135000" />
     </task>
     <task id="LOCAL-00001" summary="Changes:&#10;- Updated ITUmulator library&#10;- Merged Rabbit &amp; Master branch">
       <option name="closed" value="true" />
@@ -312,7 +294,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701957537514</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Restructuring and rebalancing and possibly bug fixing.">
+      <option name="closed" value="true" />
+      <created>1701998697187</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1701998697187</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -343,7 +333,9 @@
     <MESSAGE value="Everything seems to be working. Reproduction still needs to be implemented.&#10;&#10;Have removed all instances of w.getCurrentLocation() and calls to methods that use this method (like getEmptySurroundingTiles() without an explicit location)" />
     <MESSAGE value="Everything seems to be working. Reproduction still needs to be implemented.&#10;&#10;Have removed all instances of w.getCurrentLocation() and calls to methods that use this method (like getEmptySurroundingTiles() without an explicit location)" />
     <MESSAGE value="Animals eat again" />
-    <option name="LAST_COMMIT_MESSAGE" value="Animals eat again" />
+    <MESSAGE value="Restructuring and rebalancing and possibly bug fixing." />
+    <option name="LAST_COMMIT_MESSAGE" value="Restructuring and rebalancing and possibly bug fixing." />
+    <option name="GROUP_MULTIFILE_MERGE_BY_DIRECTORY" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
