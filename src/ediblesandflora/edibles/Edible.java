@@ -28,6 +28,10 @@ public abstract class Edible implements Actor {
         stepAge = 0;
     }
 
+    /***
+     * See super
+     * @param w providing details of the position on which the actor is currently located and much more.
+     */
     @Override
     public void act(World w) {
         stepAge++;
