@@ -1,6 +1,7 @@
 package tests;
 
 import animals.Animal;
+import animals.Rabbit;
 import itumulator.world.Location;
 import itumulator.world.World;
 import org.junit.Assert;
@@ -39,5 +40,21 @@ public class test {
         int afterSatiation = a.getSatiation();
         System.out.println(afterSatiation);
         Assert.assertNotEquals(startSatiation,afterSatiation);
+    }
+    protected void dieOfHunger(Animal a){
+        w.setTile(startLocation,a);
+        for(int i = 1;w.getEntities().containsKey(a);i++){
+            System.out.println("Act nr: " + i);
+            a.act(w);
+        }
+        boolean hasAnimalOfType = false;
+        System.out.println("Input animal simple name: " + a.getClass().getSimpleName());
+        for(Object o: w.getEntities().keySet()){
+            System.out.println("Entity exists simple name: " + o.getClass().getSimpleName());
+            if(o.getClass().getSimpleName().equals(a.getClass().getSimpleName())){
+                hasAnimalOfType = true;
+            }
+        }
+        Assert.assertFalse(hasAnimalOfType);
     }
 }

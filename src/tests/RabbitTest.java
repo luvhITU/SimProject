@@ -30,7 +30,8 @@ public class RabbitTest extends test {
     public void losesSatiationTest(){
         losesSatiation(r);
     }
-    @Test
+
+    @Test //K1-2c "Kaniner lever af græs som de spiser i løbet af dagen,"
     public void hasEatenTest(){
         Grass g = new Grass();
         Home h = new Home(new Location(5,5),5,"Rabbit");
@@ -39,7 +40,6 @@ public class RabbitTest extends test {
         r.setHome(w,h); //Sets home before to not get exception
         Object[] beforeEntities = w.getEntities().keySet().toArray();
         System.out.println(Arrays.toString(beforeEntities));
-
         int i = 0;
         while(g.getNutrition() > 0 || i > 20) {
             r.eat(w, g);
@@ -48,6 +48,10 @@ public class RabbitTest extends test {
         Object[] afterEntities = w.getEntities().keySet().toArray();
         System.out.println(Arrays.toString(afterEntities));
         Assert.assertFalse(Arrays.equals(beforeEntities,afterEntities));
+    }
+    @Test //K1-2c uden mad dør en kanin.
+    public void dieOfHungerTest(){
+        dieOfHunger(r);
     }
     @Test
     public void hasDugBurrowTest(){
