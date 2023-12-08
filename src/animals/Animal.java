@@ -500,9 +500,12 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
      */
     public void randomMove(World w) {
         Set<Location> neighbours = w.getEmptySurroundingTiles(w.getLocation(this));
-        Location l = (Location) neighbours.toArray()[HelperMethods.getRandom().nextInt(neighbours.size())];
-        w.move(this, l);
-        actionCost(1);
+        System.out.println(neighbours.size());
+        if(!neighbours.isEmpty()){ //Needs to be larger than zero to not get exception
+            Location l = (Location) neighbours.toArray()[HelperMethods.getRandom().nextInt(neighbours.size())];
+            w.move(this, l);
+            actionCost(1);
+        }
     }
 
     /***

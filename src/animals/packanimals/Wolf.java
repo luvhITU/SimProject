@@ -29,8 +29,8 @@ public class Wolf extends PackAnimal {
     public void act(World w) {
         super.act(w);
         if (home == null && canBurrowHere(w)) {
-            System.out.println(pack.getMembers().size());
-            System.out.println("can burrow");
+            //System.out.println(pack.getMembers().size());
+            //System.out.println("can burrow");
             burrow(w, maxPackSize);
         }
     }

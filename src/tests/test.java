@@ -2,13 +2,16 @@ package tests;
 
 import animals.Animal;
 import animals.Rabbit;
+import ediblesandflora.edibles.Carcass;
 import ediblesandflora.edibles.Edible;
 import itumulator.world.Location;
 import itumulator.world.World;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 
 public class test {
     protected int worldSize = 10;
@@ -78,5 +81,19 @@ public class test {
             Assert.assertFalse(w.contains(o));
         }
         catch (IllegalArgumentException iae) {Assert.assertFalse(false);} //Throws an exception instead of return false
+    }
+    protected void cantMoveWhenBlocked(Animal a){
+        //Uses carcass to block movement
+        Location[] locations = new Location[]{new Location(0, 1),new Location(1,1),new Location(1,0)};
+        for(Location l: locations){
+            String s = String.format("X: %s, Y: %s",l.getX(),l.getY());
+            System.out.println(s);
+            w.setTile(l,new Carcass(true));
+        }
+        int startEnergy = a.getEnergy();
+        w.setTile(startLocation,a);
+        a.act(w);
+        Assert.assertEquals(startLocation, w.getLocation(a));
+        Assert.assertEquals(startEnergy,a.getEnergy());
     }
 }

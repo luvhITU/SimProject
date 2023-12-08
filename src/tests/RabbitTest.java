@@ -69,7 +69,10 @@ public class RabbitTest extends test {
         }
         Assert.assertNotNull(h);
     }
-
+    @Test
+    public void cantMoveWhenBlockedTest(){
+        cantMoveWhenBlocked(r);
+    }
     //Mating does not work right now @Test
     public void hasMated(){
         Rabbit r2 = new Rabbit();
