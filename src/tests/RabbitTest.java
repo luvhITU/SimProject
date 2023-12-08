@@ -57,6 +57,7 @@ public class RabbitTest extends test {
         for(Object o: w.getEntities().keySet()){
             if(o instanceof Burrow){
                 h = (Home) o;
+                System.out.println("getAllowedSpecies():" + h.getAllowedSpecies());
             }
         }
         Assert.assertNotNull(h);
