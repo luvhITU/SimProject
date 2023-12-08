@@ -10,17 +10,32 @@ import itumulator.world.World;
 import java.awt.*;
 
 public class Burrow extends Home implements DynamicDisplayInformationProvider, NonBlocking {
-    String imageKey;
+    private String imageKey;
+
+    /***
+     * Initializes using super for location, maxOccupants and allowedSpecies. Sets imageKey to "hole-small"
+     * @param location          Location
+     * @param maxOccupants      int
+     * @param allowedSpecies    String of desired species
+     */
     public Burrow(Location location, int maxOccupants, String allowedSpecies) {
         super(location, maxOccupants, allowedSpecies);
         imageKey = "hole-small";
     }
 
+    /***
+     * See super
+     * @return  DisplayInformation
+     */
     @Override
     public DisplayInformation getInformation() {
         return new DisplayInformation(Color.magenta, imageKey);
     }
 
+    /***
+     * See super
+     * @param animal
+     */
     @Override
     public void add(Animal animal) {
         super.add(animal);
