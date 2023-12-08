@@ -51,7 +51,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
      * @param damage                int
      * @param maxHealth             int
      * @param maxSpeed              int
-     * @param matingCooldownDays    int
+     * @param matingCooldownDays    int, amount of steps before mating again
      */
     public Animal(Set<String> diet, int damage, int maxHealth, int maxSpeed, int matingCooldownDays) {
         this.diet = diet;

@@ -14,11 +14,25 @@ public class PackAnimal extends Animal {
     protected Pack pack;
     private int stepAgeWhenPackActed;
 
+    /***
+     * Constructor for Pack Animal, same as super but also has a "maxPackSize"
+     * @param diet                  Set of strings of diet elements
+     * @param damage                int
+     * @param maxHealth             int
+     * @param maxSpeed              int
+     * @param matingCooldownDays    int, amount of steps before mating again
+     * @param maxPackSize           int
+     */
     public PackAnimal(Set<String> diet, int damage, int maxHealth, int maxSpeed, int matingCooldownDays, int maxPackSize) {
         super(diet, damage, maxHealth, maxSpeed, matingCooldownDays);
         this.maxPackSize = maxPackSize;
         stepAgeWhenPackActed = 0;
     }
+
+    /***
+     * See super
+     * @param w providing details of the position on which the actor is currently located and much more.
+     */
     @Override
     public void act(World w) {
         if (pack == null) {
@@ -47,6 +61,10 @@ public class PackAnimal extends Animal {
         if (isDead()) { delete(w); }
     }
 
+    /***
+     * See super
+     * @param w World
+     */
     @Override
     public void delete(World w) {
         if (pack != null) {
@@ -55,6 +73,11 @@ public class PackAnimal extends Animal {
         super.delete(w);
     }
 
+    /***
+     * See super
+     * @param w     Wolrd
+     * @param home  Home
+     */
     @Override
     public void setHome(World w, Home home) {
         if (pack.getPackHome() == null) {
@@ -64,6 +87,11 @@ public class PackAnimal extends Animal {
         }
     }
 
+    /***
+     * See super
+     * @param w World
+     * @return
+     */
     @Override
     public Set<Location> calcTilesInSight(World w) {
         return pack.calcPackTilesInSight(w);
@@ -82,6 +110,11 @@ public class PackAnimal extends Animal {
         return !(w.contains(target) && w.isOnTile(target));
     }
 
+    /***
+     * Searches world entities for packs and if any of the existing still has room, it gets added to that pack. If no
+     * packs have room then it will make a new pack and add this.
+     * @param w World
+     */
     public void findOrStartPack(World w) {
         //Checks if there is room in current packs
         for (Object o : w.getEntities().keySet()) {
