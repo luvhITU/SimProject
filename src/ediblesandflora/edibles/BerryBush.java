@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class BerryBush extends Edible implements DynamicDisplayInformationProvider {
     /***
-     * Constructor for BerryBush() that uses configs
+     * Constructor that uses configs
      */
     public BerryBush() {
         super(Config.BerryBush.NUTRITION, Config.BerryBush.renewTimeDays);

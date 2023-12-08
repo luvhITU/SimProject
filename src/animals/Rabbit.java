@@ -5,10 +5,17 @@ import itumulator.simulator.Actor;
 import itumulator.world.World;
 
 public class Rabbit extends Animal implements Actor {
+    /***
+     * Constructor that uses configs
+     */
     public Rabbit() {
         super(Config.Rabbit.DIET, Config.Rabbit.DAMAGE, Config.Rabbit.HEALTH, Config.Rabbit.SPEED, Config.Rabbit.MATING_COOLDOWN_DAYS);
     }
 
+    /***
+     * See super
+     * @param w providing details of the position on which the actor is currently located and much more.
+     */
     @Override
     public void act(World w) {
         if (home == null) {

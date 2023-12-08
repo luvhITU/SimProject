@@ -11,11 +11,17 @@ import java.util.Set;
 public class Bear extends Animal implements Actor {
     private static final int TERRITORY_RADIUS = 2;
 
-
+    /***
+     * Constructor that uses configs
+     */
     public Bear() {
         super(Config.Bear.DIET, Config.Bear.DAMAGE, Config.Bear.HEALTH, Config.Bear.SPEED, Config.Bear.MATING_COOLDOWN_DAYS);
     }
 
+    /***
+     * See super
+     * @param w providing details of the position on which the actor is currently located and much more.
+     */
     @Override
     public void act(World w) {
         System.out.println("I was here");
@@ -41,6 +47,12 @@ public class Bear extends Animal implements Actor {
         }
     }
 
+    /***
+     * If satiation is greater than equal to 50 then it returns all tiles within territory else it returns tiles
+     * within vision radius
+     * @param w World
+     * @return  Set of Locations
+     */
     @Override
     public Set<Location> calcTilesInSight(World w) {
         if (satiation >= 50) {
@@ -51,6 +63,10 @@ public class Bear extends Animal implements Actor {
         return super.calcTilesInSight(w);
     }
 
+    /***
+     * If satiation is less than 50 then it super.randomMove else it to random location in the map
+     * @param w World
+     */
     @Override
     public void randomMove(World w) {
         if (satiation < 50) {
