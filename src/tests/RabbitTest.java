@@ -30,7 +30,10 @@ public class RabbitTest extends test {
     public void losesSatiationTest(){
         losesSatiation(r);
     }
-
+    @Test //k1-2b. Kaniner kan dø, hvilket resulterer I at de fjernes fra verdenen.
+    public void deleteTest(){
+        delete(r);
+    }
     @Test //K1-2c "Kaniner lever af græs som de spiser i løbet af dagen,"
     public void hasEatenTest(){
         Grass g = new Grass();
@@ -49,7 +52,7 @@ public class RabbitTest extends test {
         System.out.println(Arrays.toString(afterEntities));
         Assert.assertFalse(Arrays.equals(beforeEntities,afterEntities));
     }
-    @Test //K1-2c uden mad dør en kanin.
+    @Test //K1-2c "uden mad dør en kanin."
     public void dieOfHungerTest(){
         dieOfHunger(r);
     }

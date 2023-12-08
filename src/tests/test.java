@@ -57,4 +57,14 @@ public class test {
         }
         Assert.assertFalse(hasAnimalOfType);
     }
+    protected void delete(Object o){
+        w.setTile(startLocation,o);
+        if(o instanceof Animal){
+            ((Animal) o).delete(w);
+        }
+        try {
+            Assert.assertFalse(w.contains(o));
+        }
+        catch (IllegalArgumentException iae) {Assert.assertFalse(false);} //Throws an exception instead of return false
+    }
 }
