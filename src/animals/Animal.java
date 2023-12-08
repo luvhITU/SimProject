@@ -216,10 +216,19 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         this.satiation = Math.max(0, Math.min(MAX_SATIATION, satiation));
     }
 
+    /***
+     * Getter for satiation
+     * @return  int
+     */
     public int getSatiation() {
         return satiation;
     }
 
+    /***
+     * Getter for energy
+     * @return  int
+     */
+    public int getEnergy(){ return energy;}
     private void setMaxEnergy(int maxEnergy) {
         int minMaxEnergy = 30;
         this.maxEnergy = Math.max(minMaxEnergy, maxEnergy);
@@ -505,6 +514,10 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         moveTo(w, new Location(x, x)); // don't tell y
     }
 
+    /***
+     * Getter for home
+     * @return  Home
+     */
     public Home getHome() {
         return home;
     }

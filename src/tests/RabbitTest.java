@@ -1,9 +1,8 @@
-package Testing;
+package tests;
 
-import MapComponents.Grass;
-import MapComponents.Rabbit;
-import Places.Home;
-import Places.RabbitBurrow;
+import ediblesandflora.edibles.Grass;
+import animals.Rabbit;
+import homes.*;
 import itumulator.world.Location;
 import itumulator.world.World;
 import org.junit.Assert;
@@ -32,7 +31,7 @@ public class RabbitTest {
     @Test
     public void hasEatenTest(){
         Grass g = new Grass();
-        Home h = new Home(4);
+        Home h = new Home(new Location(5,5),5,"Rabbit");
         w.setTile(startLocation,g);
         w.setTile(startLocation,r);
         Object[] beforeEntities = w.getEntities().keySet().toArray();
@@ -53,7 +52,7 @@ public class RabbitTest {
         r.act(w);
         Home h = null;
         for(Object o: w.getEntities().keySet()){
-            if(o instanceof RabbitBurrow){
+            if(o instanceof Burrow){
                 h = (Home) o;
             }
         }
