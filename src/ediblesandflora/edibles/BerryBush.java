@@ -8,10 +8,17 @@ import itumulator.simulator.Actor;
 import java.awt.*;
 
 public class BerryBush extends Edible implements DynamicDisplayInformationProvider {
+    /***
+     * Constructor for BerryBush() that uses configs
+     */
     public BerryBush() {
         super(Config.BerryBush.NUTRITION, Config.BerryBush.renewTimeDays);
     }
 
+    /***
+     * See super
+     * @return  DisplayInformation
+     */
     @Override
     public DisplayInformation getInformation() {
             if (isEdible()) {
