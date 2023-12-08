@@ -17,4 +17,12 @@ public class BearTest extends test {
     public void losesSatiationTest(){
         losesSatiation(b);
     }
+    @Test
+    public void deleteTest(){
+        delete(b);
+    }
+    @Test
+    public void dieWithTimeTest(){
+        dieWithTime(b);
+    }
 }

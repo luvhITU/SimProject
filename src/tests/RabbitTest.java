@@ -53,8 +53,8 @@ public class RabbitTest extends test {
         Assert.assertFalse(Arrays.equals(beforeEntities,afterEntities));
     }
     @Test //K1-2c "uden mad dør en kanin."
-    public void dieOfHungerTest(){
-        dieOfHunger(r);
+    public void dieWithTimeTest(){
+        dieWithTime(r);
     }
     @Test
     public void hasDugBurrowTest(){

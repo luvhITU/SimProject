@@ -2,6 +2,7 @@ package tests;
 
 import animals.Animal;
 import animals.Rabbit;
+import ediblesandflora.edibles.Edible;
 import itumulator.world.Location;
 import itumulator.world.World;
 import org.junit.Assert;
@@ -41,26 +42,37 @@ public class test {
         System.out.println(afterSatiation);
         Assert.assertNotEquals(startSatiation,afterSatiation);
     }
-    protected void dieOfHunger(Animal a){
+    protected void dieWithTime(Object a){
         w.setTile(startLocation,a);
         for(int i = 1;w.getEntities().containsKey(a);i++){
             System.out.println("Act nr: " + i);
-            a.act(w);
+            if(a instanceof Animal){
+                ((Animal) a).act(w);
+            }
+            else if(a instanceof Edible){
+                ((Edible) a).act(w);
+            }
+            if(i >= 200){
+                break; //Break so it doesn't just go forever
+            }
         }
-        boolean hasAnimalOfType = false;
+        boolean hasType = false;
         System.out.println("Input animal simple name: " + a.getClass().getSimpleName());
         for(Object o: w.getEntities().keySet()){
             System.out.println("Entity exists simple name: " + o.getClass().getSimpleName());
             if(o.getClass().getSimpleName().equals(a.getClass().getSimpleName())){
-                hasAnimalOfType = true;
+                hasType = true;
             }
         }
-        Assert.assertFalse(hasAnimalOfType);
+        Assert.assertFalse(hasType);
     }
     protected void delete(Object o){
         w.setTile(startLocation,o);
         if(o instanceof Animal){
             ((Animal) o).delete(w);
+        }
+        else if(o instanceof Edible){
+            ((Edible) o).delete(w);
         }
         try {
             Assert.assertFalse(w.contains(o));
