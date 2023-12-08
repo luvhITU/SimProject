@@ -1,5 +1,6 @@
 package tests;
 
+import animals.Animal;
 import ediblesandflora.edibles.Grass;
 import animals.Rabbit;
 import homes.*;
@@ -14,19 +15,20 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
-public class RabbitTest {
-    protected int worldSize = 10;
-    protected World w = new World(worldSize);
+public class RabbitTest extends test {
     protected Rabbit r = new Rabbit();
-    protected Location startLocation = new Location(0,0);
+
     @Test
     public void hasMovedTest(){
-        int[] startXY = {startLocation.getX(),startLocation.getY()};
-        w.setTile(startLocation,r);
-        r.act(w);
-        Location movedLocation = w.getLocation(r);
-        int[] movedXY = {movedLocation.getX(),movedLocation.getY()};
-        Assert.assertFalse(Arrays.equals(startXY,movedXY));
+        hasMoved(r);
+    }
+    @Test
+    public void losesEnergyTest(){
+        losesEnergy(r);
+    }
+    @Test
+    public void losesSatiationTest(){
+        losesSatiation(r);
     }
     @Test
     public void hasEatenTest(){
@@ -59,22 +61,7 @@ public class RabbitTest {
         }
         Assert.assertNotNull(h);
     }
-    @Test
-    public void losesEnergy(){
-        int startEnergy = r.getEnergy();
-        w.setTile(startLocation,r);
-        r.act(w);
-        int afterEnergy = r.getEnergy();
-        Assert.assertNotEquals(startEnergy,afterEnergy);
-    }
-    @Test
-    public void losesSatiation(){
-        int startSatiation = r.getSatiation();
-        w.setTile(startLocation,r);
-        r.act(w);
-        int afterSatiation = r.getSatiation();
-        Assert.assertNotEquals(startSatiation,afterSatiation);
-    }
+
     //Mating does not work right now @Test
     public void hasMated(){
         Rabbit r2 = new Rabbit();
