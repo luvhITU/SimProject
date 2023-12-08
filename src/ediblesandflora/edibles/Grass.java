@@ -1,22 +1,23 @@
-package MapComponents;
+package ediblesandflora.edibles;
 
-import Abstracts.Edible;
-import Helper.*;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.simulator.Actor;
 import itumulator.world.Location;
 import itumulator.world.World;
 import itumulator.executable.DisplayInformation;
 import itumulator.world.NonBlocking;
+import utils.Config;
+import utils.HelperMethods;
+
 import java.util.Set;
 import java.awt.Color;
 
-public class Grass extends Edible implements Actor, NonBlocking, DynamicDisplayInformationProvider {
+public class Grass extends Edible implements NonBlocking, DynamicDisplayInformationProvider {
 
     private int stepAge;
 
     public Grass() {
-        super(Config.Grass.NUTRITION);
+        super(Config.Grass.NUTRITION, 0);
         stepAge = 0;
     }
 

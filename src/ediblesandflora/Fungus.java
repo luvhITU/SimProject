@@ -1,5 +1,6 @@
-package MapComponents;
+package ediblesandflora;
 
+import ediblesandflora.edibles.Carcass;
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.simulator.Actor;
@@ -25,7 +26,7 @@ public class Fungus implements Actor, DynamicDisplayInformationProvider {
     @Override
     public void act(World w) {
         stepAge++;
-        //System.out.println("MapComponents.Fungus Health: " + health);
+        //System.out.println("ediblesandflora.Fungus Health: " + health);
         degrade(w);
         spread(w);
         //System.out.println(spreadRadius);

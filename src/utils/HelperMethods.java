@@ -1,9 +1,13 @@
-package Helper;
+package utils;
 
-import MapComponents.*;
-import Places.BearTerritory;
-import Places.Home;
-import Places.RabbitBurrow;
+import animals.Bear;
+import homes.Burrow;
+import homes.Home;
+import animals.Rabbit;
+import animals.packanimals.Wolf;
+import ediblesandflora.edibles.BerryBush;
+import ediblesandflora.edibles.Carcass;
+import ediblesandflora.edibles.Grass;
 import itumulator.world.Location;
 import itumulator.world.World;
 import itumulator.executable.Program;
@@ -13,7 +17,7 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public abstract class HelperMethods {
-    private static final Random r = new Random();
+    private static final Random r = new Random(42);
     private static List<Location> occupied = new ArrayList<>();
 
     /***
@@ -73,7 +77,7 @@ public abstract class HelperMethods {
                     continue;
                 }
 
-                // if String contains "cordyceps" then the Abstracts.Animal-Object should be infected
+                // if String contains "cordyceps" then the animals.Animal-Object should be infected
                 if (str.contains("cordyceps") || str.contains("fungi")) {
                     isInfected = true;
                 }
@@ -116,11 +120,11 @@ public abstract class HelperMethods {
      *
      * @param w          World
      * @param p          Program
-     * @param isInfected Boolean. Returns True if Abstracts.Animal is infected, False if not.
+     * @param isInfected Boolean. Returns True if animals.Animal is infected, False if not.
      * @param type       Type of Object to be spawned.
      * @param amount     Amount of Object(s) to be spawned.
-     * @param x          x-Coordinate of MapComponents.Bear-Territory.
-     * @param y          y-Coordinate of MapComponents.Bear-Territory.
+     * @param x          x-Coordinate of animals.Bear-Territory.
+     * @param y          y-Coordinate of animals.Bear-Territory.
      */
     public static void spawnObject(World w, Program p, boolean isInfected, String type, int amount, int x, int y) {
         spawnObjects(w, p, isInfected, type, amount, amount, x, y);
@@ -131,12 +135,12 @@ public abstract class HelperMethods {
      *
      * @param w          World
      * @param p          Program
-     * @param isInfected Boolean. Returns True if Abstracts.Animal is infected, False if not.
+     * @param isInfected Boolean. Returns True if animals.Animal is infected, False if not.
      * @param type       Type of Object to be spawned.
      * @param startRange Minimum amount of Objects to be spawned.
      * @param endRange   Maximum amount of Objects to be spawned.
-     * @param x          x-Coordinate of MapComponents.Bear-Territory.
-     * @param y          y-Coordinate of MapComponents.Bear-Territory.
+     * @param x          x-Coordinate of animals.Bear-Territory.
+     * @param y          y-Coordinate of animals.Bear-Territory.
      */
     public static void spawnObject(World w, Program p, boolean isInfected, String type, int startRange, int endRange, int x, int y) {
         spawnObjects(w, p, isInfected, type, startRange, endRange, x, y);
@@ -147,12 +151,12 @@ public abstract class HelperMethods {
      *
      * @param w          World
      * @param p          Program
-     * @param isInfected Boolean. Returns True if Abstracts.Animal is infected, False if not.
+     * @param isInfected Boolean. Returns True if animals.Animal is infected, False if not.
      * @param type       Type of Object to be spawned.
      * @param startRange Minimum amount of Objects to be spawned.
      * @param endRange   Maximum amount of Objects to be spawned.
-     * @param x          x-Coordinate of MapComponents.Bear-Territory.
-     * @param y          y-Coordinate of MapComponents.Bear-Territory.
+     * @param x          x-Coordinate of animals.Bear-Territory.
+     * @param y          y-Coordinate of animals.Bear-Territory.
      */
     private static void spawnObjects(World w, Program p, boolean isInfected, String type, int startRange, int endRange, int x, int y) {
         int rValue = r.nextInt((endRange + 1) - startRange) + startRange;
@@ -164,56 +168,57 @@ public abstract class HelperMethods {
             Location l = getRandomEmptyLocation(w, r);
             occupied.add(l);
 
-            //TODO: Add logic to infect spawned Abstracts.Animal-Objects. Maybe as parameter in Abstracts.Animal constructor?
+            //TODO: Add logic to infect spawned animals.Animal-Objects. Maybe as parameter in animals.Animal constructor?
             if (type.equals("grass")) {
                 w.setTile(l, new Grass());
             } else if (type.equals("rabbit")) {
                 w.setTile(l, new Rabbit());
             } else if (type.equals("burrow")) {
-                w.setTile(l, new RabbitBurrow());
+                w.setTile(l, new Burrow(l, Config.Rabbit.MAX_BURROW_OCCUPANTS, "Rabbit"));
             } else if (type.equals("berry")) {
                 w.setTile(l, new BerryBush());
             } else if (type.equals("wolf")) {
                 w.setTile(l, new Wolf());
             } else if (type.equals("bear")) {
-                //TODO: Spawn MapComponents.Bear-Object
+                //TODO: Spawn animals.Bear-Object at specified coordinates
+                w.setTile(l, new Bear());
             } else if (type.equals("carcass")) {
                 w.setTile(l, new Carcass(isInfected));
             }
         }
 //        if(type.equals("wolf")){
-//            Places.Pack thePack = null;
+//            animals.packanimals.Pack thePack = null;
 //            for(Object o :w.getEntities().keySet()){
-//                if(o instanceof MapComponents.Wolf){
+//                if(o instanceof animals.packanimals.Wolf){
 //                    if(thePack != null){
-//                        thePack.addToPack((MapComponents.Wolf) o);
+//                        thePack.addToPack((animals.packanimals.Wolf) o);
 //                    }
 //                    else{
-//                        thePack = new Places.Pack(w,(MapComponents.Wolf) o);
+//                        thePack = new animals.packanimals.Pack(w,(animals.packanimals.Wolf) o);
 //                    }
 //                }
 //            }
 //        }
 
-        List<Home> rabbitBurrows = HelperMethods.availableHomes(w, "Places.RabbitBurrow");
-        Set<Object> entitiesKeys = w.getEntities().keySet();
-        for (Home h : rabbitBurrows) {
-            for (Object e : entitiesKeys) {
-                if (!h.isAvailable()) {
-                    break;
-                }
-                if (e instanceof Rabbit) {
-                    ((Rabbit) e).setHome(w, h);
-                }
-                ;
-            }
+//        List<Home> rabbitBurrows = HelperMethods.availableHomes(w, "Burrow");
+//        Set<Object> entitiesKeys = w.getEntities().keySet();
+//        for (Home h : rabbitBurrows) {
+//            for (Object e : entitiesKeys) {
+//                if (h.isFull()) {
+//                    break;
+//                }
+//                if (e instanceof Rabbit) {
+//                    ((Rabbit) e).setHome(w, h);
+//                }
+//                ;
+//            }
         }
 
         // ONLY USED TO VISUALIZE BEAR TERRITORY
-        if (!(x == -1 && y == -1)) {
-            w.setTile(new Location(x, y), new BearTerritory());
-        }
-    }
+//        if (!(x == -1 && y == -1)) {
+//            w.setTile(new Location(x, y), new BearTerritory());
+//        }
+//    }
 
     /**
      * @param w World
@@ -235,10 +240,10 @@ public abstract class HelperMethods {
     /***
      * Searches the World for homes that still has room of a specific type
      * @param w     World
-     * @param type  Type of Home
+     * @param species  Animal species the home houses.
      * @return      Arraylist< Home >
      */
-    public static ArrayList<Home> availableHomes(World w, String type) {
+    public static ArrayList<Home> availableHomes(World w, String species) {
         Map<Object, Location> entities = w.getEntities();
         ArrayList<Home> availableHomes = new ArrayList<>();
         for (Object e : entities.keySet()) {
@@ -246,7 +251,7 @@ public abstract class HelperMethods {
                 continue;
             }
             Home home = (Home) e;
-            if (home.isAvailable() && home.getClass().getSimpleName().equals(type)) {
+            if (!home.isFull() && home.getAllowedSpecies().equals(species)) {
                 availableHomes.add(home);
             }
         }

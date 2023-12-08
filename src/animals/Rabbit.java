@@ -1,8 +1,6 @@
-package MapComponents;
+package animals;
 
-import Abstracts.Animal;
-import Helper.Config;
-import Places.RabbitBurrow;
+import utils.Config;
 import itumulator.simulator.Actor;
 import itumulator.world.World;
 
@@ -14,7 +12,7 @@ public class Rabbit extends Animal implements Actor {
     @Override
     public void act(World w) {
         if (home == null) {
-            findOrDigBurrow(w);
+            tryFindOrDigBurrow(w, 5);
         }
         super.act(w);
 
@@ -34,13 +32,8 @@ public class Rabbit extends Animal implements Actor {
 
             }
         }
-        if (isDead()) { delete(w); }
-    }
-
-    private void findOrDigBurrow(World w) {
-        tryFindHome(w, "Places.RabbitBurrow");
-        if (home == null) {
-            digBurrow(w, new RabbitBurrow());
+        if (isDead()) {
+            delete(w);
         }
     }
 }
