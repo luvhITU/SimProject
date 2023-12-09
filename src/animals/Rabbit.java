@@ -1,9 +1,12 @@
 package animals;
 
 import animals.packanimals.Wolf;
+import itumulator.world.Location;
 import utils.Config;
 import itumulator.simulator.Actor;
 import itumulator.world.World;
+
+import java.util.Set;
 
 public class Rabbit extends Animal implements Actor {
     /***
@@ -45,15 +48,5 @@ public class Rabbit extends Animal implements Actor {
                 hunt(w, target);
             }
         }
-    }
-
-    @Override
-    public Animal findClosestPartner(World w) {
-        for (Animal rabbit : home.getOccupants()) {
-            if (!rabbit.isAwake && rabbit.canMate()) {
-                return rabbit;
-            }
-        }
-        return null;
     }
 }

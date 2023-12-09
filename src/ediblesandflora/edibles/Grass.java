@@ -14,28 +14,30 @@ import java.awt.Color;
 
 public class Grass extends Edible implements NonBlocking, DynamicDisplayInformationProvider {
 
-    private int stepAge;
+    private static final int MAX_STEP_AGE = 100;
 
     /***
      * Constructor for Grass
      */
     public Grass() {
         super(Config.Grass.NUTRITION, 0);
-        stepAge = 0;
     }
 
     /***
      * See super
      * @param w providing details of the position on which the actor is currently located and much more.
      */
-    @Override
-    public void act(World w) {
-        if (getIsDead(w)) {return;}
-        stepAge++;
-        if (w.isDay()) {
-            tryReproduce(w);
-        }
-    }
+//    @Override
+//    public void act(World w) {
+//        super.act(w);
+//        if (w.isDay()) {
+//            reproduceCheck(w);
+//        } else {
+//            deleteCheck(w);
+//        }
+//
+//
+//    }
 
     /***
      * See super
@@ -46,40 +48,40 @@ public class Grass extends Edible implements NonBlocking, DynamicDisplayInformat
         return new DisplayInformation(Color.magenta, "grass");
     }
 
+    @Override
+    public void age(World w) {
+        super.age(w);
+        reproduceCheck(w);
+        deleteCheck(w);
+    }
+
     /***
      * First checks if this needs to die and then returns a Boolean if it is dead or not. True means it is not dead
      * @param w World
      * @return  Boolean
      */
-    public boolean getIsDead(World w) {{
-            expirationCheck(w);
-            return w.isOnTile(this);
-        }
-    }
 
-    private void expirationCheck(World w) {
-        double divisor = 100.0;
-        double expirationProbability = stepAge / divisor;
-        if (HelperMethods.getRandom().nextDouble() < expirationProbability) {
-            delete(w);
-        }
-    }
+
 
     /***
      * Uses a random chance and spreads if the random is meet and there is room in neighboring tiles
      * @param w World
      */
-    public void tryReproduce(World w) {
-        double divisor = 5.0;
-        double expirationProbability = stepAge / divisor;
-        if (HelperMethods.getRandom().nextDouble() < expirationProbability) {
-            Set<Location> locations = w.getEmptySurroundingTiles(w.getLocation(this));
-            Location l = (Location) locations.toArray()[HelperMethods.getRandom().nextInt(locations.size())];
+    public void reproduceCheck(World w) {
+        Set<Location> neighbours = w.getEmptySurroundingTiles(w.getLocation(this));
+        neighbours.removeIf(w::containsNonBlocking);
+        if (neighbours.isEmpty()) { return; }
 
-            if (!w.containsNonBlocking(l)) {
-                //System.out.println("Placing grass at: " + l);
-                w.setTile(l, new Grass());
-            }
+        int offset = 20;
+        double p = 1 - 1.0 * stepAge / MAX_STEP_AGE + offset;
+        if (HelperMethods.getRandom().nextDouble() < p) {
+            Location locToPlaceGrass = (Location) neighbours.toArray()[HelperMethods.getRandom().nextInt(neighbours.size())];
+            w.setTile(locToPlaceGrass, new Grass());
         }
+    }
+
+    private void deleteCheck(World w) {
+        double p = 1.0 * stepAge / MAX_STEP_AGE;
+        if (HelperMethods.getRandom().nextDouble() < p) { delete(w); }
     }
 }

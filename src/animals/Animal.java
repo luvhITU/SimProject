@@ -407,7 +407,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         return (!(w.containsNonBlocking(currL) && w.getNonBlocking(currL) instanceof Home));
     }
 
-    public Animal findClosestPartner(World w) {
+    private Animal findClosestPartner(World w) {
         Set<Animal> partners = new HashSet<>();
         for (Location l : tilesInSight) {
             Object o = w.getTile(l);

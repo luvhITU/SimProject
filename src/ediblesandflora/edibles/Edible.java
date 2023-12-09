@@ -7,12 +7,12 @@ import static java.lang.Math.max;
 
 public abstract class Edible implements Actor {
 
-    private int nutrition;
-    private final int maxNutrition;
-    private final int renewTimeDays;
-    private int stepAgeWhenDepleted;
-    private int stepAge;
-    private int age;
+    protected int nutrition;
+    protected final int maxNutrition;
+    protected final int renewTimeDays;
+    protected int stepAgeWhenDepleted;
+    protected int stepAge;
+    protected int age;
 
     /***
      * Constructs an Edible object
@@ -35,7 +35,7 @@ public abstract class Edible implements Actor {
     @Override
     public void act(World w) {
         stepAge++;
-        if (stepAge % World.getTotalDayDuration() == 0) { age++; }
+        if (stepAge % World.getTotalDayDuration() == 0) { age(w); }
 
         if (renewTimeDays > 0 && isRenewableCooldownExpired()) {
             nutrition = maxNutrition;
@@ -80,5 +80,9 @@ public abstract class Edible implements Actor {
 
     private boolean isRenewableCooldownExpired() {
         return stepAge - stepAgeWhenDepleted >= renewTimeDays * World.getTotalDayDuration();
+    }
+
+    public void age(World w) {
+        age++;
     }
 }
