@@ -17,7 +17,6 @@ import java.util.Set;
 
 public class RabbitTest extends test {
     protected Rabbit r = new Rabbit();
-
     @Test
     public void hasMovedTest(){
         hasMoved(r);
@@ -56,7 +55,8 @@ public class RabbitTest extends test {
     public void dieWithTimeTest(){
         dieWithTime(r);
     }
-    @Test
+    @Test //k1-2f. Kaniner kan grave huller, eller dele eksisterende huller med andre kaniner
+    // Kaniner kan kun være knyttet til et hul.
     public void hasDugBurrowTest(){
         w.setTile(startLocation,r);
         r.act(w);
@@ -64,7 +64,7 @@ public class RabbitTest extends test {
         for(Object o: w.getEntities().keySet()){
             if(o instanceof Burrow){
                 h = (Home) o;
-                System.out.println("getAllowedSpecies():" + h.getAllowedSpecies());
+                System.out.println("getAllowedSpecies(): " + h.getAllowedSpecies());
             }
         }
         Assert.assertNotNull(h);
@@ -80,4 +80,5 @@ public class RabbitTest extends test {
         w.setTile(startLocation,r);
         w.setTile(startLocation2,r2);
     }
+
 }

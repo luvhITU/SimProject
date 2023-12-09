@@ -96,4 +96,5 @@ public class test {
         Assert.assertEquals(startLocation, w.getLocation(a));
         Assert.assertEquals(startEnergy,a.getEnergy());
     }
+
 }
