@@ -25,22 +25,6 @@ public class Grass extends Edible implements NonBlocking, DynamicDisplayInformat
 
     /***
      * See super
-     * @param w providing details of the position on which the actor is currently located and much more.
-     */
-//    @Override
-//    public void act(World w) {
-//        super.act(w);
-//        if (w.isDay()) {
-//            reproduceCheck(w);
-//        } else {
-//            deleteCheck(w);
-//        }
-//
-//
-//    }
-
-    /***
-     * See super
      * @return  DisplayInformation
      */
     @Override
@@ -56,15 +40,7 @@ public class Grass extends Edible implements NonBlocking, DynamicDisplayInformat
     }
 
     /***
-     * First checks if this needs to die and then returns a Boolean if it is dead or not. True means it is not dead
-     * @param w World
-     * @return  Boolean
-     */
-
-
-
-    /***
-     * Uses a random chance and spreads if the random is meet and there is room in neighboring tiles
+     * Runs a probability check based on age, and spreads the grass if check succeeds
      * @param w World
      */
     public void reproduceCheck(World w) {
@@ -80,6 +56,10 @@ public class Grass extends Edible implements NonBlocking, DynamicDisplayInformat
         }
     }
 
+    /***
+     * Runs a probability check based on age, and deletes the grass if check succeeds
+     * @param w World
+     */
     private void deleteCheck(World w) {
         double p = 1.0 * stepAge / MAX_STEP_AGE;
         if (HelperMethods.getRandom().nextDouble() < p) { delete(w); }

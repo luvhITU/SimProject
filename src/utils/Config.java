@@ -30,7 +30,7 @@ public class Config {
      */
     public static class Wolf {
         public static final Set<String> DIET = Set.of("Rabbit", "Bear", "Wolf", "Carcass");
-        public static final int DAMAGE = 40;
+        public static final int DAMAGE = 30;
         public static final int HEALTH = 100;
         public static final int SPEED = 2;
         public static final int MATING_COOLDOWN_DAYS = 3;

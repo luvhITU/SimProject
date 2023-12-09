@@ -354,13 +354,12 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
     public void moveTo(World w, Location targetLoc, int speed) {
         Set<Location> neighbours = HelperMethods.getEmptySurroundingTiles(w, w.getLocation(this), speed);
         Location bestMove = (Location) HelperMethods.findNearestOfObjects(w, targetLoc, neighbours);
-//        int currDistToTargetLoc = utils.HelperMethods.getDistance(w.getLocation(this), targetLoc);
-//        int newDistToTargetLoc = utils.HelperMethods.getDistance(bestMove, targetLoc);
-//        if (newDistToTargetLoc < currDistToTargetLoc) {
-
+        int currDistToTargetLoc = utils.HelperMethods.getDistance(w.getLocation(this), targetLoc);
+        int newDistToTargetLoc = utils.HelperMethods.getDistance(bestMove, targetLoc);
+        if (newDistToTargetLoc < currDistToTargetLoc) {
             w.move(this, bestMove);
             actionCost(speed);
-//        }
+        }
     }
 
     /***
@@ -535,14 +534,9 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         return HelperMethods.findNearestOfObjects(w, w.getLocation(this), findEdibles(w));
     }
 
-    // Needs an override in wolf, to not detect animals in pack.
     protected Animal findClosestPredator(World w) {
         Set<Animal> predators = findPredators(w);
         return (Animal) HelperMethods.findNearestOfObjects(w, w.getLocation(this), predators);
-    }
-
-    private boolean isPredatorInSight(World w) {
-        return !findPredators(w).isEmpty();
     }
 
     private Set<Animal> findPredators(World w) {
@@ -576,7 +570,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
     }
 
     /***
-     * Does nothing but calculates center of the map
+     * Moves animal to center of the map
      * @param w World
      */
     public void moveToMiddle(World w) {
