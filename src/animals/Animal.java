@@ -13,9 +13,9 @@ import itumulator.world.NonBlocking;
 import itumulator.world.World;
 
 import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public abstract class Animal implements Actor, DynamicDisplayInformationProvider {
 
@@ -39,7 +39,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
     protected int stepAgeWhenMated;
     protected final Set<String> diet;
     protected Home home;
-    protected boolean isAwake;
+    public boolean isAwake;
     protected boolean isBreedable;
     protected int stepAge;
     protected int age;
@@ -77,24 +77,11 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
      * @param w providing details of the position on which the actor is currently located and much more.
      */
     public void act(World w) {
-        stepAge++;
-        // If a day has passed, age.
-        if (stepAge % World.getTotalDayDuration() == 0) {
-            age();
-        }
-
-        if (!isAwake) {
-            // Increase energy every stepe while sleeping.
-            setEnergy(energy + STEP_SLEEP_ENERGY_INCREASE);
-            // If it's morning, wake up.
-            if (w.getCurrentTime() == 0) {
-                wakeUp(w);
-            }
-        }
-        if (isAwake) {
-            tilesInSight = calcTilesInSight(w);
-        }
-
+        beginAct(w);
+        if (!isAwake) { sleepAct(w); }
+        deleteIfDead(w);
+        if (isAwake && !isDead()) { awakeAct(w); }
+        deleteIfDead(w);
     }
 
     // Implement canMateFunction
@@ -119,6 +106,28 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
      * Checks if object is dead
      * @return  Boolean
      */
+
+    public void beginAct(World w) {
+        stepAge++;
+        // If a day has passed, age.
+        if (stepAge % World.getTotalDayDuration() == 0) {
+            age();
+        }
+    }
+
+    public void sleepAct(World w) {
+        // Increase energy every stepe while sleeping.
+        setEnergy(energy + STEP_SLEEP_ENERGY_INCREASE);
+        // If it's morning, wake up.
+        if (w.isDay()) {
+            wakeUp(w);
+        }
+    }
+
+    public void awakeAct(World w) {
+        tilesInSight = calcTilesInSight(w);
+    }
+
     public boolean isDead() {
         return satiation == 0 || health == 0;
     }
@@ -322,6 +331,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
     public void emerge(World w) {
         int radius = 1;
         Location l = HelperMethods.getClosestEmptyTile(w, w.getLocation(home), radius);
+        if (l == null) { return; }
         w.setCurrentLocation(l);
         w.setTile(l, this);
     }
@@ -397,22 +407,77 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         return (!(w.containsNonBlocking(currL) && w.getNonBlocking(currL) instanceof Home));
     }
 
-//    public void reproduce(World w, animals.Animal partner) {
-//        Location l = utils.HelperMethods.getClosestEmptyTile(w, 1);
-//        animals.Animal lilBaby = null;
-//        try {
-//            lilBaby = this.getClass().getDeclaredConstructor().newInstance();
-//        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-//                 NoSuchMethodException ignore) {
-//        }
-//        w.setTile(l, lilBaby);
-//        partner.resetReproductionCooldown();
-//        actionCost(6, 9);
-//    }
+    public Animal findClosestPartner(World w) {
+        Set<Animal> partners = new HashSet<>();
+        for (Location l : tilesInSight) {
+            Object o = w.getTile(l);
+            if (o instanceof Animal) {
+                Animal animal = (Animal) o;
+                if (animal.canMate()) {
+                    partners.add(animal);
+                }
+            }
+
+        }
+        return (Animal) HelperMethods.findNearestOfObjects(w, w.getLocation(this), partners);
+    }
+
+    public void landMatingPackage(World w) {
+        Animal partner = findClosestPartner(w);
+        if (partner == null) { return; }
+        boolean targetInRange = isTargetInRange(w, partner);
+        if (!targetInRange) {
+            moveTo(w, w.getLocation(partner));
+            targetInRange = isTargetInRange(w, partner);
+        }
+        if (targetInRange) {
+            mateOnLand(w, partner);
+        }
 
 
-    private boolean canMate(World w) {
-        return getIsMature() && stepAgeWhenMated - stepAge <= matingCooldownDays * World.getTotalDayDuration();
+
+    }
+
+    private void mateOnLand(World w, Animal partner) {
+        Location locToPlaceChild = utils.HelperMethods.getClosestEmptyTile(w, w.getLocation(this), 1);
+        w.setTile(locToPlaceChild, createOffSpring());
+        resetReproductionCooldown(partner);
+        actionCost(10);
+    }
+
+    public void burrowMatingPackage(World w) {
+        for (Animal animal : home.getOccupants()) {
+            if (!animal.isAwake && animal.canMate()) {
+                mateInBurrow(w, animal);
+                return;
+            }
+        }
+    }
+
+    private void mateInBurrow(World w, Animal partner) {
+        Location locToPlaceChild = HelperMethods.getClosestEmptyTile(w, home.getLocation(), 1);
+        w.setTile(locToPlaceChild, createOffSpring());
+        resetReproductionCooldown(partner);
+        actionCost(10);
+    }
+
+    private Animal createOffSpring() {
+        try {
+            return this.getClass().getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            return null;
+        }
+    }
+
+    private void resetReproductionCooldown(Animal partner) {
+        stepAgeWhenMated = stepAge;
+        partner.stepAgeWhenMated = partner.stepAge + 1;
+    }
+
+
+    public boolean canMate() {
+        return getIsMature() && stepAge - stepAgeWhenMated >= matingCooldownDays * World.getTotalDayDuration();
     }
 
     protected void flee(World w, Location predatorLocation) {
@@ -435,7 +500,9 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         if (!targetInRange) {
             int speed = (isAnimal) ? calcMaxSpeed() : 1;
             moveTo(w, targetLoc, speed);
-        } else  {
+            targetInRange = isTargetInRange(w, target);
+        }
+        if (targetInRange) {
             if (isAnimal) {
                 attack(w, (Animal) target);
             } else {

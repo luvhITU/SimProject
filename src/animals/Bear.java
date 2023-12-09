@@ -18,32 +18,25 @@ public class Bear extends Animal implements Actor {
         super(Config.Bear.DIET, Config.Bear.DAMAGE, Config.Bear.HEALTH, Config.Bear.SPEED, Config.Bear.MATING_COOLDOWN_DAYS);
     }
 
-    /***
-     * See super
-     * @param w providing details of the position on which the actor is currently located and much more.
-     */
     @Override
-    public void act(World w) {
-        //System.out.println("I was here");
+    public void beginAct(World w) {
+        super.beginAct(w);
         if (home == null) {
             setHome(w, new Home(w.getLocation(this), 1, "Bear"));
         }
-        super.act(w);
-        if (w.isNight()) {
-            goHome(w);
-        } else if (w.getCurrentTime() == 0 && !isAwake) {
-            wakeUp(w);
-        }
-        if (isAwake) {
+    }
+
+    @Override
+    public void awakeAct(World w) {
+        super.awakeAct(w);
+        if (w.isNight()) { goHome(w); }
+        else {
             Object closestEdible = findClosestEdible(w);
             if (closestEdible == null) {
                 wander(w);
             } else {
                 hunt(w, closestEdible);
             }
-        }
-        if (isDead()) {
-            delete(w);
         }
     }
 

@@ -17,7 +17,7 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public abstract class HelperMethods {
-    private static final Random r = new Random(42);
+    private static final Random r = new Random();
     private static List<Location> occupied = new ArrayList<>();
 
     /***
@@ -256,16 +256,6 @@ public abstract class HelperMethods {
             }
         }
         return availableHomes;
-    }
-
-    /***
-     * Returns the closest empty tile within the given radius
-     * @param w         World
-     * @param radius    Radius in int
-     * @return          Location
-     */
-    public static Location getClosestEmptyTile(World w, int radius) {
-        return getClosestEmptyTile(w, w.getCurrentLocation(), radius);
     }
 
     /***

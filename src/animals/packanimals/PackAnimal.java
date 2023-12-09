@@ -26,7 +26,7 @@ public class PackAnimal extends Animal {
     public PackAnimal(Set<String> diet, int damage, int maxHealth, int maxSpeed, int matingCooldownDays, int maxPackSize) {
         super(diet, damage, maxHealth, maxSpeed, matingCooldownDays);
         this.maxPackSize = maxPackSize;
-        stepAgeWhenPackActed = 0;
+        stepAgeWhenPackActed = -1;
     }
 
     /***
@@ -34,31 +34,32 @@ public class PackAnimal extends Animal {
      * @param w providing details of the position on which the actor is currently located and much more.
      */
     @Override
-    public void act(World w) {
+    public void beginAct(World w) {
+        super.beginAct(w);
         if (pack == null) {
             findOrStartPack(w);
         }
+    }
 
-        super.act(w);
+    @Override
+    public void awakeAct(World w) {
         if (hasPackActed()) { return; }
-        if (isAwake) {
-            Location closestHostileWolfLoc = HelperMethods.findNearestLocationByType(w, w.getLocation(this), tilesInSight, this.getClass().getSimpleName());
-            if (closestHostileWolfLoc != null) {
-                flee(w, closestHostileWolfLoc);
-            } else if (w.isNight()) {
-                goHome(w);
+        super.awakeAct(w);
+        Location closestHostileWolfLoc = HelperMethods.findNearestLocationByType(w, w.getLocation(this), tilesInSight, this.getClass().getSimpleName());
+        if (closestHostileWolfLoc != null) {
+            flee(w, closestHostileWolfLoc);
+        } else if (w.isNight()) {
+            goHome(w);
+        } else {
+            if (isTargetUnavailable(w)) {
+                pack.setTarget(findClosestEdible(w));
+            }
+            if (pack.getTarget() == null) {
+                randomMove(w);
             } else {
-                if (isTargetUnavailable(w)) {
-                    pack.setTarget(findClosestEdible(w));
-                }
-                if (pack.getTarget() == null) {
-                    randomMove(w);
-                } else {
-                    hunt(w, pack.getTarget());
-                }
+                hunt(w, pack.getTarget());
             }
         }
-        if (isDead()) { delete(w); }
     }
 
     /***
@@ -75,7 +76,7 @@ public class PackAnimal extends Animal {
 
     /***
      * See super
-     * @param w     Wolrd
+     * @param w     World
      * @param home  Home
      */
     @Override
@@ -115,6 +116,8 @@ public class PackAnimal extends Animal {
      * packs have room then it will make a new pack and add this.
      * @param w World
      */
+
+
     public void findOrStartPack(World w) {
         //Checks if there is room in current packs
         for (Object o : w.getEntities().keySet()) {
@@ -142,9 +145,8 @@ public class PackAnimal extends Animal {
             }
             if (!(member.isDead() && member.hasPackActed()) && w.isOnTile(member)) {
                 member.joinHunt(w, target);
-                member.stepAgeWhenPackActed = member.stepAge;
+                member.stepAgeWhenPackActed = (member == this) ? this.stepAge : member.stepAge + 1;
             }
-
         }
     }
 

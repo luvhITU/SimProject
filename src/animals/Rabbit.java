@@ -1,5 +1,6 @@
 package animals;
 
+import animals.packanimals.Wolf;
 import utils.Config;
 import itumulator.simulator.Actor;
 import itumulator.world.World;
@@ -12,35 +13,47 @@ public class Rabbit extends Animal implements Actor {
         super(Config.Rabbit.DIET, Config.Rabbit.DAMAGE, Config.Rabbit.HEALTH, Config.Rabbit.SPEED, Config.Rabbit.MATING_COOLDOWN_DAYS);
     }
 
-    /***
-     * See super
-     * @param w providing details of the position on which the actor is currently located and much more.
-     */
     @Override
-    public void act(World w) {
+    public void beginAct(World w) {
+        super.beginAct(w);
         if (home == null) {
             tryFindOrDigBurrow(w, 5);
         }
-        super.act(w);
+    }
 
-        if (isAwake) {
-            Animal predator = findClosestPredator(w);
-            if (predator != null) {
-                flee(w, w.getLocation(predator));
-            } else if (w.isNight()) {
-                goHome(w);
+    @Override
+    public void sleepAct(World w) {
+        if (w.getCurrentTime() == 0 && canMate()) {
+            burrowMatingPackage(w);
+        }
+        super.sleepAct(w);
+    }
+
+    @Override
+    public void awakeAct(World w) {
+        super.awakeAct(w);
+        Animal predator = findClosestPredator(w);
+        if (predator != null) {
+            flee(w, w.getLocation(predator));
+        } else if (w.isNight()) {
+            goHome(w);
+        } else {
+            Object target = findClosestEdible(w);
+            if (target == null) {
+                randomMove(w);
             } else {
-                Object target = findClosestEdible(w);
-                if (target == null) {
-                    randomMove(w);
-                } else {
-                    hunt(w, target);
-                }
-
+                hunt(w, target);
             }
         }
-        if (isDead()) {
-            delete(w);
+    }
+
+    @Override
+    public Animal findClosestPartner(World w) {
+        for (Animal rabbit : home.getOccupants()) {
+            if (!rabbit.isAwake && rabbit.canMate()) {
+                return rabbit;
+            }
         }
+        return null;
     }
 }

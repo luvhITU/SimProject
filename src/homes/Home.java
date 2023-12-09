@@ -63,6 +63,14 @@ public class Home implements DynamicDisplayInformationProvider {
      * Add the input animal to the occupants list and throws an exception if there is no room left
      * @param animal
      */
+
+    /***
+     * Getter for home occupants
+     * @return set of occupants
+     */
+    public Set<Animal> getOccupants () {
+        return occupants;
+    }
     public void add(Animal animal) {
         if (isFull()) { throw new IllegalStateException("Home is filled to brim already!"); }
         occupants.add(animal);
