@@ -14,11 +14,14 @@ import itumulator.executable.Program;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.*;
 
 public abstract class HelperMethods {
     private static final Random r = new Random();
     private static List<Location> occupied = new ArrayList<>();
+    private static PrintStream SysOut = System.out;
 
     /***
      * Gets random
@@ -380,5 +383,18 @@ public abstract class HelperMethods {
             }
         }
         return minDistanceObject;
+    }
+    public static void disableSysOut(boolean t){
+        if(t){
+
+            System.setOut(new PrintStream(new OutputStream() {
+                public void write(int b) {
+                    //DO NOTHING
+                }
+            }));
+        }
+        else{
+            System.setOut(SysOut);
+        }
     }
 }
