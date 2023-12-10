@@ -9,6 +9,8 @@ import itumulator.world.World;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.*;
 
 public class test {
@@ -121,6 +123,12 @@ public class test {
         // Checking that there are only to animals of this type to start with
         Assert.assertEquals(2, getObjectsByType(animalType).size());
         w.setNight();
+        PrintStream original = System.out;
+        System.setOut(new PrintStream(new OutputStream() {
+            public void write(int b) {
+                //DO NOTHING
+            }
+        })); //Disable prints because it is annoying that it prints so much and it prints from itu library
         while (w.getCurrentTime() != 1) {
             p.simulate();
         }
@@ -152,6 +160,7 @@ public class test {
             p.simulate();
             keepSatiated();
         }
+        System.setOut(original); //Sets setOut to original
         // Making sure the one more offspring was produced
         Assert.assertEquals(4, getObjectsByType(animalType).size());
     }
