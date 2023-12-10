@@ -5,7 +5,8 @@ import itumulator.world.World;
 public class Main {
 
     public static void main(String[] args) {
-        String input = "data/t2-8a.txt";
+//        String input = "data/t2-8a.txt";
+        String input = "data/test-files/2wolves.txt";
 
         int size = HelperMethods.readWorldSize(input);
         int delay = 200;

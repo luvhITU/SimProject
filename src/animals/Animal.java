@@ -453,11 +453,12 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         w.setTile(locToPlaceChild, createOffSpring());
         resetReproductionCooldown(partner);
         actionCost(10);
+        partner.actionCost(10);
     }
 
     public void burrowMatingPackage(World w) {
         for (Animal animal : home.getOccupants()) {
-            if (!animal.isAwake && animal.canMate()) {
+            if (!(this == animal || animal.isAwake) && animal.canMate()) {
                 mateInBurrow(w, animal);
                 return;
             }
@@ -469,6 +470,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         w.setTile(locToPlaceChild, createOffSpring());
         resetReproductionCooldown(partner);
         actionCost(10);
+        partner.actionCost(10);
     }
 
     private Animal createOffSpring() {

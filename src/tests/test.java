@@ -118,30 +118,42 @@ public class test {
         String animalType = a.getClass().getSimpleName();
         w.setTile(new Location(0,0), b);
         w.setTile(new Location(0,1), a);
+        // Checking that there are only to animals of this type to start with
         Assert.assertEquals(2, getObjectsByType(animalType).size());
         w.setNight();
         while (w.getCurrentTime() != 1) {
             p.simulate();
         }
+        // Checking that animals didn't mate the first night (because they haven't matured yet)
         Assert.assertEquals(2, getObjectsByType(animalType).size());
-
+        // Making them mature
         a.setAge(Animal.MATURITY_AGE);
         b.setAge(Animal.MATURITY_AGE);
-        while (w.getCurrentTime() != 1) {
+        // Simulating until they can mate
+        while (!a.canMate() || !b.canMate()) {
             p.simulate();
-        }
-        Assert.assertEquals(2, getObjectsByType(animalType).size());
-
-        for (int i = 1; i < a.getMatingCooldownDays(); i++) {
-            Assert.assertEquals(3, getObjectsByType(animalType).size());
             keepSatiated();
         }
+        w.setNight();
         while (w.getCurrentTime() != 1) {
             p.simulate();
             keepSatiated();
         }
-        Assert.assertEquals(2, getObjectsByType(animalType).size());
-
+        // Making sure they produced one offspring during the night
+        Assert.assertEquals(3, getObjectsByType(animalType).size());
+        Assert.assertFalse(a.canMate() || b.canMate());
+        // Seeing if they can mate again after mating once
+        while (!a.canMate() || !b.canMate()) {
+            p.simulate();
+            keepSatiated();
+        }
+        w.setNight();
+        while (w.getCurrentTime() != 1) {
+            p.simulate();
+            keepSatiated();
+        }
+        // Making sure the one more offspring was produced
+        Assert.assertEquals(4, getObjectsByType(animalType).size());
     }
 
 }

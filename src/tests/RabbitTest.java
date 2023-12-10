@@ -16,38 +16,39 @@ import java.util.Map;
 import java.util.Set;
 
 public class RabbitTest extends test {
-    protected Rabbit r = new Rabbit();
+    protected Rabbit a = new Rabbit();
+    protected Rabbit b = new Rabbit();
 
     @Test
-    public void burrowReproductionTest() { doesBurrowReproduceCorrectly(new Rabbit(), new Rabbit()); };
+    public void burrowReproductionTest() { doesBurrowReproduceCorrectly(a, b); };
     @Test
     public void hasMovedTest(){
-        hasMoved(r);
+        hasMoved(a);
     }
     @Test
     public void losesEnergyTest(){
-        losesEnergy(r);
+        losesEnergy(a);
     }
     @Test
     public void losesSatiationTest(){
-        losesSatiation(r);
+        losesSatiation(a);
     }
     @Test //k1-2b. Kaniner kan dø, hvilket resulterer I at de fjernes fra verdenen.
     public void deleteTest(){
-        delete(r);
+        delete(a);
     }
     @Test //K1-2c "Kaniner lever af græs som de spiser i løbet af dagen,"
     public void hasEatenTest(){
         Grass g = new Grass();
         Home h = new Home(new Location(5,5),5,"Rabbit");
         w.setTile(startLocation,g);
-        w.setTile(startLocation,r);
-        r.setHome(w,h); //Sets home before to not get exception
+        w.setTile(startLocation,a);
+        a.setHome(w,h); //Sets home before to not get exception
         Object[] beforeEntities = w.getEntities().keySet().toArray();
         System.out.println(Arrays.toString(beforeEntities));
         int i = 0;
         while(g.getNutrition() > 0 || i > 20) {
-            r.eat(w, g);
+            a.eat(w, g);
             i++;
         }
         Object[] afterEntities = w.getEntities().keySet().toArray();
@@ -56,13 +57,14 @@ public class RabbitTest extends test {
     }
     @Test //K1-2c "uden mad dør en kanin."
     public void dieWithTimeTest(){
-        dieWithTime(r);
+        dieWithTime(a);
     }
     @Test //k1-2f. Kaniner kan grave huller, eller dele eksisterende huller med andre kaniner
     // Kaniner kan kun være knyttet til et hul.
     public void hasDugBurrowTest(){
-        w.setTile(startLocation,r);
-        r.act(w);
+        w.setTile(startLocation,a);
+        w.setNight();
+        a.act(w);
         Home h = null;
         for(Object o: w.getEntities().keySet()){
             if(o instanceof Burrow){
@@ -74,13 +76,13 @@ public class RabbitTest extends test {
     }
     @Test
     public void cantMoveWhenBlockedTest(){
-        cantMoveWhenBlocked(r);
+        cantMoveWhenBlocked(a);
     }
     //Mating does not work right now @Test
     public void hasMated(){
         Rabbit r2 = new Rabbit();
         Location startLocation2 = new Location(0,1);
-        w.setTile(startLocation,r);
+        w.setTile(startLocation,a);
         w.setTile(startLocation2,r2);
     }
 
