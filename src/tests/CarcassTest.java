@@ -35,11 +35,13 @@ public class CarcassTest extends test{
         w.setTile(startLocation,c);
         w.setTile(new Location(1,1),c2);
         System.out.println("w.getEntities().keySet()");
-        //disableSysOut(true);
+        disableSysOut(true);
         while(w.getEntities().containsKey(c2) && w.getEntities().containsKey(c)){
             p.simulate();
             System.out.println(w.getEntities().keySet());
         }
         disableSysOut(false);
+        Assert.assertFalse(w.contains(c2)); //Should contain originally uninfected and not originally infected
+        Assert.assertTrue(w.contains(c));
     }
 }
