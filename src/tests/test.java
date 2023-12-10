@@ -1,6 +1,7 @@
 package tests;
 
 import animals.Animal;
+import ediblesandflora.Fungus;
 import ediblesandflora.edibles.Carcass;
 import ediblesandflora.edibles.Edible;
 import itumulator.executable.Program;
@@ -76,6 +77,9 @@ public class test {
             else if(a instanceof Edible){
                 ((Edible) a).act(w);
             }
+            else if(a instanceof Fungus){
+                ((Fungus) a).act(w);
+            }
             if(i >= 200){
                 break; //Break so it doesn't just go forever
             }
@@ -97,6 +101,9 @@ public class test {
         }
         else if(o instanceof Edible){
             ((Edible) o).delete(w);
+        }
+        else if(o instanceof Fungus){
+            ((Fungus) o).delete(w);
         }
         try {
             Assert.assertFalse(w.contains(o));
