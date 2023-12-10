@@ -44,4 +44,17 @@ public class CarcassTest extends test{
         Assert.assertFalse(w.contains(c2)); //Should contain originally uninfected and not originally infected
         Assert.assertTrue(w.contains(c));
     }
+    @Test
+    public void spreadTest(){
+        w.setTile(startLocation,c);
+        w.setTile(new Location(1,1),cInfected);
+        System.out.println(c.getIsInfected());
+        disableSysOut(true);
+        for(int i = 0;!c.getIsInfected() && i < 100;i++){
+            p.simulate();
+        }
+        disableSysOut(false);
+        System.out.println(c.getIsInfected());
+        Assert.assertTrue(c.getIsInfected());
+    }
 }
