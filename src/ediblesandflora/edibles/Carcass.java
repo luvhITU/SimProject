@@ -53,7 +53,11 @@ public class Carcass extends Edible implements DynamicDisplayInformationProvider
     }
 
     private void degrade(World w) {
-        reduceNutritionBy(1);
+        if (!isInfected && stepAge % 2 == 0) {
+            reduceNutritionBy(1);
+        } else if (isInfected) {
+            reduceNutritionBy(1);
+        }
         if (getNutrition() <= 0) {
             Location deathLocation = w.getLocation(this);
             deleteAndSpawnFungus(w, deathLocation);

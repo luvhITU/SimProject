@@ -106,7 +106,7 @@ public abstract class HelperMethods {
                     x = Integer.parseInt(tokens[2]);
                     y = Integer.parseInt(tokens[3]);
                     System.out.println("Amount: " + amount);
-                    System.out.println("Territory Center: (" + x + "," + y + ")");
+                    System.out.println("Spawn Location: (" + x + "," + y + ")");
                     spawnObject(w, p, isInfected, type, amount, x, y);
                 }
                 isInfected = false;
@@ -171,7 +171,6 @@ public abstract class HelperMethods {
             Location l = getRandomEmptyLocation(w, r);
             occupied.add(l);
 
-            //TODO: Add logic to infect spawned animals.Animal-Objects. Maybe as parameter in animals.Animal constructor?
             if (type.equals("grass")) {
                 w.setTile(l, new Grass());
             } else if (type.equals("rabbit")) {
@@ -183,8 +182,7 @@ public abstract class HelperMethods {
             } else if (type.equals("wolf")) {
                 w.setTile(l, new Wolf());
             } else if (type.equals("bear")) {
-                //TODO: Spawn animals.Bear-Object at specified coordinates
-                w.setTile(l, new Bear());
+                w.setTile(new Location(x, y), new Bear());
             } else if (type.equals("carcass")) {
                 w.setTile(l, new Carcass(isInfected));
             }
