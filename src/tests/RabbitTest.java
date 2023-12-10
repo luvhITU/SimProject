@@ -46,10 +46,8 @@ public class RabbitTest extends test {
         a.setHome(w,h); //Sets home before to not get exception
         Object[] beforeEntities = w.getEntities().keySet().toArray();
         System.out.println(Arrays.toString(beforeEntities));
-        int i = 0;
-        while(g.getNutrition() > 0 || i > 20) {
+        for(int i = 0;g.getNutrition() > 0 || i > 20;i++){
             a.eat(w, g);
-            i++;
         }
         Object[] afterEntities = w.getEntities().keySet().toArray();
         System.out.println(Arrays.toString(afterEntities));
