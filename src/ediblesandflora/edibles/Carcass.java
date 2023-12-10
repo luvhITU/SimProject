@@ -13,34 +13,27 @@ import java.awt.Color;
 public class Carcass extends Edible implements DynamicDisplayInformationProvider {
     private static final int defaultNutrition = 30;
     private static final double fungusThresholdPercentage = 0.3;
-    private final int initialNutrition;
+//    private final int initialNutrition;
     private int fungusGrowth = 0;
     private final int fungusThreshold;
-//    private final String carcassType;
     private boolean isInfected = false;
     private boolean fungusCreated;
     private Fungus fungus = null;
 
     public Carcass(Animal animal, boolean isInfected) {
-        super(animal.maxHealth / 2, 0);
-//        this.carcassType = animal.getClass().getSimpleName();
+        super(animal.getMaxHealth() / 2, 0);
         this.isInfected = isInfected;
-        this.initialNutrition = getNutrition();
-        this.fungusThreshold = (int) (fungusThresholdPercentage * initialNutrition);
+        this.fungusThreshold = (int) (fungusThresholdPercentage * maxNutrition);
     }
 
     public Carcass(boolean isInfected) {
         super(defaultNutrition, 0);
-//        this.carcassType = null;
         this.isInfected = isInfected;
-        this.initialNutrition = getNutrition();
-        this.fungusThreshold = (int) (fungusThresholdPercentage * initialNutrition);
+        this.fungusThreshold = (int) (fungusThresholdPercentage * maxNutrition);
     }
 
     @Override
     public void act(World w) {
-        //System.out.println("Nutrition: " + getNutrition());
-        //System.out.println("ediblesandflora.Fungus Growth: " + fungusGrowth);
         super.act(w);
         degrade(w);
         checkForInfection(w);
@@ -55,11 +48,6 @@ public class Carcass extends Edible implements DynamicDisplayInformationProvider
         return new DisplayInformation(Color.magenta, imageKey);
     }
 
-//    @Override
-//    public String getType() {
-//        return carcassType;
-//    }
-
     public boolean getIsInfected() {
         return isInfected;
     }
@@ -73,7 +61,7 @@ public class Carcass extends Edible implements DynamicDisplayInformationProvider
     }
 
     private void checkForInfection(World w) {
-        double infectionProbability = (initialNutrition - getNutrition()) / 100.0;
+        double infectionProbability = (maxNutrition - getNutrition()) / 100.0;
         if (!isInfected && HelperMethods.getRandom().nextDouble() < infectionProbability) {
             //System.out.println("ediblesandflora.edibles.Carcass is infected!");
             isInfected = true;
@@ -96,8 +84,7 @@ public class Carcass extends Edible implements DynamicDisplayInformationProvider
     }
 
     private void createFungus(World w) {
-        //System.out.println("ediblesandflora.Fungus has grown inside the carcass!");
-        fungus = new Fungus(initialNutrition);
+        fungus = new Fungus(maxNutrition);
     }
 
     private void deleteAndSpawnFungus(World w, Location deathLocation) {

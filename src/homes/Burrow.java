@@ -34,12 +34,12 @@ public class Burrow extends Home implements DynamicDisplayInformationProvider, N
 
     /***
      * See super
-     * @param animal
+     * @param animal Animal
      */
     @Override
     public void add(Animal animal) {
         super.add(animal);
-        if (animal.maxHealth > 70) {
+        if (animal.getMaxHealth() > 70) {
             imageKey = "hole";
         }
     }

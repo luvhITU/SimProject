@@ -21,7 +21,7 @@ import java.util.*;
 public abstract class Animal implements Actor, DynamicDisplayInformationProvider {
 
 
-    public static final int MATURITY_AGE = 3;
+    protected static final int MATURITY_AGE = 3;
     protected static final int BASE_MAX_ENERGY = 100;
     protected static final int MAX_SATIATION = 100;
     protected static final int AGE_MAX_ENERGY_DECREASE = 5;
@@ -29,7 +29,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
     protected static final int VISION_RANGE = 4;
     protected static final double ACTION_COST_MULTIPLIER = 1.5;
 
-    public final int maxHealth;
+    protected final int maxHealth;
     protected int maxEnergy;
     protected int energy;
     protected int satiation;
@@ -41,7 +41,6 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
     protected final Set<String> diet;
     protected Home home;
     public boolean isAwake;
-    protected boolean isBreedable;
     protected int stepAge;
     protected int age;
     protected Set<Location> tilesInSight;
@@ -61,7 +60,6 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         this.health = maxHealth;
         this.maxSpeed = maxSpeed;
         this.matingCooldownDays = matingCooldownDays;
-
         maxEnergy = BASE_MAX_ENERGY;
         satiation = 70;
         energy = BASE_MAX_ENERGY;
@@ -69,7 +67,6 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         stepAgeWhenMated = 0;
         age = 0;
         isAwake = true;
-        isBreedable = matingCooldownDays != 0;
         home = null;
     }
 
@@ -105,11 +102,6 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         return new DisplayInformation(Color.magenta, imageKeyBuilder.toString());
     }
 
-    /***
-     * Checks if object is dead
-     * @return  Boolean
-     */
-
     public void beginAct(World w) {
         stepAge++;
         // If a day has passed, age.
@@ -140,8 +132,8 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
             delete(w);
         }
     }
-    //Should it be Protected?
-    private int getMaxHealth() {
+
+    public int getMaxHealth() {
         return maxHealth;
     }
 
@@ -180,11 +172,15 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         animal.deleteIfDead(w);
     }
 
+    public static int getMaturityAge() {
+        return MATURITY_AGE;
+    }
+
     /***
      * Returns int speed which is based on maxSpeed and energy
      * @return  int
      */
-    public int calcMaxSpeed() {
+    private int calcMaxSpeed() {
         return (int) Math.max(1, Math.round(maxSpeed * (energy / 100.0)));
     }
 

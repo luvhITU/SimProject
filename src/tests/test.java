@@ -139,8 +139,8 @@ public class test {
         // Checking that animals didn't mate the first night (because they haven't matured yet)
         Assert.assertEquals(2, getObjectsByType(animalType).size());
         // Making them mature
-        a.setAge(Animal.MATURITY_AGE);
-        b.setAge(Animal.MATURITY_AGE);
+        a.setAge(Animal.getMaturityAge());
+        b.setAge(Animal.getMaturityAge());
         // Simulating until they can mate
         while (!a.canMate() || !b.canMate()) {
             p.simulate();
