@@ -16,12 +16,20 @@ public class Rabbit extends Animal implements Actor {
         super(Config.Rabbit.DIET, Config.Rabbit.DAMAGE, Config.Rabbit.HEALTH, Config.Rabbit.SPEED, Config.Rabbit.MATING_COOLDOWN_DAYS);
     }
 
+    /***
+     * See super
+     * @param w The world
+     */
     @Override
     public void beginAct(World w) {
         super.beginAct(w);
 
     }
 
+    /***
+     * See super
+     * @param w The world
+     */
     @Override
     public void sleepAct(World w) {
         if (w.getCurrentTime() == 0 && canMate()) {
@@ -30,6 +38,10 @@ public class Rabbit extends Animal implements Actor {
         super.sleepAct(w);
     }
 
+    /***
+     * See super
+     * @param w World
+     */
     @Override
     public void awakeAct(World w) {
         super.awakeAct(w);
