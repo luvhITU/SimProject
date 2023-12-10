@@ -33,7 +33,9 @@ public class Pack implements DynamicDisplayInformationProvider {
      * Returns true if there is no space left in pack
      * @return  Boolean
      */
-    public boolean isFull() { return packHome.isFull(); }
+    public boolean isFull() {
+        return members.size() == members.iterator().next().maxPackSize;
+    }
 
     /***
      * Adds pack animal to pack and throws and exception if the pack animal already is in the pack

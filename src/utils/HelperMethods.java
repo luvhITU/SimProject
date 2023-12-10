@@ -277,7 +277,7 @@ public abstract class HelperMethods {
             }
             oldTargetTiles = new HashSet<>(targetTiles);
         }
-        throw new IllegalStateException("No empty tiles within set radius");
+        return null;
     }
 
     /***

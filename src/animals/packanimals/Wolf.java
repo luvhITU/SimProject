@@ -23,9 +23,7 @@ public class Wolf extends PackAnimal {
 
     @Override
     public void awakeAct(World w) {
-        if (home == null && canBurrowHere(w)) {
-            //System.out.println(pack.getMembers().size());
-            //System.out.println("can burrow");
+        if (w.isNight() && home == null && canBurrowHere(w)) {
             burrow(w, maxPackSize);
         }
         super.awakeAct(w);

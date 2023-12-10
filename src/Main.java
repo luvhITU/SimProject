@@ -8,7 +8,7 @@ public class Main {
         String input = "data/t2-8a.txt";
 
         int size = HelperMethods.readWorldSize(input);
-        int delay = 1000;
+        int delay = 200;
         int display_size = 800;
 
         Program p = new Program(size, display_size, delay);

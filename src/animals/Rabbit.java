@@ -19,9 +19,7 @@ public class Rabbit extends Animal implements Actor {
     @Override
     public void beginAct(World w) {
         super.beginAct(w);
-        if (home == null) {
-            tryFindOrDigBurrow(w, 5);
-        }
+
     }
 
     @Override
@@ -39,7 +37,11 @@ public class Rabbit extends Animal implements Actor {
         if (predator != null) {
             flee(w, w.getLocation(predator));
         } else if (w.isNight()) {
-            goHome(w);
+            if (home == null) {
+                tryFindOrDigBurrow(w, 5);
+            } else {
+                goHome(w);
+            }
         } else {
             Object target = findClosestEdible(w);
             if (target == null) {

@@ -17,6 +17,9 @@ import java.util.Set;
 
 public class RabbitTest extends test {
     protected Rabbit r = new Rabbit();
+
+    @Test
+    public void burrowReproductionTest() { doesBurrowReproduceCorrectly(new Rabbit(), new Rabbit()); };
     @Test
     public void hasMovedTest(){
         hasMoved(r);

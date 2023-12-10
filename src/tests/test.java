@@ -1,21 +1,38 @@
 package tests;
 
 import animals.Animal;
-import animals.Rabbit;
 import ediblesandflora.edibles.Carcass;
 import ediblesandflora.edibles.Edible;
+import itumulator.executable.Program;
 import itumulator.world.Location;
 import itumulator.world.World;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
+import java.util.*;
 
 public class test {
-    protected int worldSize = 10;
-    protected World w = new World(worldSize);
+    protected int worldSize = 4;
+    protected Program p = new Program(worldSize, 800, 1);
+    protected World w = p.getWorld();
+
+    private void keepSatiated() {
+        for (Object o : w.getEntities().keySet()) {
+            if (o instanceof Animal) {
+                ((Animal) o).setSatiation(100);
+            }
+        }
+    }
+
+    private Set<Object> getObjectsByType(String type) {
+        Set<Object> objects = new HashSet<>();
+        for (Object o: w.getEntities().keySet()) {
+            if (o.getClass().getSimpleName().equals(type)) {
+                objects.add(o);
+            }
+        }
+        return objects;
+    }
     protected Location startLocation = new Location(0,0);
     protected void hasMoved(Animal a){
         int[] startXY = {startLocation.getX(),startLocation.getY()};
@@ -95,6 +112,36 @@ public class test {
         a.act(w);
         Assert.assertEquals(startLocation, w.getLocation(a));
         Assert.assertEquals(startEnergy,a.getEnergy());
+    }
+
+    protected void doesBurrowReproduceCorrectly(Animal a, Animal b) {
+        String animalType = a.getClass().getSimpleName();
+        w.setTile(new Location(0,0), b);
+        w.setTile(new Location(0,1), a);
+        Assert.assertEquals(2, getObjectsByType(animalType).size());
+        w.setNight();
+        while (w.getCurrentTime() != 1) {
+            p.simulate();
+        }
+        Assert.assertEquals(2, getObjectsByType(animalType).size());
+
+        a.setAge(Animal.MATURITY_AGE);
+        b.setAge(Animal.MATURITY_AGE);
+        while (w.getCurrentTime() != 1) {
+            p.simulate();
+        }
+        Assert.assertEquals(2, getObjectsByType(animalType).size());
+
+        for (int i = 1; i < a.getMatingCooldownDays(); i++) {
+            Assert.assertEquals(3, getObjectsByType(animalType).size());
+            keepSatiated();
+        }
+        while (w.getCurrentTime() != 1) {
+            p.simulate();
+            keepSatiated();
+        }
+        Assert.assertEquals(2, getObjectsByType(animalType).size());
+
     }
 
 }

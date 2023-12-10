@@ -10,7 +10,7 @@ public class Config {
      * Has: int "NUTRITION"
      */
     public static class Grass {
-        public static final int NUTRITION = 20;
+        public static final int NUTRITION = 5;
     }
 
     /***

@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class PackAnimal extends Animal {
     protected int maxPackSize;
-    protected Pack pack;
+    public Pack pack;
     private int stepAgeWhenPackActed;
 
     /***
@@ -48,7 +48,7 @@ public class PackAnimal extends Animal {
         Location closestHostileWolfLoc = HelperMethods.findNearestLocationByType(w, w.getLocation(this), tilesInSight, this.getClass().getSimpleName());
         if (closestHostileWolfLoc != null) {
             flee(w, closestHostileWolfLoc);
-        } else if (w.isNight()) {
+        } else if (home != null && w.isNight()) {
             goHome(w);
         } else {
             if (isTargetUnavailable(w)) {
