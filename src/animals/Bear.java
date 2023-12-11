@@ -31,7 +31,7 @@ public class Bear extends Animal implements Actor {
         super.awakeAct(w);
         if (isBedTime(w)) { goHome(w); }
         else {
-            Object closestEdible = findClosestEdible(w);
+            Object closestEdible = findTarget(w);
             if (closestEdible == null) {
                 wander(w);
             } else {

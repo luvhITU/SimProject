@@ -41,7 +41,7 @@ public class Rabbit extends Animal implements Actor {
                 goHome(w);
             }
         } else {
-            Object target = findClosestEdible(w);
+            Object target = findTarget(w);
             if (target == null) {
                 randomMove(w);
             } else {

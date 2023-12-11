@@ -6,10 +6,10 @@ public class Main {
 
     public static void main(String[] args) {
 //        String input = "data/t2-8a.txt";
-        String input = "data/test-files/2wolves.txt";
+        String input = "data/tf2-1.txt";
 
         int size = HelperMethods.readWorldSize(input);
-        int delay = 200;
+        int delay = 1000;
         int display_size = 800;
 
         Program p = new Program(size, display_size, delay);

@@ -50,19 +50,24 @@ public class PackAnimal extends Animal {
         if (avoidsOtherPacks) {
             Location closestPackLoc = HelperMethods.findNearestLocationByType(w, w.getLocation(this), tilesInSight, this.getClass().getSimpleName());
             if (closestPackLoc != null) {
+                System.out.println("flee");
                 flee(w, closestPackLoc);
+                return;
             }
-        } else if (home != null && isBedTime(w)) {
-            goHome(w);
-        } else {
+        }
+        if (home == null || !isBedTime(w)) {
             if (isTargetUnavailable(w)) {
-                pack.setTarget(findClosestEdible(w));
+                pack.setTarget(findTarget(w));
             }
             if (pack.getTarget() == null) {
                 randomMove(w);
             } else {
+                System.out.println(pack.getTarget());
                 hunt(w, pack.getTarget());
             }
+        } else {
+            System.out.println("go home");
+            goHome(w);
         }
     }
 
@@ -143,6 +148,9 @@ public class PackAnimal extends Animal {
 
     @Override
     protected void hunt(World w, Object target) {
+//        if (pack.getMembers().contains(target)) {
+//            throw new IllegalArgumentException("Cannot hunt pack members.");
+//        }
         for (PackAnimal member : pack.getMembers()) {
             if (isTargetUnavailable(w)) {
                 return;

@@ -511,6 +511,9 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
     }
 
     protected void hunt(World w, Object target) {
+        if (target == this) {
+            throw new IllegalArgumentException("Animal cannot hunt itself");
+        }
         Location targetLoc = w.getLocation(target);
         boolean targetInRange = isTargetInRange(w, target);
         boolean isAnimal = target instanceof Animal;
@@ -537,20 +540,38 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         return w.getSurroundingTiles(w.getLocation(this)).contains(targetLoc);
     }
 
-    protected Set<Object> findEdibles(World w) {
-        Set<Object> edibles = new HashSet<>();
+    protected Set<Edible> findEdibles(World w) {
+        Set<Edible> edibles = new HashSet<>();
         for (Location l : tilesInSight) {
             Object o = w.getTile(l);
             if (o != null && diet.contains(o.getClass().getSimpleName())) {
-                if (o instanceof Edible && ((Edible) o).isEdible() || o instanceof Animal)
-                    edibles.add(o);
+                if (o instanceof Edible && ((Edible) o).isEdible())
+                    edibles.add((Edible) o);
             }
         }
         return edibles;
     }
-    protected Object findClosestEdible(World w) {
-        return HelperMethods.findNearestOfObjects(w, w.getLocation(this), findEdibles(w));
+
+    protected Edible findClosestEdible(World w) {
+        return (Edible) HelperMethods.findNearestOfObjects(w, w.getLocation(this), findEdibles(w));
     }
+
+    public Set<Animal> findPrey(World w) {
+        Set<Animal> prey = new HashSet<>();
+        for (Location l : tilesInSight) {
+            Object o = w.getTile(l);
+            if (o instanceof Animal && diet.contains(o.getClass().getSimpleName())) {
+                prey.add((Animal) o);
+            }
+        }
+        return prey;
+    }
+
+    public Animal findClosestPrey(World w) {
+        return (Animal) HelperMethods.findNearestOfObjects(w, w.getLocation(this), findPrey(w));
+    }
+
+
 
     protected Animal findClosestPredator(World w) {
         Set<Animal> predators = findPredators(w);
@@ -571,6 +592,24 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
             }
         }
         return predators;
+    }
+
+    public Object findTarget(World w) {
+        Edible edible = findClosestEdible(w);
+        Animal prey = findClosestPrey(w);
+        if (edible == null && prey == null) {
+            return null;
+        } else if (!(edible instanceof Carcass)) {
+            return prey;
+        } else if (prey == null) {
+            return edible;
+        }
+        int distEdible = HelperMethods.getDistance(w.getLocation(this), w.getLocation(edible));
+        int distPrey = HelperMethods.getDistance(w.getLocation(this), w.getLocation(prey));
+            if (distEdible < distPrey) {
+                return edible;
+            }
+        return prey;
     }
 
     /***
