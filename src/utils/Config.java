@@ -48,6 +48,15 @@ public class Config {
         public static final int MATING_COOLDOWN_DAYS = 0;
     }
 
+    public static class Fox {
+        public static final Set<String> DIET = Set.of("Berry", "Rabbit", "Fox", "Carcass");
+        public static final int DAMAGE = 15;
+        public static final int HEALTH = 60;
+        public static final int SPEED = 2;
+        public static final int MATING_COOLDOWN_DAYS = 3;
+        public static final int MAX_PACK_SIZE = 6;
+    }
+
     /***
      * Has: int "NUTRITION" and int "renewTimeDays"
      */

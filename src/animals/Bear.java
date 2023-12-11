@@ -29,7 +29,7 @@ public class Bear extends Animal implements Actor {
     @Override
     public void awakeAct(World w) {
         super.awakeAct(w);
-        if (w.isNight()) { goHome(w); }
+        if (isBedTime(w)) { goHome(w); }
         else {
             Object closestEdible = findClosestEdible(w);
             if (closestEdible == null) {

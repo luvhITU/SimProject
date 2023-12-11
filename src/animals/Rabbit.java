@@ -34,7 +34,7 @@ public class Rabbit extends Animal implements Actor {
         Animal predator = findClosestPredator(w);
         if (predator != null) {
             flee(w, w.getLocation(predator));
-        } else if (w.isNight()) {
+        } else if (isBedTime(w)) {
             if (home == null) {
                 tryFindOrDigBurrow(w, 5);
             } else {

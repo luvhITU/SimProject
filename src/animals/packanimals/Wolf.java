@@ -10,7 +10,7 @@ public class Wolf extends PackAnimal {
      * Constructor that uses configs
      */
     public Wolf() {
-        super(Config.Wolf.DIET, Config.Wolf.DAMAGE, Config.Wolf.HEALTH, Config.Wolf.SPEED, Config.Wolf.MATING_COOLDOWN_DAYS, Config.Wolf.MAX_PACK_SIZE);
+        super(Config.Wolf.DIET, Config.Wolf.DAMAGE, Config.Wolf.HEALTH, Config.Wolf.SPEED, Config.Wolf.MATING_COOLDOWN_DAYS, Config.Wolf.MAX_PACK_SIZE, true);
     }
 
     @Override

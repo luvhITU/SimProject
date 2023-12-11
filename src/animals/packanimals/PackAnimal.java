@@ -11,6 +11,7 @@ import java.util.Set;
 
 public class PackAnimal extends Animal {
     protected int maxPackSize;
+    protected boolean avoidsOtherPacks;
     public Pack pack;
     private int stepAgeWhenPackActed;
 
@@ -23,9 +24,10 @@ public class PackAnimal extends Animal {
      * @param matingCooldownDays    int, amount of steps before mating again
      * @param maxPackSize           int
      */
-    public PackAnimal(Set<String> diet, int damage, int maxHealth, int maxSpeed, int matingCooldownDays, int maxPackSize) {
+    public PackAnimal(Set<String> diet, int damage, int maxHealth, int maxSpeed, int matingCooldownDays, int maxPackSize, boolean avoidsOtherPacks) {
         super(diet, damage, maxHealth, maxSpeed, matingCooldownDays);
         this.maxPackSize = maxPackSize;
+        this.avoidsOtherPacks = avoidsOtherPacks;
         stepAgeWhenPackActed = -1;
     }
 
@@ -45,10 +47,12 @@ public class PackAnimal extends Animal {
     public void awakeAct(World w) {
         if (hasPackActed()) { return; }
         super.awakeAct(w);
-        Location closestHostileWolfLoc = HelperMethods.findNearestLocationByType(w, w.getLocation(this), tilesInSight, this.getClass().getSimpleName());
-        if (closestHostileWolfLoc != null) {
-            flee(w, closestHostileWolfLoc);
-        } else if (home != null && w.isNight()) {
+        if (avoidsOtherPacks) {
+            Location closestPackLoc = HelperMethods.findNearestLocationByType(w, w.getLocation(this), tilesInSight, this.getClass().getSimpleName());
+            if (closestPackLoc != null) {
+                flee(w, closestPackLoc);
+            }
+        } else if (home != null && isBedTime(w)) {
             goHome(w);
         } else {
             if (isTargetUnavailable(w)) {

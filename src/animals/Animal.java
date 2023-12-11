@@ -37,6 +37,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
     protected final int damage;
     protected final int maxSpeed;
     protected final int matingCooldownDays;
+    protected final boolean isNocturnal;
     protected int stepAgeWhenMated;
     protected final Set<String> diet;
     protected Home home;
@@ -53,13 +54,14 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
      * @param maxSpeed              int
      * @param matingCooldownDays    int, amount of steps before mating again
      */
-    public Animal(Set<String> diet, int damage, int maxHealth, int maxSpeed, int matingCooldownDays) {
+    public Animal(Set<String> diet, int damage, int maxHealth, int maxSpeed, int matingCooldownDays, boolean isNocturnal) {
         this.diet = diet;
         this.damage = damage;
         this.maxHealth = maxHealth;
         this.health = maxHealth;
         this.maxSpeed = maxSpeed;
         this.matingCooldownDays = matingCooldownDays;
+        this.isNocturnal = isNocturnal;
         maxEnergy = BASE_MAX_ENERGY;
         satiation = 70;
         energy = BASE_MAX_ENERGY;
@@ -68,6 +70,10 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         age = 0;
         isAwake = true;
         home = null;
+    }
+
+    public Animal(Set<String> diet, int damage, int maxHealth, int maxSpeed, int matingCooldownDays) {
+        this(diet, damage, maxHealth, maxSpeed, matingCooldownDays, false);
     }
 
     /***
@@ -230,6 +236,10 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
      */
     public int getSatiation() {
         return satiation;
+    }
+
+    public boolean isBedTime(World w) {
+        return (isNocturnal) ? w.isDay() : w.isNight();
     }
 
     /***
@@ -538,7 +548,6 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         }
         return edibles;
     }
-
     protected Object findClosestEdible(World w) {
         return HelperMethods.findNearestOfObjects(w, w.getLocation(this), findEdibles(w));
     }
