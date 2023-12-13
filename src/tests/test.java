@@ -18,8 +18,7 @@ import static utils.HelperMethods.disableSysOut;
 
 public class test {
     protected int worldSize = 4;
-    protected Program p = new Program(worldSize, 800, 1);
-    protected World w = p.getWorld();
+    protected World w = new World(worldSize);
 
     private void keepSatiated() {
         for (Object o : w.getEntities().keySet()) {
@@ -134,7 +133,7 @@ public class test {
         w.setNight();
         disableSysOut(true);//Disable prints because it is annoying that it prints so much and it prints from itu library
         while (w.getCurrentTime() != 1) {
-            p.simulate();
+            w.step();
         }
         // Checking that animals didn't mate the first night (because they haven't matured yet)
         Assert.assertEquals(2, getObjectsByType(animalType).size());
@@ -143,12 +142,12 @@ public class test {
         b.setAge(Animal.getMaturityAge());
         // Simulating until they can mate
         while (!a.canMate() || !b.canMate()) {
-            p.simulate();
+            w.step();
             keepSatiated();
         }
         w.setNight();
         while (w.getCurrentTime() != 1) {
-            p.simulate();
+            w.step();
             keepSatiated();
         }
         // Making sure they produced one offspring during the night
@@ -156,12 +155,12 @@ public class test {
         Assert.assertFalse(a.canMate() || b.canMate());
         // Seeing if they can mate again after mating once
         while (!a.canMate() || !b.canMate()) {
-            p.simulate();
+            w.step();
             keepSatiated();
         }
         w.setNight();
         while (w.getCurrentTime() != 1) {
-            p.simulate();
+            w.step();
             keepSatiated();
         }
         disableSysOut(false); //Enable system.out.print again

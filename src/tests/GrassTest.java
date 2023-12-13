@@ -23,7 +23,7 @@ public class GrassTest extends test {
         Map<Object, Location> entities = null;
 
         for (int i = 0; i < 20; i++) {
-            p.simulate();
+            w.step();
             entities = w.getEntities();
         }
         assertTrue(entities.size() > 1);
@@ -34,7 +34,7 @@ public class GrassTest extends test {
         Grass grass = new Grass();
         w.setTile(new Location(0, 0), grass);
         for (int i = 0; i < 200; i++) {
-            p.simulate();
+            w.step();
         }
         assertFalse(w.contains(grass));
     }

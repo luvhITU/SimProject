@@ -37,7 +37,7 @@ public class CarcassTest extends test{
         System.out.println("w.getEntities().keySet()");
         disableSysOut(true);
         while(w.getEntities().containsKey(c2) && w.getEntities().containsKey(c)){
-            p.simulate();
+            w.step();
             System.out.println(w.getEntities().keySet());
         }
         disableSysOut(false);
@@ -51,7 +51,7 @@ public class CarcassTest extends test{
         System.out.println(c.getIsInfected());
         disableSysOut(true);
         for(int i = 0;!c.getIsInfected() && i < 100;i++){
-            p.simulate();
+            w.step();
         }
         disableSysOut(false);
         System.out.println(c.getIsInfected());
