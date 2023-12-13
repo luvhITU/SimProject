@@ -1,6 +1,9 @@
 package tests;
 
 import animals.Animal;
+import animals.Bear;
+import animals.Rabbit;
+import animals.packanimals.Wolf;
 import ediblesandflora.Fungus;
 import ediblesandflora.edibles.Carcass;
 import ediblesandflora.edibles.Edible;
@@ -9,17 +12,49 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.params.provider.MethodSource;
+import utils.Config;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.*;
+import java.util.stream.Stream;
 
+import static org.junit.Assert.assertThrows;
 import static utils.HelperMethods.disableSysOut;
+import org.junit.jupiter.params.ParameterizedTest;
 
 public class test {
     protected int worldSize = 4;
     protected World w = new World(worldSize);
-
+    protected Location startLocation = new Location(0,0);
+    protected static Rabbit rabbit = new Rabbit();
+    protected static Wolf wolf = new Wolf();
+    protected static Bear bear = new Bear();
+    static Stream<Animal> Animals() {
+        return Stream.of(rabbit,wolf,bear);
+    }
+    @ParameterizedTest
+    @MethodSource("Animals")
+    public void canMovePositive(Animal a){
+        w.setTile(startLocation,a);
+        Location moveToLocation = new Location(2,2);
+        Assertions.assertNotEquals(moveToLocation.getX(), startLocation.getX());
+        Assertions.assertNotEquals(moveToLocation.getY(), startLocation.getY());
+        w.move(a,moveToLocation);
+    }
+    @ParameterizedTest
+    @MethodSource("Animals")
+    public void canMoveNegative(Animal a){
+        w.setTile(startLocation,a);
+        Location moveToLocation = new Location(100,100);
+        Assertions.assertNotEquals(moveToLocation.getX(), startLocation.getX());
+        Assertions.assertNotEquals(moveToLocation.getY(), startLocation.getY());
+        assertThrows(IllegalArgumentException.class, () -> {
+            w.move(a,moveToLocation);
+        });
+    }
     private void keepSatiated() {
         for (Object o : w.getEntities().keySet()) {
             if (o instanceof Animal) {
@@ -37,7 +72,8 @@ public class test {
         }
         return objects;
     }
-    protected Location startLocation = new Location(0,0);
+    @ParameterizedTest
+    @MethodSource("Animals")
     protected void hasMoved(Animal a){
         int[] startXY = {startLocation.getX(),startLocation.getY()};
         System.out.println(Arrays.toString(startXY));
@@ -48,6 +84,8 @@ public class test {
         System.out.println(Arrays.toString(movedXY));
         Assert.assertFalse(Arrays.equals(startXY,movedXY));
     }
+    @ParameterizedTest
+    @MethodSource("Animals")
     protected void losesEnergy(Animal a){
         int startEnergy = a.getEnergy();
         System.out.println(startEnergy);
@@ -57,6 +95,8 @@ public class test {
         System.out.println(afterEnergy);
         Assert.assertNotEquals(startEnergy,afterEnergy);
     }
+    @ParameterizedTest
+    @MethodSource("Animals")
     protected void losesSatiation(Animal a){
         int startSatiation = a.getSatiation();
         System.out.println(startSatiation);

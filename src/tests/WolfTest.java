@@ -43,7 +43,7 @@ public class WolfTest extends test{
             }
         }
         if(c == null){
-            Assert.assertTrue(false); //needs to fail if there is no carcass
+            Assert.fail(); //needs to fail if there is no carcass
         }
         for(int i = 0;w.getEntities().containsKey(c) && i < 100; i++){
             a.eat(w,c);
