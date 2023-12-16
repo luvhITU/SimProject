@@ -1,6 +1,7 @@
 package utils;
 
 import animals.Bear;
+import animals.packanimals.Fox;
 import homes.Burrow;
 import homes.Home;
 import animals.Rabbit;
@@ -189,6 +190,8 @@ public abstract class HelperMethods {
                 }
             } else if (type.equals("carcass")) {
                 w.setTile(l, new Carcass(isInfected));
+            } else if (type.equals("fox")) {
+                w.setTile(l, new Fox());
             }
         }
 //        if(type.equals("wolf")){

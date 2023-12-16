@@ -31,6 +31,13 @@ public class PackAnimal extends Animal {
         stepAgeWhenPackActed = -1;
     }
 
+    public PackAnimal(Set<String> diet, int damage, int maxHealth, int maxSpeed, int matingCooldownDays, int maxPackSize, boolean avoidsOtherPacks, boolean isNocturnal) {
+        super(diet, damage, maxHealth, maxSpeed, matingCooldownDays, isNocturnal);
+        this.maxPackSize = maxPackSize;
+        this.avoidsOtherPacks = avoidsOtherPacks;
+        stepAgeWhenPackActed = -1;
+    }
+
     /***
      * See super
      * @param w providing details of the position on which the actor is currently located and much more.
@@ -54,15 +61,16 @@ public class PackAnimal extends Animal {
                 flee(w, closestPackLoc);
                 return;
             }
-        }
-        if (home == null || !isBedTime(w)) {
+        } if (home == null || !isBedTime(w)) {
+            if (home == null && isBedTime(w)) {
+                sleep(w);
+            }
             if (isTargetUnavailable(w)) {
                 pack.setTarget(findTarget(w));
             }
             if (pack.getTarget() == null) {
                 randomMove(w);
             } else {
-                System.out.println(pack.getTarget());
                 hunt(w, pack.getTarget());
             }
         } else {
