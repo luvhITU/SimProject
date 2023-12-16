@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static utils.HelperMethods.disableSysOut;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -141,15 +142,17 @@ public class test {
                 ((Fungus) o).act(w);
             }
         }
-        if(!(o instanceof BerryBush)){ //Berry bush deletes the berries instead of deleting the object
+        if(!(o instanceof BerryBush)){ //Berry bush cannot get "die"
             assertThrows(IllegalArgumentException.class, () -> {
                 w.getLocation(o);
             });
         }
         else{
-            Assertions.assertTrue(w.contains(((BerryBush) o)));
+            Assertions.assertTrue(w.contains(o));
         }
     }
+    @ParameterizedTest
+    @MethodSource("Objects")
     protected void delete(Object o){
         w.setTile(startLocation,o);
         if(o instanceof Animal){
@@ -161,10 +164,13 @@ public class test {
         else if(o instanceof Fungus){
             ((Fungus) o).delete(w);
         }
-        try {
-            Assert.assertFalse(w.contains(o));
+        System.out.println(w.contains(o));
+        if(!(o instanceof BerryBush)) {
+            Assertions.assertFalse(w.contains(o));
         }
-        catch (IllegalArgumentException iae) {Assert.assertFalse(false);} //Throws an exception instead of return false
+        else{
+            Assertions.assertTrue(w.contains(o));
+        }
     }
     protected void cantMoveWhenBlocked(Animal a){
         //Uses carcass to block movement

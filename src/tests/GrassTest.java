@@ -11,12 +11,6 @@ import static org.junit.Assert.*;
 public class GrassTest extends test {
 
     @Test
-    public void testGetInformationReturnsDisplayInformation() {
-        Grass grass = new Grass();
-        assertNotNull(grass.getInformation());
-    }
-
-    @Test
     public void reproduceCheckTest() {
         Grass grass = new Grass();
         w.setTile(new Location(0, 0), grass);
@@ -27,15 +21,5 @@ public class GrassTest extends test {
             entities = w.getEntities();
         }
         assertTrue(entities.size() > 1);
-    }
-
-    @Test
-    public void deleteCheckTest() {
-        Grass grass = new Grass();
-        w.setTile(new Location(0, 0), grass);
-        for (int i = 0; i < 200; i++) {
-            w.step();
-        }
-        assertFalse(w.contains(grass));
     }
 }

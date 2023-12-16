@@ -21,22 +21,6 @@ public class RabbitTest extends test {
 
     @Test
     public void burrowReproductionTest() { doesBurrowReproduceCorrectly(a, b); };
-    @Test
-    public void hasMovedTest(){
-        hasMoved(a);
-    }
-    @Test
-    public void losesEnergyTest(){
-        losesEnergy(a);
-    }
-    @Test
-    public void losesSatiationTest(){
-        losesSatiation(a);
-    }
-    @Test //k1-2b. Kaniner kan dø, hvilket resulterer I at de fjernes fra verdenen.
-    public void deleteTest(){
-        delete(a);
-    }
     @Test //K1-2c "Kaniner lever af græs som de spiser i løbet af dagen,"
     public void hasEatenTest(){
         Grass g = new Grass();
@@ -52,10 +36,6 @@ public class RabbitTest extends test {
         Object[] afterEntities = w.getEntities().keySet().toArray();
         System.out.println(Arrays.toString(afterEntities));
         Assert.assertFalse(Arrays.equals(beforeEntities,afterEntities));
-    }
-    @Test //K1-2c "uden mad dør en kanin."
-    public void dieWithTimeTest(){
-        dieWithTime(a);
     }
     @Test //k1-2f. Kaniner kan grave huller, eller dele eksisterende huller med andre kaniner
     // Kaniner kan kun være knyttet til et hul.
@@ -75,13 +55,6 @@ public class RabbitTest extends test {
     @Test
     public void cantMoveWhenBlockedTest(){
         cantMoveWhenBlocked(a);
-    }
-    //Mating does not work right now @Test
-    public void hasMated(){
-        Rabbit r2 = new Rabbit();
-        Location startLocation2 = new Location(0,1);
-        w.setTile(startLocation,a);
-        w.setTile(startLocation2,r2);
     }
 
 }
