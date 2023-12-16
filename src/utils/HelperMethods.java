@@ -1,6 +1,5 @@
 package utils;
 
-import animals.Animal;
 import animals.Bear;
 import homes.Burrow;
 import homes.Home;
@@ -15,7 +14,6 @@ import itumulator.executable.Program;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -388,29 +386,15 @@ public abstract class HelperMethods {
         }
         return minDistanceObject;
     }
-    public static void disableSysOut(boolean t){
-        if(t){
-
-            System.setOut(new PrintStream(new OutputStream() {
-                public void write(int b) {
-                    //DO NOTHING
-                }
-            }));
-        }
-        else{
-            System.setOut(SysOut);
-        }
-    }
-
     /***
-     * Since the map objects all have a delete method but don't share a superclass,
-     * this is used to invoke the delete method on different superclasses
-     * @param o Object that is invoked delete on
-     * @param w World
+     * Used to invoke methods with shared names but no shared inheritance for the method with input name
+     * @param o             Object that the method is invoked on
+     * @param methodName    Name of the method that is invoked
+     * @param w             World
      */
-    public static void invokeDelete(Object o, World w) {
+    public static void invokeMethod(Object o, String methodName,World w) {
         try {
-            Method m = o.getClass().getMethod("delete",World.class);
+            Method m = o.getClass().getMethod(methodName,World.class);
             m.invoke(o,w);
         } catch (Exception e) {
             System.out.println(e.getMessage());

@@ -21,8 +21,7 @@ import java.util.stream.Stream;
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static utils.HelperMethods.disableSysOut;
-import static utils.HelperMethods.invokeDelete;
+import static utils.HelperMethods.*;
 
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -130,21 +129,13 @@ public class test {
     }
     @ParameterizedTest
     @MethodSource("Objects")
-    protected void dieWithTime(Object o){
+    protected void dieWithTimeTest(Object o){
         w.setTile(startLocation,o);
         for(int i = 0;w.getEntities().containsKey(o) && i < 200;i++){
             System.out.println("Act nr: " + i);
-            if(o instanceof Animal){
-                ((Animal) o).act(w);
-            }
-            else if(o instanceof Edible){
-                ((Edible) o).act(w);
-            }
-            else if(o instanceof Fungus){
-                ((Fungus) o).act(w);
-            }
+            invokeMethod(o,"act",w);
         }
-        if(!(o instanceof BerryBush)){ //Berry bush cannot get "die"
+        if(!(o instanceof BerryBush)){ //Berry bush cannot "die", so it should still be on the map
             assertThrows(IllegalArgumentException.class, () -> {
                 w.getLocation(o);
             });
@@ -155,9 +146,12 @@ public class test {
     }
     @ParameterizedTest
     @MethodSource("Objects")
-    protected void delete(Object o){
+    protected void deleteTest(Object o){
+        System.out.println("Before being placed: " + w.contains(o));
         w.setTile(startLocation,o);
-        invokeDelete(o,w);
+        System.out.println("After being placed: " + w.contains(o));
+        invokeMethod(o,"delete",w);
+        System.out.println("After invokeDelete: " + w.contains(o));
         if(!(o instanceof BerryBush)) {
             Assertions.assertFalse(w.contains(o));
         }
@@ -187,7 +181,6 @@ public class test {
         // Checking that there are only to animals of this type to start with
         Assert.assertEquals(2, getObjectsByType(animalType).size());
         w.setNight();
-        disableSysOut(true);//Disable prints because it is annoying that it prints so much and it prints from itu library
         while (w.getCurrentTime() != 1) {
             w.step();
         }
@@ -219,7 +212,6 @@ public class test {
             w.step();
             keepSatiated();
         }
-        disableSysOut(false); //Enable system.out.print again
         // Making sure the one more offspring was produced
         Assert.assertEquals(4, getObjectsByType(animalType).size());
     }
