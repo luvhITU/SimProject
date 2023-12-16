@@ -3,14 +3,18 @@ package tests;
 import animals.Animal;
 import animals.Bear;
 import animals.Rabbit;
+import animals.packanimals.Fox;
 import animals.packanimals.Wolf;
 import ediblesandflora.Fungus;
+import ediblesandflora.edibles.BerryBush;
 import ediblesandflora.edibles.Carcass;
 import ediblesandflora.edibles.Edible;
+import ediblesandflora.edibles.Grass;
 import itumulator.executable.Program;
 import itumulator.world.Location;
 import itumulator.world.World;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -26,14 +30,34 @@ import static utils.HelperMethods.disableSysOut;
 import org.junit.jupiter.params.ParameterizedTest;
 
 public class test {
-    protected int worldSize = 4;
-    protected World w = new World(worldSize);
-    protected Location startLocation = new Location(0,0);
-    protected static Rabbit rabbit = new Rabbit();
-    protected static Wolf wolf = new Wolf();
-    protected static Bear bear = new Bear();
+    protected final int worldSize = 4;
+    protected final World w = new World(worldSize);
+    protected final Location startLocation = new Location(0,0);
     static Stream<Animal> Animals() {
-        return Stream.of(rabbit,wolf,bear);
+        return Stream.of(
+                new Rabbit(),
+                new Wolf(),
+                new Bear(),
+                new Fox()
+        );
+    }
+    static Stream<Edible> Edibles(){
+        return Stream.of(
+                new Grass(),
+                new BerryBush(),
+                new Carcass(false)
+        );
+    }
+    static Stream<Fungus> Fungus(){
+        return Stream.of(
+                new Fungus(new Rabbit().getEnergy())
+        );
+    }
+    static Stream<Object> AnimalsEdibles() {
+        return Stream.concat(Animals(),Edibles());
+    }
+    static Stream<Object> Objects(){
+        return Stream.concat(AnimalsEdibles(),Fungus());
     }
     @ParameterizedTest
     @MethodSource("Animals")
@@ -87,6 +111,7 @@ public class test {
     @ParameterizedTest
     @MethodSource("Animals")
     protected void losesEnergy(Animal a){
+        System.out.println(a);
         int startEnergy = a.getEnergy();
         System.out.println(startEnergy);
         w.setTile(startLocation,a);
@@ -106,32 +131,30 @@ public class test {
         System.out.println(afterSatiation);
         Assert.assertNotEquals(startSatiation,afterSatiation);
     }
-    protected void dieWithTime(Object a){
-        w.setTile(startLocation,a);
-        for(int i = 1;w.getEntities().containsKey(a);i++){
+    @ParameterizedTest
+    @MethodSource("Objects")
+    protected void dieWithTime(Object o){
+        w.setTile(startLocation,o);
+        for(int i = 1;w.getEntities().containsKey(o) && i <= 200;i++){
             System.out.println("Act nr: " + i);
-            if(a instanceof Animal){
-                ((Animal) a).act(w);
+            if(o instanceof Animal){
+                ((Animal) o).act(w);
             }
-            else if(a instanceof Edible){
-                ((Edible) a).act(w);
+            else if(o instanceof Edible){
+                ((Edible) o).act(w);
             }
-            else if(a instanceof Fungus){
-                ((Fungus) a).act(w);
-            }
-            if(i >= 200){
-                break; //Break so it doesn't just go forever
+            else if(o instanceof Fungus){
+                ((Fungus) o).act(w);
             }
         }
-        boolean hasType = false;
-        System.out.println("Input animal simple name: " + a.getClass().getSimpleName());
-        for(Object o: w.getEntities().keySet()){
-            System.out.println("Entity exists simple name: " + o.getClass().getSimpleName());
-            if(o.getClass().getSimpleName().equals(a.getClass().getSimpleName())){
-                hasType = true;
-            }
+        if(!(o instanceof BerryBush)){ //Berry bush deletes the berries instead of deleting the object
+            assertThrows(IllegalArgumentException.class, () -> {
+                w.getLocation(o);
+            });
         }
-        Assert.assertFalse(hasType);
+        else{
+            System.out.println(((BerryBush) o).getNutrition());
+        }
     }
     protected void delete(Object o){
         w.setTile(startLocation,o);
@@ -155,7 +178,7 @@ public class test {
         for(Location l: locations){
             String s = String.format("X: %s, Y: %s",l.getX(),l.getY());
             System.out.println(s);
-            w.setTile(l,new Carcass(true));
+            w.setTile(l,new Carcass(false));
         }
         int startEnergy = a.getEnergy();
         w.setTile(startLocation,a);
