@@ -1,5 +1,6 @@
 package utils;
 
+import animals.Animal;
 import animals.Bear;
 import homes.Burrow;
 import homes.Home;
@@ -16,6 +17,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public abstract class HelperMethods {
@@ -397,6 +399,21 @@ public abstract class HelperMethods {
         }
         else{
             System.setOut(SysOut);
+        }
+    }
+
+    /***
+     * Since the map objects all have a delete method but don't share a superclass,
+     * this is used to invoke the delete method on different superclasses
+     * @param o Object that is invoked delete on
+     * @param w World
+     */
+    public static void invokeDelete(Object o, World w) {
+        try {
+            Method m = o.getClass().getMethod("delete",World.class);
+            m.invoke(o,w);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }

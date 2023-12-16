@@ -22,6 +22,8 @@ import java.util.stream.Stream;
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static utils.HelperMethods.disableSysOut;
+import static utils.HelperMethods.invokeDelete;
+
 import org.junit.jupiter.params.ParameterizedTest;
 
 public class test {
@@ -155,16 +157,7 @@ public class test {
     @MethodSource("Objects")
     protected void delete(Object o){
         w.setTile(startLocation,o);
-        if(o instanceof Animal){
-            ((Animal) o).delete(w);
-        }
-        else if(o instanceof Edible){
-            ((Edible) o).delete(w);
-        }
-        else if(o instanceof Fungus){
-            ((Fungus) o).delete(w);
-        }
-        System.out.println(w.contains(o));
+        invokeDelete(o,w);
         if(!(o instanceof BerryBush)) {
             Assertions.assertFalse(w.contains(o));
         }
