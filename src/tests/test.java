@@ -10,18 +10,12 @@ import ediblesandflora.edibles.BerryBush;
 import ediblesandflora.edibles.Carcass;
 import ediblesandflora.edibles.Edible;
 import ediblesandflora.edibles.Grass;
-import itumulator.executable.Program;
 import itumulator.world.Location;
 import itumulator.world.World;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.provider.MethodSource;
-import utils.Config;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -106,7 +100,7 @@ public class test {
         Location movedLocation = w.getLocation(a);
         int[] movedXY = {movedLocation.getX(),movedLocation.getY()};
         System.out.println(Arrays.toString(movedXY));
-        Assert.assertFalse(Arrays.equals(startXY,movedXY));
+        Assertions.assertFalse(Arrays.equals(startXY,movedXY));
     }
     @ParameterizedTest
     @MethodSource("Animals")
@@ -135,7 +129,7 @@ public class test {
     @MethodSource("Objects")
     protected void dieWithTime(Object o){
         w.setTile(startLocation,o);
-        for(int i = 1;w.getEntities().containsKey(o) && i <= 200;i++){
+        for(int i = 0;w.getEntities().containsKey(o) && i < 200;i++){
             System.out.println("Act nr: " + i);
             if(o instanceof Animal){
                 ((Animal) o).act(w);
@@ -153,7 +147,7 @@ public class test {
             });
         }
         else{
-            System.out.println(((BerryBush) o).getNutrition());
+            Assertions.assertTrue(w.contains(((BerryBush) o)));
         }
     }
     protected void delete(Object o){
