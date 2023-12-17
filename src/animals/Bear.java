@@ -18,6 +18,10 @@ public class Bear extends Animal implements Actor {
         super(Config.Bear.DIET, Config.Bear.DAMAGE, Config.Bear.HEALTH, Config.Bear.SPEED, Config.Bear.MATING_COOLDOWN_DAYS);
     }
 
+    /***
+     * See super
+     * @param w World
+     */
     @Override
     public void beginAct(World w) {
         super.beginAct(w);
@@ -26,6 +30,10 @@ public class Bear extends Animal implements Actor {
         }
     }
 
+    /***
+     * See super
+     * @param w World
+     */
     @Override
     public void awakeAct(World w) {
         super.awakeAct(w);

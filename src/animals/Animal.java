@@ -387,14 +387,13 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
      * @param speed     int
      */
     public void moveTo(World w, Location targetLoc, int speed) {
-        try {
-            Set<Location> neighbours = HelperMethods.getEmptySurroundingTiles(w, w.getLocation(this), speed);
-            Location bestMove = (Location) HelperMethods.findNearestOfObjects(w, targetLoc, neighbours);
-            w.move(this, bestMove);
-            actionCost(speed);
-        } catch (NullPointerException e) {
-            System.out.println(this + ": " + e.getMessage());
+        Set<Location> neighbours = HelperMethods.getEmptySurroundingTiles(w, w.getLocation(this), speed);
+        if(neighbours.isEmpty()){
+            return;
         }
+        Location bestMove = (Location) HelperMethods.findNearestOfObjects(w, targetLoc, neighbours);
+        w.move(this, bestMove);
+        actionCost(speed);
     }
 
     /***

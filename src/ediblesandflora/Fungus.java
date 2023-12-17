@@ -70,15 +70,18 @@ public class Fungus implements Actor, DynamicDisplayInformationProvider {
      * @param w World
      */
     public void spread(World w) {
-        Set<Location> locations = w.getSurroundingTiles(w.getCurrentLocation(), spreadRadius);
-        for (Location l : locations) {
-            if (w.getTile(l) instanceof Carcass) {
-                if (!((Carcass) w.getTile(l)).getIsInfected()) {
-                    ((Carcass) w.getTile(l)).setInfected();
-                    //System.out.println("Spread to: " + w.getTile(l));
+        try {
+            Set<Location> locations = w.getSurroundingTiles(w.getCurrentLocation(), spreadRadius);
+            for (Location l : locations) {
+                if (w.getTile(l) instanceof Carcass) {
+                    if (!((Carcass) w.getTile(l)).getIsInfected()) {
+                        ((Carcass) w.getTile(l)).setInfected();
+                        //System.out.println("Spread to: " + w.getTile(l));
+                    }
                 }
             }
         }
+        catch (NullPointerException ignore){ } //Catches if the location is null
         // Only runs every 2. step
         if (stepAge % 2 == 0 && spreadRadius < spreadRadiusMax) {
             spreadRadius++;

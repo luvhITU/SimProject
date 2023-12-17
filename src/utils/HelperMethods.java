@@ -15,8 +15,8 @@ import itumulator.executable.Program;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.OutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public abstract class HelperMethods {
@@ -389,17 +389,18 @@ public abstract class HelperMethods {
         }
         return minDistanceObject;
     }
-    public static void disableSysOut(boolean t){
-        if(t){
-
-            System.setOut(new PrintStream(new OutputStream() {
-                public void write(int b) {
-                    //DO NOTHING
-                }
-            }));
-        }
-        else{
-            System.setOut(SysOut);
+    /***
+     * Used to invoke methods with shared names but no shared inheritance for the method with input name
+     * @param o             Object that the method is invoked on
+     * @param methodName    Name of the method that is invoked
+     * @param w             World
+     */
+    public static void invokeMethod(Object o, String methodName,World w) {
+        try {
+            Method m = o.getClass().getMethod(methodName,World.class);
+            m.invoke(o,w);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }
