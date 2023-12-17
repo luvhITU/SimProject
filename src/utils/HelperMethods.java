@@ -184,9 +184,9 @@ public abstract class HelperMethods {
                 w.setTile(l, new BerryBush());
             } else if (type.equals("wolf")) {
                 Wolf newWolf = new Wolf();
-                // Kommenteret ud pga. Cannot invoke "animals.packanimals.Pack.getPackHome()" because "this.pack" is null
-                /*w.setTile(l, newWolf);
-                if(wolfPack == null){
+                w.setTile(l, newWolf);
+                // Udkommenteret pga. "IllegalStateException: Home is filled to brim already!"
+                /*if(wolfPack == null){
                     wolfPack = new Pack();
                     Burrow newBurrow = new Burrow(l,rValue,newWolf.getClass().getSimpleName());
                     w.add(wolfPack);
