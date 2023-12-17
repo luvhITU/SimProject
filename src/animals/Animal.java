@@ -1,10 +1,10 @@
 package animals;
 
-import animals.packanimals.Wolf;
 import ediblesandflora.edibles.Edible;
 import homes.Burrow;
 import homes.Home;
 import ediblesandflora.edibles.Carcass;
+import utils.Config;
 import utils.HelperMethods;
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
@@ -42,6 +42,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
     protected final Set<String> diet;
     protected Home home;
     public boolean isAwake;
+    public boolean isSleepingInHome;
     protected int stepAge;
     protected int age;
     protected Set<Location> tilesInSight;
@@ -69,6 +70,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         stepAgeWhenMated = 0;
         age = 0;
         isAwake = true;
+        isSleepingInHome = false;
         home = null;
     }
 
@@ -82,7 +84,9 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
      */
     public void act(World w) {
         beginAct(w);
-        if (!isAwake) { sleepAct(w); }
+        if (!isAwake) {
+            sleepAct(w);
+        }
         deleteIfDead(w);
         if (isAwake && !isDead()) {
             awakeAct(w);
@@ -94,7 +98,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
 
     /***
      * See super
-     * @return  DisplayInformation
+     * @return DisplayInformation
      */
     @Override
     public DisplayInformation getInformation() {
@@ -120,7 +124,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         // Increase energy every stepe while sleeping.
         setEnergy(energy + STEP_SLEEP_ENERGY_INCREASE);
         // If it's morning, wake up.
-        if (w.isDay()) {
+        if (!isBedTime(w)) {
             wakeUp(w);
         }
     }
@@ -155,7 +159,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
     /***
      * Returns int for nutrition absorbed based on maxHealth
      * @param nutrition int
-     * @return          int
+     * @return int
      */
     public int calcNutritionAbsorbed(int nutrition) {
         return (int) Math.round(nutrition / (maxHealth / 100.0));
@@ -184,7 +188,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
 
     /***
      * Returns int speed which is based on maxSpeed and energy
-     * @return  int
+     * @return int
      */
     private int calcMaxSpeed() {
         return (int) Math.max(1, Math.round(maxSpeed * (energy / 100.0)));
@@ -193,7 +197,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
     /***
      * Uses int VISION_RANGE to get tiles that is within that radius
      * @param w World
-     * @return  Set< Location >
+     * @return Set<Location>
      */
     public Set<Location> calcTilesInSight(World w) {
         return w.getSurroundingTiles(w.getLocation(this), VISION_RANGE);
@@ -206,6 +210,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
     public void sleep(World w) {
         isAwake = false;
         if (home instanceof Burrow) {
+            isSleepingInHome = true;
             w.remove(this);
         }
     }
@@ -215,8 +220,9 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
      * @param w World
      */
     public void wakeUp(World w) {
-        if (home instanceof Burrow) {
+        if (home instanceof Burrow && isSleepingInHome) {
             emerge(w);
+            isSleepingInHome = false;
         } else {
             isAwake = true;
         }
@@ -232,7 +238,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
 
     /***
      * Getter for satiation
-     * @return  int
+     * @return int
      */
     public int getSatiation() {
         return satiation;
@@ -244,9 +250,12 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
 
     /***
      * Getter for energy
-     * @return  int
+     * @return int
      */
-    public int getEnergy(){ return energy;}
+    public int getEnergy() {
+        return energy;
+    }
+
     private void setMaxEnergy(int maxEnergy) {
         int minMaxEnergy = 30;
         this.maxEnergy = Math.max(minMaxEnergy, maxEnergy);
@@ -269,13 +278,15 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
 
     /***
      * Returns the difference of MAX_SATIATION and satiation in int
-     * @return  int
+     * @return int
      */
-    public int calcMissingSatiation() { return MAX_SATIATION - satiation; }
+    public int calcMissingSatiation() {
+        return MAX_SATIATION - satiation;
+    }
 
     /***
      * Getter for location of Home
-     * @return  Location
+     * @return Location
      */
     public Location getHomeLocation() {
         return home.getLocation();
@@ -310,6 +321,10 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         if (!w.contains(home)) {
             w.add(home);
         }
+    }
+
+    public void resetHome() {
+        home = null;
     }
 
     public void setAge(int age) {
@@ -348,7 +363,9 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
     public void emerge(World w) {
         int radius = 1;
         Location l = HelperMethods.getClosestEmptyTile(w, w.getLocation(home), radius);
-        if (l == null) { return; }
+        if (l == null) {
+            return;
+        }
         w.setCurrentLocation(l);
         w.setTile(l, this);
         isAwake = true;
@@ -390,15 +407,20 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
             burrow(w, maxOccupants);
         }
     }
+
     /***
      * Finds a home if one is available
      * @param w     World
      * @param type  String
      */
     private void tryOccupyExistingHomes(World w, String type) {
-        if (home != null) { throw new IllegalStateException("Animal already has a home"); }
+        if (home != null) {
+            throw new IllegalStateException("Animal already has a home");
+        }
         List<Home> availableHomes = HelperMethods.availableHomes(w, getClass().getSimpleName());
-        if (availableHomes.isEmpty()) { return; }
+        if (availableHomes.isEmpty()) {
+            return;
+        }
         Home home = availableHomes.get(0);
         setHome(w, home);
     }
@@ -409,8 +431,12 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
      * @param maxOccupants int
      */
     public void burrow(World w, int maxOccupants) {
-        if (!canBurrowHere(w)) { throw new IllegalArgumentException("Cannot burrow at this location"); }
-        if (home != null) { throw new IllegalStateException("Animal already has a home"); }
+        if (!canBurrowHere(w)) {
+            throw new IllegalArgumentException("Cannot burrow at this location");
+        }
+        if (home != null) {
+            throw new IllegalStateException("Animal already has a home");
+        }
         Location currL = w.getLocation(this);
         if (w.containsNonBlocking(currL)) {
             w.delete(w.getNonBlocking(currL));
@@ -443,7 +469,9 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
 
     public void landMatingPackage(World w) {
         Animal partner = findClosestPartner(w);
-        if (partner == null) { return; }
+        if (partner == null) {
+            return;
+        }
         boolean targetInRange = isTargetInRange(w, partner);
         if (!targetInRange) {
             moveTo(w, w.getLocation(partner));
@@ -452,7 +480,6 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         if (targetInRange) {
             mateOnLand(w, partner);
         }
-
 
 
     }
@@ -520,6 +547,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         Location targetLoc = w.getLocation(target);
         boolean targetInRange = isTargetInRange(w, target);
         boolean isAnimal = target instanceof Animal;
+        boolean isBurrow = target instanceof Burrow;
 
         if (!targetInRange) {
             int speed = (isAnimal) ? calcMaxSpeed() : 1;
@@ -529,9 +557,34 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         if (targetInRange) {
             if (isAnimal) {
                 attack(w, (Animal) target);
-            } else {
-                eat(w, (Edible) target);
+            } else if (isBurrow && home == null && isBedTime(w)) {
+                if (!((Burrow) target).getOccupants().isEmpty()) {
+                    Iterator<Animal> iterator = ((Burrow) target).getOccupants().iterator();
+
+                    while (iterator.hasNext()) {
+                        Animal a = iterator.next();
+
+                        if (a instanceof Rabbit) {
+                            if (!a.isAwake) {
+                                a.emerge(w);
+                            }
+                            iterator.remove();
+                            a.resetHome();
+                            a.flee(w, w.getLocation(this));
+                        }
+                    }
+
+                    if (!((Burrow) target).getOccupants().isEmpty()) {
+                        w.delete(target);
+                        burrow(w, Config.Fox.MAX_PACK_SIZE);
+                    }
+                } else {
+                    w.delete(target);
+                    burrow(w, Config.Fox.MAX_PACK_SIZE);
+                }
             }
+        } else if (target instanceof Edible) {
+            eat(w, (Edible) target);
         }
     }
 
@@ -575,7 +628,6 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
     }
 
 
-
     protected Animal findClosestPredator(World w) {
         Set<Animal> predators = findPredators(w);
         return (Animal) HelperMethods.findNearestOfObjects(w, w.getLocation(this), predators);
@@ -602,16 +654,16 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         Animal prey = findClosestPrey(w);
         if (edible == null && prey == null) {
             return null;
-        } else if (!(edible instanceof Carcass)) {
+        } else if (!(edible instanceof Carcass) && prey != null) {
             return prey;
         } else if (prey == null) {
             return edible;
         }
         int distEdible = HelperMethods.getDistance(w.getLocation(this), w.getLocation(edible));
         int distPrey = HelperMethods.getDistance(w.getLocation(this), w.getLocation(prey));
-            if (distEdible < distPrey) {
-                return edible;
-            }
+        if (distEdible < distPrey) {
+            return edible;
+        }
         return prey;
     }
 
@@ -621,8 +673,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
      */
     public void randomMove(World w) {
         Set<Location> neighbours = w.getEmptySurroundingTiles(w.getLocation(this));
-        System.out.println(neighbours.size());
-        if(!neighbours.isEmpty()){ //Needs to be larger than zero to not get exception
+        if (!neighbours.isEmpty()) { //Needs to be larger than zero to not get exception
             Location l = (Location) neighbours.toArray()[HelperMethods.getRandom().nextInt(neighbours.size())];
             w.move(this, l);
             actionCost(1);
@@ -640,7 +691,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
 
     /***
      * Getter for home
-     * @return  Home
+     * @return Home
      */
     public Home getHome() {
         return home;
