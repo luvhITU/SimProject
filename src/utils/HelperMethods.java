@@ -185,15 +185,15 @@ public abstract class HelperMethods {
             } else if (type.equals("wolf")) {
                 Wolf newWolf = new Wolf();
                 w.setTile(l, newWolf);
-                // Udkommenteret pga. "IllegalStateException: Home is filled to brim already!"
-                /*if(wolfPack == null){
+                if(wolfPack == null){
                     wolfPack = new Pack();
-                    Burrow newBurrow = new Burrow(l,rValue,newWolf.getClass().getSimpleName());
+                    int PackSize = Math.max(rValue, Config.Wolf.MAX_PACK_SIZE);
+                    Burrow newBurrow = new Burrow(l,PackSize,newWolf.getClass().getSimpleName());
                     w.add(wolfPack);
                     w.setTile(l,newBurrow);
                     wolfPack.setPackHome(w,newBurrow);
                 }
-                wolfPack.add(w,newWolf);*/
+                wolfPack.add(w,newWolf);
             } else if (type.equals("bear")) {
                 if (!(x == -1 && y == -1)) {
                     w.setTile(new Location(x, y), new Bear());
