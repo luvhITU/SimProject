@@ -57,7 +57,6 @@ public class PackAnimal extends Animal {
         if (avoidsOtherPacks) {
             Location closestPackLoc = HelperMethods.findNearestLocationByType(w, w.getLocation(this), tilesInSight, this.getClass().getSimpleName());
             if (closestPackLoc != null) {
-                System.out.println("flee");
                 flee(w, closestPackLoc);
                 return;
             }
@@ -74,7 +73,6 @@ public class PackAnimal extends Animal {
                 hunt(w, pack.getTarget());
             }
         } else {
-            System.out.println("go home");
             goHome(w);
         }
     }
@@ -143,7 +141,6 @@ public class PackAnimal extends Animal {
                 if (!pack.isFull()) {
                     this.pack = pack;
                     pack.add(w, this);
-
                 }
             }
         }
@@ -169,7 +166,9 @@ public class PackAnimal extends Animal {
             }
         }
     }
-
+    public void setPack(Pack p){
+        this.pack = p;
+    }
     private void joinHunt(World w, Object target) {
         super.hunt(w, target);
     }
