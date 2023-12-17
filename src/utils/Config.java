@@ -26,8 +26,7 @@ public class Config {
     }
 
     /***
-     * Has: Set<String> "DIET", int "DAMAGE", int "HEALTH", int "SPEED", int "MATING_COOLDOWN_DAYS"
-     * and int "MAX_PACK_SIZE"
+     * Has: Set<String> "DIET", int "DAMAGE", int "HEALTH", int "SPEED" and int "MATING_COOLDOWN_DAYS"
      */
     public static class Wolf {
         public static final Set<String> DIET = Set.of("Rabbit", "Bear", "Wolf", "Carcass");
@@ -49,10 +48,6 @@ public class Config {
         public static final int MATING_COOLDOWN_DAYS = 0;
     }
 
-    /***
-     * Has: Set<String> "DIET", int "DAMAGE", int "HEALTH", int "SPEED", int "MATING_COOLDOWN_DAYS"
-     * and int "MAX_PACK_SIZE"
-     */
     public static class Fox {
         public static final Set<String> DIET = Set.of("BerryBush", "Rabbit", "Fox", "Carcass");
         public static final int DAMAGE = 15;

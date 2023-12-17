@@ -2,7 +2,6 @@ package utils;
 
 import animals.Bear;
 import animals.packanimals.Fox;
-import animals.packanimals.Pack;
 import homes.Burrow;
 import homes.Home;
 import animals.Rabbit;
@@ -16,15 +15,14 @@ import itumulator.executable.Program;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.OutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Method;
 import java.util.*;
 
 public abstract class HelperMethods {
     private static final Random r = new Random();
     private static List<Location> occupied = new ArrayList<>();
-    private static Pack wolfPack = null;
-    static int counter = 0;
+    private static PrintStream SysOut = System.out;
 
     /***
      * Gets random
@@ -183,16 +181,7 @@ public abstract class HelperMethods {
             } else if (type.equals("berry")) {
                 w.setTile(l, new BerryBush());
             } else if (type.equals("wolf")) {
-                Wolf newWolf = new Wolf();
-                w.setTile(l, newWolf);
-                if(wolfPack == null){
-                    wolfPack = new Pack();
-                    Burrow newBurrow = new Burrow(l,rValue,newWolf.getClass().getSimpleName());
-                    w.add(wolfPack);
-                    w.setTile(l,newBurrow);
-                    wolfPack.setPackHome(w,newBurrow);
-                }
-                wolfPack.add(w,newWolf);
+                w.setTile(l, new Wolf());
             } else if (type.equals("bear")) {
                 if (!(x == -1 && y == -1)) {
                     w.setTile(new Location(x, y), new Bear());
@@ -205,8 +194,34 @@ public abstract class HelperMethods {
                 w.setTile(l, new Fox());
             }
         }
-        wolfPack = null;
-    }
+//        if(type.equals("wolf")){
+//            animals.packanimals.Pack thePack = null;
+//            for(Object o :w.getEntities().keySet()){
+//                if(o instanceof animals.packanimals.Wolf){
+//                    if(thePack != null){
+//                        thePack.addToPack((animals.packanimals.Wolf) o);
+//                    }
+//                    else{
+//                        thePack = new animals.packanimals.Pack(w,(animals.packanimals.Wolf) o);
+//                    }
+//                }
+//            }
+//        }
+
+//        List<Home> rabbitBurrows = HelperMethods.availableHomes(w, "Burrow");
+//        Set<Object> entitiesKeys = w.getEntities().keySet();
+//        for (Home h : rabbitBurrows) {
+//            for (Object e : entitiesKeys) {
+//                if (h.isFull()) {
+//                    break;
+//                }
+//                if (e instanceof Rabbit) {
+//                    ((Rabbit) e).setHome(w, h);
+//                }
+//                ;
+//            }
+        }
+
         // ONLY USED TO VISUALIZE BEAR TERRITORY
 //        if (!(x == -1 && y == -1)) {
 //            w.setTile(new Location(x, y), new BearTerritory());
@@ -374,18 +389,17 @@ public abstract class HelperMethods {
         }
         return minDistanceObject;
     }
-    /***
-     * Used to invoke methods with shared names but no shared inheritance for the method with input name
-     * @param o             Object that the method is invoked on
-     * @param methodName    Name of the method that is invoked
-     * @param w             World
-     */
-    public static void invokeMethod(Object o, String methodName,World w) {
-        try {
-            Method m = o.getClass().getMethod(methodName,World.class);
-            m.invoke(o,w);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+    public static void disableSysOut(boolean t){
+        if(t){
+
+            System.setOut(new PrintStream(new OutputStream() {
+                public void write(int b) {
+                    //DO NOTHING
+                }
+            }));
+        }
+        else{
+            System.setOut(SysOut);
         }
     }
 }
