@@ -12,7 +12,6 @@ import ediblesandflora.edibles.Edible;
 import ediblesandflora.edibles.Grass;
 import itumulator.world.Location;
 import itumulator.world.World;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -20,7 +19,6 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static utils.HelperMethods.*;
 
 import org.junit.jupiter.params.ParameterizedTest;
@@ -71,9 +69,7 @@ public class test {
         Location moveToLocation = new Location(100,100);
         Assertions.assertNotEquals(moveToLocation.getX(), startLocation.getX());
         Assertions.assertNotEquals(moveToLocation.getY(), startLocation.getY());
-        assertThrows(IllegalArgumentException.class, () -> {
-            w.move(a,moveToLocation);
-        });
+        assertThrows(IllegalArgumentException.class, () -> w.move(a,moveToLocation));
     }
     private void keepSatiated() {
         for (Object o : w.getEntities().keySet()) {
@@ -114,7 +110,7 @@ public class test {
         a.act(w);
         int afterEnergy = a.getEnergy();
         System.out.println(afterEnergy);
-        Assert.assertNotEquals(startEnergy,afterEnergy);
+        Assertions.assertNotEquals(startEnergy, afterEnergy);
     }
     @ParameterizedTest
     @MethodSource("Animals")
@@ -125,7 +121,7 @@ public class test {
         a.act(w);
         int afterSatiation = a.getSatiation();
         System.out.println(afterSatiation);
-        Assert.assertNotEquals(startSatiation,afterSatiation);
+        Assertions.assertNotEquals(startSatiation, afterSatiation);
     }
     @ParameterizedTest
     @MethodSource("Objects")
@@ -136,9 +132,7 @@ public class test {
             invokeMethod(o,"act",w);
         }
         if(!(o instanceof BerryBush)){ //Berry bush cannot "die", so it should still be on the map
-            assertThrows(IllegalArgumentException.class, () -> {
-                w.getLocation(o);
-            });
+            assertThrows(IllegalArgumentException.class, () -> w.getLocation(o));
         }
         else{
             Assertions.assertTrue(w.contains(o));
@@ -159,19 +153,21 @@ public class test {
             Assertions.assertTrue(w.contains(o));
         }
     }
+    @ParameterizedTest
+    @MethodSource("Animals")
     protected void cantMoveWhenBlocked(Animal a){
         //Uses carcass to block movement
         Location[] locations = new Location[]{new Location(0, 1),new Location(1,1),new Location(1,0)};
         for(Location l: locations){
-            String s = String.format("X: %s, Y: %s",l.getX(),l.getY());
+            String s = String.format("Carcass at X: %s, Y: %s",l.getX(),l.getY());
             System.out.println(s);
             w.setTile(l,new Carcass(false));
         }
         int startEnergy = a.getEnergy();
         w.setTile(startLocation,a);
         a.act(w);
-        Assert.assertEquals(startLocation, w.getLocation(a));
-        Assert.assertEquals(startEnergy,a.getEnergy());
+        Assertions.assertEquals(startLocation, w.getLocation(a));
+        Assertions.assertEquals(startEnergy, a.getEnergy());
     }
 
     protected void doesBurrowReproduceCorrectly(Animal a, Animal b) {
@@ -179,41 +175,52 @@ public class test {
         w.setTile(new Location(0,0), b);
         w.setTile(new Location(0,1), a);
         // Checking that there are only to animals of this type to start with
-        Assert.assertEquals(2, getObjectsByType(animalType).size());
+        Assertions.assertEquals(2, getObjectsByType(animalType).size());
         w.setNight();
+        System.out.println("0. while loop");
         while (w.getCurrentTime() != 1) {
             w.step();
         }
         // Checking that animals didn't mate the first night (because they haven't matured yet)
-        Assert.assertEquals(2, getObjectsByType(animalType).size());
+        Assertions.assertEquals(2, getObjectsByType(animalType).size());
         // Making them mature
         a.setAge(Animal.getMaturityAge());
         b.setAge(Animal.getMaturityAge());
         // Simulating until they can mate
+        System.out.println("1. while loop");
         while (!a.canMate() || !b.canMate()) {
             w.step();
             keepSatiated();
         }
         w.setNight();
+        System.out.println("2. while loop");
         while (w.getCurrentTime() != 1) {
             w.step();
             keepSatiated();
         }
         // Making sure they produced one offspring during the night
-        Assert.assertEquals(3, getObjectsByType(animalType).size());
-        Assert.assertFalse(a.canMate() || b.canMate());
+        Assertions.assertEquals(3, getObjectsByType(animalType).size());
+        Assertions.assertFalse(a.canMate() || b.canMate());
         // Seeing if they can mate again after mating once
+        System.out.println("3. while loop");
         while (!a.canMate() || !b.canMate()) {
             w.step();
             keepSatiated();
         }
         w.setNight();
+        System.out.println("4. while loop");
         while (w.getCurrentTime() != 1) {
             w.step();
             keepSatiated();
         }
         // Making sure the one more offspring was produced
-        Assert.assertEquals(4, getObjectsByType(animalType).size());
+        Assertions.assertEquals(4, getObjectsByType(animalType).size());
     }
+    protected void BurrowReproduction(){
+        Rabbit rabbit1 = new Rabbit();
+        Rabbit rabbit2 = new Rabbit();
+        w.setTile(startLocation,rabbit1);
+        w.setTile(new Location(1,1),rabbit2);
 
+    }
 }

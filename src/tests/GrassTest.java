@@ -17,6 +17,7 @@ public class GrassTest extends test {
         Map<Object, Location> entities = null;
 
         for (int i = 0; i < 20; i++) {
+            grass.act(w);
             w.step();
             entities = w.getEntities();
         }

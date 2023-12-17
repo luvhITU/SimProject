@@ -52,9 +52,4 @@ public class RabbitTest extends test {
         }
         Assert.assertNotNull(h);
     }
-    @Test
-    public void cantMoveWhenBlockedTest(){
-        cantMoveWhenBlocked(a);
-    }
-
 }
