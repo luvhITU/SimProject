@@ -47,6 +47,7 @@ public class Pack implements DynamicDisplayInformationProvider {
             throw new IllegalArgumentException(animal + " is already a member.");
         }
         members.add(animal);
+        animal.setPack(this);
         if (packHome != null) {
             animal.setHome(w, packHome);
         }

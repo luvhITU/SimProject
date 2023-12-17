@@ -141,7 +141,6 @@ public class PackAnimal extends Animal {
                 if (!pack.isFull()) {
                     this.pack = pack;
                     pack.add(w, this);
-
                 }
             }
         }
@@ -167,7 +166,9 @@ public class PackAnimal extends Animal {
             }
         }
     }
-
+    public void setPack(Pack p){
+        this.pack = p;
+    }
     private void joinHunt(World w, Object target) {
         super.hunt(w, target);
     }
