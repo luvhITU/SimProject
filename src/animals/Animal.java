@@ -371,6 +371,9 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
      */
     public void moveTo(World w, Location targetLoc, int speed) {
         Set<Location> neighbours = HelperMethods.getEmptySurroundingTiles(w, w.getLocation(this), speed);
+        if(neighbours.isEmpty()){
+            return;
+        }
         Location bestMove = (Location) HelperMethods.findNearestOfObjects(w, targetLoc, neighbours);
         w.move(this, bestMove);
         actionCost(speed);

@@ -114,6 +114,18 @@ public class test {
     }
     @ParameterizedTest
     @MethodSource("Animals")
+    protected void moveToTest(Animal a){
+        w.setTile(startLocation,a);
+        Location[] locations = new Location[]{new Location(0, 1),new Location(1,1),new Location(1,0)};
+        for(Location l: locations){
+            String s = String.format("Carcass at X: %s, Y: %s",l.getX(),l.getY());
+            System.out.println(s);
+            w.setTile(l,new Carcass(false));
+        }
+        a.moveTo(w,new Location(3,3));
+    }
+    @ParameterizedTest
+    @MethodSource("Animals")
     protected void losesSatiation(Animal a){
         int startSatiation = a.getSatiation();
         System.out.println(startSatiation);
