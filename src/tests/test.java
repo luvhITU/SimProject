@@ -74,7 +74,7 @@ public class test {
         HelperMethods.readObjects(input, w, p);
 
         //Counter for amount of objects in the world
-        HashMap<String, Integer> counterObjects = amountTypes(w);
+        HashMap<String, Integer> counterObjects = HelperMethods.amountTypes(w);
         //Test that it meets predefined conditions
         Assertions.assertEquals(25,w.getSize());
         Assertions.assertTrue(counterObjects.get("Grass") >= 7 && counterObjects.get("Grass") <= 11);
@@ -88,36 +88,7 @@ public class test {
         Assertions.assertEquals(1,counterObjects.get("Carcass"));
         Assertions.assertTrue(counterObjects.get("Fox") >= 3 && counterObjects.get("Fox") <= 6);
     }
-    private HashMap<String, Integer> amountTypes(World w){
-        HashMap<String, Integer> counterObjects = new HashMap<>();
-        for(Object o : w.getEntities().keySet()){
-            String objectName;
-            if(o instanceof Carcass){
-                if(((Carcass) o).getIsInfected()){
-                    objectName = o.getClass().getSimpleName() + " Fungi";
-                }
-                else{
-                    objectName = o.getClass().getSimpleName();
-                }
-            }
-            else if(o instanceof Burrow){
-                objectName = ((Burrow) o).getAllowedSpecies() + " " + o.getClass().getSimpleName();
-            }
-            else {
-                objectName = o.getClass().getSimpleName();
-            }
-            if(counterObjects.containsKey(objectName)){
-                counterObjects.put(objectName,counterObjects.get(objectName) + 1);
-            }
-            else{
-                counterObjects.put(objectName,1);
-            }
-        }
-        for(String s : counterObjects.keySet()){
-            System.out.println(s + " amount " + counterObjects.get(s));
-        }
-        return counterObjects;
-    }
+
     @ParameterizedTest
     @MethodSource("Animals")
     public void canMovePositive(Animal a){

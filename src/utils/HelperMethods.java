@@ -389,4 +389,44 @@ public abstract class HelperMethods {
             System.out.println(e.getMessage());
         }
     }
+
+    /***
+     * Searches w.getEntities().keySet() and counts amount of entries for each Object.getClass().getSimpleName()
+     * @param w World
+     * @return  keySet is .getClass().getSimpleName() and contains is int of amount of times in World
+     */
+    public static HashMap<String, Integer> amountTypes(World w){
+        HashMap<String, Integer> counterObjects = new HashMap<>();
+        for(Object o : w.getEntities().keySet()){
+            String objectName = getString(o);
+            if(counterObjects.containsKey(objectName)){
+                counterObjects.put(objectName,counterObjects.get(objectName) + 1);
+            }
+            else{
+                counterObjects.put(objectName,1);
+            }
+        }
+        for(String s : counterObjects.keySet()){
+            System.out.println(s + " amount " + counterObjects.get(s));
+        }
+        return counterObjects;
+    }
+    private static String getString(Object o) {
+        String objectName;
+        if(o instanceof Carcass){
+            if(((Carcass) o).getIsInfected()){
+                objectName = o.getClass().getSimpleName() + " Fungi";
+            }
+            else{
+                objectName = o.getClass().getSimpleName();
+            }
+        }
+        else if(o instanceof Burrow){
+            objectName = ((Burrow) o).getAllowedSpecies() + " " + o.getClass().getSimpleName();
+        }
+        else {
+            objectName = o.getClass().getSimpleName();
+        }
+        return objectName;
+    }
 }
