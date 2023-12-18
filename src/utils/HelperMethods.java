@@ -376,7 +376,7 @@ public abstract class HelperMethods {
         return minDistanceObject;
     }
     /***
-     * Used to invoke methods with shared names but no shared inheritance for the method with input name
+     * Used to invoke methods with shared names but no shared inheritance for the method with input name and only using world
      * @param o             Object that the method is invoked on
      * @param methodName    Name of the method that is invoked
      * @param w             World

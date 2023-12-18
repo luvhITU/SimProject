@@ -9,11 +9,15 @@ import itumulator.world.World;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import utils.Config;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+
+import static org.junit.Assert.assertThrows;
 
 public class RabbitTest extends test {
     protected Rabbit a = new Rabbit();
@@ -28,14 +32,12 @@ public class RabbitTest extends test {
         w.setTile(startLocation,g);
         w.setTile(startLocation,a);
         a.setHome(w,h); //Sets home before to not get exception
-        Object[] beforeEntities = w.getEntities().keySet().toArray();
-        System.out.println(Arrays.toString(beforeEntities));
-        for(int i = 0;g.getNutrition() > 0 || i > 20;i++){
+        for(int i = 0; g.getNutrition() > 0 || i > 20; i++){
             a.eat(w, g);
         }
-        Object[] afterEntities = w.getEntities().keySet().toArray();
-        System.out.println(Arrays.toString(afterEntities));
-        Assert.assertFalse(Arrays.equals(beforeEntities,afterEntities));
+        assertThrows( IllegalArgumentException.class, () ->
+                w.getLocation(g)
+        );
     }
     @Test //k1-2f. Kaniner kan grave huller, eller dele eksisterende huller med andre kaniner
     // Kaniner kan kun være knyttet til et hul.
@@ -50,6 +52,8 @@ public class RabbitTest extends test {
                 System.out.println("getAllowedSpecies(): " + h.getAllowedSpecies());
             }
         }
-        Assert.assertNotNull(h);
+        Assert.assertNotNull(h); //Test that a burrow has been placed in the world
+        Assert.assertNotNull(a.getHome()); //Test that the rabbit has a burrow
+        Assertions.assertEquals(h,a.getHome()); //Test that the burrow the rabbit has is the same as the in the world
     }
 }

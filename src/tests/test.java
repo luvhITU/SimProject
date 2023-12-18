@@ -4,14 +4,18 @@ import animals.Animal;
 import animals.Bear;
 import animals.Rabbit;
 import animals.packanimals.Fox;
+import animals.packanimals.PackAnimal;
 import animals.packanimals.Wolf;
 import ediblesandflora.Fungus;
 import ediblesandflora.edibles.BerryBush;
 import ediblesandflora.edibles.Carcass;
 import ediblesandflora.edibles.Edible;
 import ediblesandflora.edibles.Grass;
+import homes.Burrow;
+import itumulator.executable.Program;
 import itumulator.world.Location;
 import itumulator.world.World;
+import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -22,18 +26,22 @@ import static org.junit.Assert.assertThrows;
 import static utils.HelperMethods.*;
 
 import org.junit.jupiter.params.ParameterizedTest;
+import utils.Config;
+import utils.HelperMethods;
 
 public class test {
     protected final int worldSize = 4;
     protected final World w = new World(worldSize);
     protected final Location startLocation = new Location(0,0);
-    static Stream<Animal> Animals() {
+    static Stream<PackAnimal> PackAnimals(){
         return Stream.of(
-                new Rabbit(),
                 new Wolf(),
-                new Bear(),
                 new Fox()
         );
+    }
+    static Stream<Animal> Animals() {
+        Stream<Animal> remainingAnimals = Stream.of( new Rabbit(), new Bear());
+        return Stream.concat(PackAnimals(),remainingAnimals);
     }
     static Stream<Edible> Edibles(){
         return Stream.of(
@@ -53,6 +61,63 @@ public class test {
     static Stream<Object> Objects(){
         return Stream.concat(AnimalsEdibles(),Fungus());
     }
+    @Test
+    public void canInputObjectsFromFile(){
+        String input = "data/test-files/oneOfEach.txt";
+
+        int size = HelperMethods.readWorldSize(input);
+        int delay = 1000;
+        int display_size = 800;
+
+        Program p = new Program(size, display_size, delay);
+        World w = p.getWorld();
+        HelperMethods.readObjects(input, w, p);
+
+        //Counter for amount of objects in the world
+        HashMap<String, Integer> counterObjects = amountTypes(w);
+        //Test that it meets predefined conditions
+        Assertions.assertEquals(25,w.getSize());
+        Assertions.assertTrue(counterObjects.get("Grass") >= 7 && counterObjects.get("Grass") <= 11);
+        Assertions.assertEquals(2,counterObjects.get("Rabbit"));
+        Assertions.assertEquals(1,counterObjects.get("Rabbit Burrow"));
+        Assertions.assertEquals(2,counterObjects.get("Wolf"));
+        Assertions.assertEquals(1,counterObjects.get("Pack"));
+        Assertions.assertEquals(1,counterObjects.get("Bear"));
+        Assertions.assertTrue(counterObjects.get("BerryBush") >= 1 && counterObjects.get("BerryBush") <= 3);
+        Assertions.assertTrue(counterObjects.get("Carcass Fungi") >= 4 && counterObjects.get("Carcass Fungi") <= 5);
+        Assertions.assertEquals(1,counterObjects.get("Carcass"));
+        Assertions.assertTrue(counterObjects.get("Fox") >= 3 && counterObjects.get("Fox") <= 6);
+    }
+    private HashMap<String, Integer> amountTypes(World w){
+        HashMap<String, Integer> counterObjects = new HashMap<>();
+        for(Object o : w.getEntities().keySet()){
+            String objectName;
+            if(o instanceof Carcass){
+                if(((Carcass) o).getIsInfected()){
+                    objectName = o.getClass().getSimpleName() + " Fungi";
+                }
+                else{
+                    objectName = o.getClass().getSimpleName();
+                }
+            }
+            else if(o instanceof Burrow){
+                objectName = ((Burrow) o).getAllowedSpecies() + " " + o.getClass().getSimpleName();
+            }
+            else {
+                objectName = o.getClass().getSimpleName();
+            }
+            if(counterObjects.containsKey(objectName)){
+                counterObjects.put(objectName,counterObjects.get(objectName) + 1);
+            }
+            else{
+                counterObjects.put(objectName,1);
+            }
+        }
+        for(String s : counterObjects.keySet()){
+            System.out.println(s + " amount " + counterObjects.get(s));
+        }
+        return counterObjects;
+    }
     @ParameterizedTest
     @MethodSource("Animals")
     public void canMovePositive(Animal a){
@@ -66,7 +131,7 @@ public class test {
     @MethodSource("Animals")
     public void canMoveNegative(Animal a){
         w.setTile(startLocation,a);
-        Location moveToLocation = new Location(100,100);
+        Location moveToLocation = new Location(w.getSize()+1,w.getSize()+1);
         Assertions.assertNotEquals(moveToLocation.getX(), startLocation.getX());
         Assertions.assertNotEquals(moveToLocation.getY(), startLocation.getY());
         assertThrows(IllegalArgumentException.class, () -> w.move(a,moveToLocation));
@@ -135,11 +200,13 @@ public class test {
         System.out.println(afterSatiation);
         Assertions.assertNotEquals(startSatiation, afterSatiation);
     }
-    //K1-1b. Græs kan nedbrydes og forsvinde.
     @ParameterizedTest
     @MethodSource("Objects")
     protected void dieWithTimeTest(Object o){
         w.setTile(startLocation,o);
+        if(o instanceof Fox){
+            w.setNight(); //Needs to be night for fox to act
+        }
         for(int i = 0;w.getEntities().containsKey(o) && i < 200;i++){
             System.out.println("Act nr: " + i);
             invokeMethod(o,"act",w);
@@ -228,12 +295,5 @@ public class test {
         }
         // Making sure the one more offspring was produced
         Assertions.assertEquals(4, getObjectsByType(animalType).size());
-    }
-    protected void BurrowReproduction(){
-        Rabbit rabbit1 = new Rabbit();
-        Rabbit rabbit2 = new Rabbit();
-        w.setTile(startLocation,rabbit1);
-        w.setTile(new Location(1,1),rabbit2);
-
     }
 }
