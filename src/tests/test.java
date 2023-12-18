@@ -135,6 +135,7 @@ public class test {
         System.out.println(afterSatiation);
         Assertions.assertNotEquals(startSatiation, afterSatiation);
     }
+    //K1-1b. Græs kan nedbrydes og forsvinde.
     @ParameterizedTest
     @MethodSource("Objects")
     protected void dieWithTimeTest(Object o){
