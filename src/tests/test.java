@@ -115,16 +115,6 @@ public class test {
             }
         }
     }
-
-    private Set<Object> getObjectsByType(String type) {
-        Set<Object> objects = new HashSet<>();
-        for (Object o: w.getEntities().keySet()) {
-            if (o.getClass().getSimpleName().equals(type)) {
-                objects.add(o);
-            }
-        }
-        return objects;
-    }
     @ParameterizedTest
     @MethodSource("Animals")
     protected void hasMoved(Animal a){
@@ -224,18 +214,26 @@ public class test {
 
     protected void doesBurrowReproduceCorrectly(Animal a, Animal b) {
         String type = a.getClass().getSimpleName();
+        Burrow burrow = new Burrow(startLocation,10,type);
+        w.setTile(startLocation,burrow);
         w.setTile(new Location(0,0), b);
         w.setTile(new Location(0,1), a);
-        Location homeLocation = new Location(1,1);
-        Home home = new Home(homeLocation,3,type);
-        a.setHome(w,home);
-        b.setHome(w,home);
-        System.out.println(a.canMate());
-        for (int i = 0;i < 1000 && HelperMethods.amountTypes(w).get(type) == 1;i++) {
-            w.step();
-            keepSatiated();
+        Set<Animal> animals = new HashSet<>();
+        animals.add(a);
+        animals.add(b);
+        for(Animal an: animals){
+            an.setHome(w,burrow);
+            an.setAge(100);
+            an.setIsAwake(false);
         }
-        System.out.println(a.canMate());
-        Assertions.assertEquals(3,HelperMethods.amountTypes(w).get(type));
+        a.burrowMatingPackage(w);
+        int animalCounter = 0;
+        for(Object o: w.getEntities().keySet()){
+            if(o.getClass().getSimpleName().equals(type)){
+                animalCounter++;
+            }
+        }
+        System.out.println(animalCounter);
+        Assertions.assertEquals(3,animalCounter);
     }
 }

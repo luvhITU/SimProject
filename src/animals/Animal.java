@@ -502,6 +502,10 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         partner.actionCost(10);
     }
 
+    /***
+     * Does mating
+     * @param w World
+     */
     public void burrowMatingPackage(World w) {
         for (Animal animal : home.getOccupants()) {
             if (!(this == animal || animal.isAwake) && animal.canMate()) {
@@ -718,5 +722,22 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
      */
     public Home getHome() {
         return home;
+    }
+
+    /***
+     * Sets age and stepAge to input
+     * @param newAge    The age to be set
+     */
+    public void setAge(int newAge){
+        stepAge = newAge;
+        age = newAge;
+    }
+
+    /***
+     * Sets isAwake
+     * @param b Sets isAwake
+     */
+    public void setIsAwake(boolean b){
+        isAwake = b;
     }
 }
