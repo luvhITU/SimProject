@@ -406,9 +406,6 @@ public abstract class HelperMethods {
                 counterObjects.put(objectName,1);
             }
         }
-        for(String s : counterObjects.keySet()){
-            System.out.println(s + " amount " + counterObjects.get(s));
-        }
         return counterObjects;
     }
     private static String getString(Object o) {

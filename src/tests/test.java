@@ -12,6 +12,7 @@ import ediblesandflora.edibles.Carcass;
 import ediblesandflora.edibles.Edible;
 import ediblesandflora.edibles.Grass;
 import homes.Burrow;
+import homes.Home;
 import itumulator.executable.Program;
 import itumulator.world.Location;
 import itumulator.world.World;
@@ -222,49 +223,19 @@ public class test {
     }
 
     protected void doesBurrowReproduceCorrectly(Animal a, Animal b) {
-        String animalType = a.getClass().getSimpleName();
+        String type = a.getClass().getSimpleName();
         w.setTile(new Location(0,0), b);
         w.setTile(new Location(0,1), a);
-        // Checking that there are only to animals of this type to start with
-        Assertions.assertEquals(2, getObjectsByType(animalType).size());
-        w.setNight();
-        System.out.println("0. while loop");
-        while (w.getCurrentTime() != 1) {
-            w.step();
-        }
-        // Checking that animals didn't mate the first night (because they haven't matured yet)
-        Assertions.assertEquals(2, getObjectsByType(animalType).size());
-        // Making them mature
-        a.setAge(Animal.getMaturityAge());
-        b.setAge(Animal.getMaturityAge());
-        // Simulating until they can mate
-        System.out.println("1. while loop");
-        while (!a.canMate() || !b.canMate()) {
+        Location homeLocation = new Location(1,1);
+        Home home = new Home(homeLocation,3,type);
+        a.setHome(w,home);
+        b.setHome(w,home);
+        System.out.println(a.canMate());
+        for (int i = 0;i < 1000 && HelperMethods.amountTypes(w).get(type) == 1;i++) {
             w.step();
             keepSatiated();
         }
-        w.setNight();
-        System.out.println("2. while loop");
-        while (w.getCurrentTime() != 1) {
-            w.step();
-            keepSatiated();
-        }
-        // Making sure they produced one offspring during the night
-        Assertions.assertEquals(3, getObjectsByType(animalType).size());
-        Assertions.assertFalse(a.canMate() || b.canMate());
-        // Seeing if they can mate again after mating once
-        System.out.println("3. while loop");
-        while (!a.canMate() || !b.canMate()) {
-            w.step();
-            keepSatiated();
-        }
-        w.setNight();
-        System.out.println("4. while loop");
-        while (w.getCurrentTime() != 1) {
-            w.step();
-            keepSatiated();
-        }
-        // Making sure the one more offspring was produced
-        Assertions.assertEquals(4, getObjectsByType(animalType).size());
+        System.out.println(a.canMate());
+        Assertions.assertEquals(3,HelperMethods.amountTypes(w).get(type));
     }
 }

@@ -34,10 +34,8 @@ public class Fungus implements Actor, DynamicDisplayInformationProvider {
     @Override
     public void act(World w) {
         stepAge++;
-        //System.out.println("ediblesandflora.Fungus Health: " + health);
         degrade(w);
         spread(w);
-        //System.out.println(spreadRadius);
     }
 
     /***
@@ -76,7 +74,6 @@ public class Fungus implements Actor, DynamicDisplayInformationProvider {
                 if (w.getTile(l) instanceof Carcass) {
                     if (!((Carcass) w.getTile(l)).getIsInfected()) {
                         ((Carcass) w.getTile(l)).setInfected();
-                        //System.out.println("Spread to: " + w.getTile(l));
                     }
                 }
             }
@@ -94,5 +91,13 @@ public class Fungus implements Actor, DynamicDisplayInformationProvider {
      */
     public void delete(World w) {
         w.delete(this);
+    }
+
+    /***
+     * Sets the spread radius of the fungus
+     * @param input The set radius
+     */
+    public void setSpreadRadius(int input){
+        spreadRadius = input;
     }
 }
