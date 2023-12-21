@@ -20,18 +20,31 @@ public class Carcass extends Edible implements DynamicDisplayInformationProvider
     private boolean fungusCreated;
     private Fungus fungus = null;
 
+    /***
+     * Carcass constructor
+     * @param animal        Animal
+     * @param isInfected    True means infected
+     */
     public Carcass(Animal animal, boolean isInfected) {
         super(animal.getMaxHealth() / 2, 0);
         this.isInfected = isInfected;
         this.fungusThreshold = (int) (fungusThresholdPercentage * maxNutrition);
     }
 
+    /***
+     * Carcass constructor
+     * @param isInfected    True means infected
+     */
     public Carcass(boolean isInfected) {
         super(defaultNutrition, 0);
         this.isInfected = isInfected;
         this.fungusThreshold = (int) (fungusThresholdPercentage * maxNutrition);
     }
 
+    /***
+     * See super
+     * @param w providing details of the position on which the actor is currently located and much more.
+     */
     @Override
     public void act(World w) {
         super.act(w);
@@ -39,6 +52,10 @@ public class Carcass extends Edible implements DynamicDisplayInformationProvider
         checkForInfection(w);
     }
 
+    /***
+     * See super
+     * @return  DisplayInformation
+     */
     @Override
     public DisplayInformation getInformation() {
         String imageKey = getNutrition() > 100 ? "carcass" : "carcass-small";
@@ -48,6 +65,10 @@ public class Carcass extends Edible implements DynamicDisplayInformationProvider
         return new DisplayInformation(Color.magenta, imageKey);
     }
 
+    /***
+     * Returns if carcass is infected
+     * @return  True means infected
+     */
     public boolean getIsInfected() {
         return isInfected;
     }
@@ -98,6 +119,9 @@ public class Carcass extends Edible implements DynamicDisplayInformationProvider
         }
     }
 
+    /***
+     * Sets infected of carcass to true
+     */
     public void setInfected() {
         isInfected = true;
     }

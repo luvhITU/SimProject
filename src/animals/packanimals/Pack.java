@@ -15,6 +15,9 @@ public class Pack implements DynamicDisplayInformationProvider {
     private Home packHome;
     private Object target;
 
+    /***
+     * Pack constructor
+     */
     public Pack() {
         members = new HashSet<>();
         target = null;
@@ -137,13 +140,5 @@ public class Pack implements DynamicDisplayInformationProvider {
             }
         }
         return memberLocations;
-    }
-
-    public int calcTotalMissingSatiation() {
-        int totalMissingNutrition = 0;
-        for (PackAnimal member : members) {
-            totalMissingNutrition += Animal.getMaxSatiation() - member.getSatiation();
-        }
-        return totalMissingNutrition;
     }
 }

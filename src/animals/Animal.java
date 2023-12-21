@@ -54,6 +54,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
      * @param maxHealth             int
      * @param maxSpeed              int
      * @param matingCooldownDays    int, amount of steps before mating again
+     * @param isNocturnal           True if animal is nocturnal
      */
     public Animal(Set<String> diet, int damage, int maxHealth, int maxSpeed, int matingCooldownDays, boolean isNocturnal) {
         this.diet = diet;
@@ -74,6 +75,14 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         home = null;
     }
 
+    /***
+     * Constructor for animal
+     * @param diet                  Set< String >
+     * @param damage                int
+     * @param maxHealth             int
+     * @param maxSpeed              int
+     * @param matingCooldownDays    int, amount of steps before mating again
+     */
     public Animal(Set<String> diet, int damage, int maxHealth, int maxSpeed, int matingCooldownDays) {
         this(diet, damage, maxHealth, maxSpeed, matingCooldownDays, false);
     }
@@ -94,8 +103,6 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         }
     }
 
-    // Implement canMateFunction
-
     /***
      * See super
      * @return DisplayInformation
@@ -112,6 +119,10 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         return new DisplayInformation(Color.magenta, imageKeyBuilder.toString());
     }
 
+    /***
+     * Act called when animal enters the world
+     * @param w World
+     */
     public void beginAct(World w) {
         stepAge++;
         // If a day has passed, age.
@@ -120,6 +131,10 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         }
     }
 
+    /***
+     * Act for animal when sleeping
+     * @param w World
+     */
     public void sleepAct(World w) {
         // Increase energy every stepe while sleeping.
         setEnergy(energy + STEP_SLEEP_ENERGY_INCREASE);
@@ -129,10 +144,18 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         }
     }
 
+    /***
+     * Sets tilesInSight for animal
+     * @param w World
+     */
     public void awakeAct(World w) {
         tilesInSight = calcTilesInSight(w);
     }
 
+    /***
+     * Getter for if animal is dead
+     * @return  Returns true if animal is dead
+     */
     public boolean isDead() {
         return satiation <= 0 || health <= 0;
     }
@@ -143,6 +166,10 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         }
     }
 
+    /***
+     * Getter for max health
+     * @return  Max health for animal
+     */
     public int getMaxHealth() {
         return maxHealth;
     }
@@ -180,10 +207,6 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         }
         animal.health -= damage;
         animal.deleteIfDead(w);
-    }
-
-    public static int getMaturityAge() {
-        return MATURITY_AGE;
     }
 
     /***
@@ -244,6 +267,11 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         return satiation;
     }
 
+    /***
+     * Returns true during day if animal is non-nocturnal and opposite for nocturnal
+     * @param w World
+     * @return  True if should go to bed
+     */
     public boolean isBedTime(World w) {
         return (isNocturnal) ? w.isDay() : w.isNight();
     }
@@ -323,12 +351,11 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         }
     }
 
+    /***
+     * Sets home of animal to null
+     */
     public void resetHome() {
         home = null;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
     }
 
     public int getMatingCooldownDays() {
@@ -467,23 +494,6 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         return (Animal) HelperMethods.findNearestOfObjects(w, w.getLocation(this), partners);
     }
 
-    public void landMatingPackage(World w) {
-        Animal partner = findClosestPartner(w);
-        if (partner == null) {
-            return;
-        }
-        boolean targetInRange = isTargetInRange(w, partner);
-        if (!targetInRange) {
-            moveTo(w, w.getLocation(partner));
-            targetInRange = isTargetInRange(w, partner);
-        }
-        if (targetInRange) {
-            mateOnLand(w, partner);
-        }
-
-
-    }
-
     private void mateOnLand(World w, Animal partner) {
         Location locToPlaceChild = utils.HelperMethods.getClosestEmptyTile(w, w.getLocation(this), 1);
         w.setTile(locToPlaceChild, createOffSpring());
@@ -523,7 +533,10 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         partner.stepAgeWhenMated = partner.stepAge + 1;
     }
 
-
+    /***
+     * Uses age and if is mature to see if animal can mate
+     * @return  True=Can mate, False= cannot mate
+     */
     public boolean canMate() {
         return getIsMature() && stepAge - stepAgeWhenMated >= matingCooldownDays * World.getTotalDayDuration();
     }
@@ -612,7 +625,7 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         return (Edible) HelperMethods.findNearestOfObjects(w, w.getLocation(this), findEdibles(w));
     }
 
-    public Set<Animal> findPrey(World w) {
+    private Set<Animal> findPrey(World w) {
         Set<Animal> prey = new HashSet<>();
         for (Location l : tilesInSight) {
             Object o = w.getTile(l);
@@ -623,6 +636,11 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         return prey;
     }
 
+    /***
+     *
+     * @param w World
+     * @return  Animal pray
+     */
     public Animal findClosestPrey(World w) {
         return (Animal) HelperMethods.findNearestOfObjects(w, w.getLocation(this), findPrey(w));
     }
@@ -649,6 +667,11 @@ public abstract class Animal implements Actor, DynamicDisplayInformationProvider
         return predators;
     }
 
+    /***
+     * Finds instance of closest allowed pray
+     * @param w World
+     * @return  Object of the pray
+     */
     public Object findTarget(World w) {
         Edible edible = findClosestEdible(w);
         Animal prey = findClosestPrey(w);

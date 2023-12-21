@@ -208,11 +208,6 @@ public abstract class HelperMethods {
         }
         wolfPack = null;
     }
-    // ONLY USED TO VISUALIZE BEAR TERRITORY
-//        if (!(x == -1 && y == -1)) {
-//            w.setTile(new Location(x, y), new BearTerritory());
-//        }
-//    }
 
     /**
      * @param w World

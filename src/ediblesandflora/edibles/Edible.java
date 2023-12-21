@@ -82,6 +82,10 @@ public abstract class Edible implements Actor {
         return stepAge - stepAgeWhenDepleted >= renewTimeDays * World.getTotalDayDuration();
     }
 
+    /***
+     * Uses age++
+     * @param w World
+     */
     public void age(World w) {
         age++;
     }

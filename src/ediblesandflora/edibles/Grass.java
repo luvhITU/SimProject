@@ -32,6 +32,10 @@ public class Grass extends Edible implements NonBlocking, DynamicDisplayInformat
         return new DisplayInformation(Color.magenta, "grass");
     }
 
+    /***
+     * See super
+     * @param w World
+     */
     @Override
     public void age(World w) {
         super.age(w);

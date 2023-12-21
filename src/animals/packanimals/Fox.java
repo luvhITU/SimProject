@@ -20,6 +20,10 @@ public class Fox extends PackAnimal {
         super(Config.Fox.DIET, Config.Fox.DAMAGE, Config.Fox.HEALTH, Config.Fox.SPEED, Config.Fox.MATING_COOLDOWN_DAYS, Config.Fox.MAX_PACK_SIZE, true, true);
     }
 
+    /***
+     * See super
+     * @param w World
+     */
     @Override
     public void sleepAct(World w) {
         if (w.getCurrentTime() == 10 && canMate() && home != null) {
@@ -28,6 +32,11 @@ public class Fox extends PackAnimal {
         super.sleepAct(w);
     }
 
+    /***
+     * See super
+     * @param w World
+     * @return  Pray
+     */
     @Override
     public Object findTarget(World w) {
         Edible edible = findClosestEdible(w);
@@ -58,11 +67,11 @@ public class Fox extends PackAnimal {
         }
     }
 
-    public Burrow findClosestBurrow(World w) {
+    private Burrow findClosestBurrow(World w) {
         return (Burrow) HelperMethods.findNearestOfObjects(w, w.getLocation(this), findBurrow(w));
     }
 
-    public Set<Burrow> findBurrow(World w) {
+    private Set<Burrow> findBurrow(World w) {
         Set<Burrow> burrows = new HashSet<>();
         for (Location l : tilesInSight) {
             Object o = w.getTile(l);

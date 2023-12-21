@@ -54,23 +54,17 @@ public class Home implements DynamicDisplayInformationProvider {
     }
 
     /***
-     * Getter for the int of limit of occupants in the Home
-     * @return  int
-     */
-    public int getMaxOccupants() { return maxOccupants; }
-
-    /***
-     * Add the input animal to the occupants list and throws an exception if there is no room left
-     * @param animal
-     */
-
-    /***
      * Getter for home occupants
      * @return set of occupants
      */
     public Set<Animal> getOccupants () {
         return occupants;
     }
+
+    /***
+     * Adds animal to occupants list, throws exception if home is full
+     * @param animal    Animal to be added
+     */
     public void add(Animal animal) {
         if (isFull()) { throw new IllegalStateException("Home is filled to brim already!"); }
         occupants.add(animal);
@@ -78,7 +72,7 @@ public class Home implements DynamicDisplayInformationProvider {
 
     /***
      * Removes input animal from occupants list and throws an exception if the animal doesn't live there
-     * @param animal
+     * @param animal    Animal that is to be removed
      */
     public void remove(Animal animal) {
         if (!occupants.contains(animal)) { throw new IllegalArgumentException(animal + " does not live here"); }

@@ -13,6 +13,10 @@ public class Wolf extends PackAnimal {
         super(Config.Wolf.DIET, Config.Wolf.DAMAGE, Config.Wolf.HEALTH, Config.Wolf.SPEED, Config.Wolf.MATING_COOLDOWN_DAYS, Config.Wolf.MAX_PACK_SIZE, true);
     }
 
+    /***
+     * See super
+     * @param w World
+     */
     @Override
     public void sleepAct(World w) {
         if (w.getCurrentTime() == 0 && canMate()) {
@@ -21,6 +25,10 @@ public class Wolf extends PackAnimal {
         super.sleepAct(w);
     }
 
+    /***
+     * See super
+     * @param w World
+     */
     @Override
     public void awakeAct(World w) {
         if (w.isNight() && home == null && canBurrowHere(w)) {

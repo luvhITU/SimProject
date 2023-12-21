@@ -30,8 +30,7 @@ public class PackAnimal extends Animal {
         this.avoidsOtherPacks = avoidsOtherPacks;
         stepAgeWhenPackActed = -1;
     }
-
-    public PackAnimal(Set<String> diet, int damage, int maxHealth, int maxSpeed, int matingCooldownDays, int maxPackSize, boolean avoidsOtherPacks, boolean isNocturnal) {
+    protected PackAnimal(Set<String> diet, int damage, int maxHealth, int maxSpeed, int matingCooldownDays, int maxPackSize, boolean avoidsOtherPacks, boolean isNocturnal) {
         super(diet, damage, maxHealth, maxSpeed, matingCooldownDays, isNocturnal);
         this.maxPackSize = maxPackSize;
         this.avoidsOtherPacks = avoidsOtherPacks;
@@ -50,6 +49,10 @@ public class PackAnimal extends Animal {
         }
     }
 
+    /***
+     * See super
+     * @param w World
+     */
     @Override
     public void awakeAct(World w) {
         if (hasPackActed()) { return; }
@@ -131,8 +134,6 @@ public class PackAnimal extends Animal {
      * packs have room then it will make a new pack and add this.
      * @param w World
      */
-
-
     public void findOrStartPack(World w) {
         //Checks if there is room in current packs
         for (Object o : w.getEntities().keySet()) {
@@ -153,9 +154,6 @@ public class PackAnimal extends Animal {
 
     @Override
     protected void hunt(World w, Object target) {
-//        if (pack.getMembers().contains(target)) {
-//            throw new IllegalArgumentException("Cannot hunt pack members.");
-//        }
         for (PackAnimal member : pack.getMembers()) {
             if (isTargetUnavailable(w)) {
                 return;
@@ -166,6 +164,11 @@ public class PackAnimal extends Animal {
             }
         }
     }
+
+    /***
+     * Sets pack to input pack
+     * @param p Pack for the fox
+     */
     public void setPack(Pack p){
         this.pack = p;
     }
